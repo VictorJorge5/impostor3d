@@ -1,0 +1,13 @@
+# Despliegue en Render (plan gratuito). En Render: New + > Blueprint > elige este repositorio.
+services:
+  - type: web
+    name: impostor3d
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"

@@ -1,0 +1,9 @@
+{
+  "name": "impostor3d",
+  "version": "1.0.0",
+  "description": "Juego tipo Among Us en 3D (1ª/3ª persona) para jugar con amigos",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "express": "^4.19.2", "socket.io": "^4.7.5" }
+}
