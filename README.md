@@ -114,10 +114,17 @@ Hay 8 rejillas en el suelo, en dos redes: Reactor-Navegación-Eléctrica-Cafeter
 Dentro de una ventilación nadie te ve: no puedes matar, sabotear ni moverte por el mapa, solo viajar a las rejillas conectadas o salir. Si alguien está cerca verá un anillo al entrar o salir.
 
 
+### Reuniones y votación (como en Among Us)
+- **Pantalla:** "¿Quién es el impostor?" con una **tarjeta por jugador** (su cara y su nombre) y una barra de tiempo. Primero va la **discusión** (no se puede votar) y después la **votación**.
+- **Votar:** toca la tarjeta de quien creas que es el impostor y confirma con **✓** (o cancela con **✕**). **"Saltar voto"** también pide confirmación. No se puede votar a uno mismo ni a un eliminado.
+- **"HA VOTADO":** cuando alguien vota, su tarjeta recibe un sello (sin decir a quién ha votado).
+- **Chat:** botón 💬 arriba a la izquierda, con un contador de mensajes sin leer. En pantallas anchas el chat va fijo a la derecha.
+- **Resultado:** bajo cada tarjeta aparecen **las caras de quienes la han votado**, y en "Saltar voto" las de quienes se han saltado el voto. Con **votos anónimos** salen solo puntos grises con el recuento. El expulsado se marca en rojo y después viene la animación de expulsión.
+
 ### Terminales de información (cualquier jugador vivo; botón "Usar" junto al terminal)
 | Terminal | Dónde | Qué da |
 |---|---|---|
-| **Cámaras de seguridad** | Almacén | 4 vistas en directo del mapa 3D (pasillos oeste, este y norte, y la cafetería). Mientras alguien mira, **la luz roja de las cámaras parpadea para todos** |
+| **Cámaras de seguridad** | Almacén | 4 vistas en directo del mapa 3D (pasillos oeste, este y norte, y la cafetería), a pantalla completa y sin el HUD encima (en el móvil en vertical se apilan en una columna). Mientras alguien mira, **la luz roja de las cámaras parpadea para todos** |
 | **Panel de administración** | Cafetería | Cuánta gente hay en cada sala, con puntos de su color (no la posición exacta). Un impostor dentro de una ventilación no aparece |
 | **Signos vitales** | Enfermería | Todos los jugadores con su electrocardiograma: VIVO o MUERTO en directo |
 | **Registro de puertas** | Eléctrica | Quién ha entrado o salido de cada sala y hace cuántos segundos (se ignoran los rebotes en el umbral; las ventilaciones no dejan rastro) |

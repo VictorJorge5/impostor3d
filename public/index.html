@@ -100,22 +100,62 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 .shake{animation:shake .3s}
 @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
-#meeting{flex-direction:column;background:#070b14f2;padding:max(12px,env(safe-area-inset-top)) 12px 12px;gap:10px;overflow:auto}
-#meeting h2{margin:6px 0 0;font-size:22px}
-#mtgSub{color:var(--steel);font-size:14px}
+#meeting{flex-direction:column;background:#070b14f2;padding:max(10px,env(safe-area-inset-top)) 10px max(10px,env(safe-area-inset-bottom));gap:8px;overflow:hidden}
+#mtgMain{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;background:linear-gradient(#1c2c4a,#13203a);border:3px solid #3f5a8c;border-radius:18px;padding:10px;box-shadow:inset 0 0 0 3px #0a1222}
+#mtgHead{display:flex;align-items:center;gap:10px;flex:none}
+#mtgHead h2{margin:0;font-size:clamp(17px,4.8vw,23px);line-height:1.15}
+#mtgSub{color:#a9bdea;font-size:13px;line-height:1.3}
 #mtgTimer{color:var(--amber);font-weight:800}
-.prow{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;background:#0f1626;border:1px solid var(--line);margin-bottom:7px}
-.prow.dead{opacity:.45}
-.pname{flex:1}
-.tag{font-size:12px;color:var(--mut)}.tag.ok{color:var(--mint)}
-.vbtn{padding:8px 14px;border-radius:10px;border:1px solid var(--red);background:transparent;color:var(--red);font-weight:800}
-#chatLog{flex:1;min-height:90px;max-height:26vh;overflow:auto;padding:8px 10px;border-radius:12px;background:#0b101c;border:1px solid var(--line);font-size:14px;line-height:1.5;-webkit-user-select:text;user-select:text}
+#btnChat{position:relative;width:46px;height:46px;border-radius:50%;border:2px solid #7ea2e8;background:#0e1830;font-size:21px;color:#fff;padding:0;flex:none}
+#chatBadge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;border-radius:10px;background:#ff3b5c;color:#fff;font-size:11px;font-weight:900;display:none;align-items:center;justify-content:center;padding:0 5px}
+#chatBadge.on{display:flex}
+#mtgBar{height:7px;border-radius:4px;background:#0a1222;overflow:hidden;flex:none}
+#mtgBar i{display:block;height:100%;width:100%;background:var(--amber);transition:width .25s linear}
+#mtgBar.discuss i{background:#7ea2e8}
+#mtgPlayers{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px 8px;align-content:start;padding:6px 4px 4px}
+.pcard{position:relative;display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:12px;background:#e3eafa;color:#16213a;border:3px solid transparent;min-height:62px}
+.pcard .pt{width:46px;height:46px;flex:none;border-width:3px;background:#fff}
+.pcard .pname{flex:1;min-width:60px;font-weight:800;font-size:15px;line-height:1.15;overflow-wrap:anywhere}
+.pcard .pname small{display:block;font-weight:700;font-size:11px;color:#5a6a90;margin-top:1px}
+.pcard.me{border-color:#7ea2e8}
+.pcard.can{cursor:pointer}.pcard.can:active{transform:scale(.97)}
+.pcard.sel{border-color:#ffd44a;box-shadow:0 0 0 3px #ffd44a55;grid-column:1/-1}   /* la tarjeta elegida ocupa la fila: hay sitio para ✓ y ✕ */
+.pcard.imp .pname{color:#c4162f}
+.pcard.dead{filter:grayscale(1);opacity:.5}
+.pcard.dead::after{content:"✖";position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:30px;color:#c4162f;font-weight:900}
+.pcard.out{border-color:#ff3b5c;background:#ffe3e8;animation:shake .5s}
+.sticker{position:absolute;top:-9px;right:-5px;background:#5ef2c0;color:#06231a;font-size:9.5px;font-weight:900;padding:2px 7px;border-radius:9px;letter-spacing:.5px;box-shadow:0 1px 4px #0009;z-index:1}
+.pconf{display:flex;gap:6px;flex:none}
+.cbtn{width:38px;height:38px;border-radius:50%;border:none;font-size:19px;font-weight:900;color:#fff;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cbtn.ok{background:#2fbf71}.cbtn.no{background:#c4162f}
+.vchips{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.vchips .pt{width:23px!important;height:23px!important;border-width:2px;animation:pop .35s cubic-bezier(.2,1.6,.4,1) both;animation-delay:calc(var(--i)*.22s)}
+.vchips .dot{width:17px;height:17px;border-radius:50%;background:#7a869f;animation:pop .35s both;animation-delay:calc(var(--i)*.22s)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:none;opacity:1}}
+#mtgFoot{display:flex;flex-direction:column;gap:6px;flex:none}
+#btnSkip{display:none;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#e3eafa;color:#16213a;border:3px solid transparent;font-weight:800;font-size:15px;min-height:50px}
+#btnSkip .sl{flex:1}#btnSkip .vchips{margin:0}
+#btnSkip.can{cursor:pointer}#btnSkip.sel{border-color:#ffd44a;box-shadow:0 0 0 3px #ffd44a55}
+#mtgInfo{text-align:center;color:#b6c8f0;font-size:13.5px;min-height:1.3em;line-height:1.3}
+#mtgResult{display:none;padding:8px 10px;border-radius:12px;background:#2a1220;border:2px solid var(--red);text-align:center}
+#mtgResult b{font-size:17px}
+#mtgResult .vs{margin-top:4px;font-size:12px;color:#ffd0d6;line-height:1.5}
+#chatPanel{position:absolute;inset:0;display:none;flex-direction:column;gap:8px;background:#0b1427;padding:max(10px,env(safe-area-inset-top)) 10px max(10px,env(safe-area-inset-bottom));z-index:2}
+#chatPanel.on{display:flex}
+#chatHead{display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:18px}
+#chatLog{flex:1;min-height:0;overflow:auto;padding:8px;border-radius:12px;background:#0f1930;border:1px solid var(--line);-webkit-user-select:text;user-select:text}
+.msg{display:flex;gap:8px;align-items:flex-end;margin-bottom:9px}
+.msg .pt{width:30px;height:30px;flex:none;border-width:2px}
+.msg .bub{background:#e3eafa;color:#16213a;border-radius:12px 12px 12px 3px;padding:6px 10px;max-width:82%;font-size:14px;line-height:1.35;word-break:break-word}
+.msg .bub b{display:block;font-size:11.5px;margin-bottom:1px}
 #chatRow{display:flex;gap:8px}
 #chatRow .field{padding:11px 12px;font-size:15px}
 #chatRow button{padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--hull);font-weight:700}
-#mtgResult{display:none;padding:14px;border-radius:14px;background:#1a0f16;border:1px solid var(--red);text-align:center}
-#mtgResult b{font-size:20px}
-#mtgResult .vs{margin-top:8px;font-size:12.5px;color:var(--steel);line-height:1.6}
+@media (min-width:900px) and (orientation:landscape){
+  #meeting{flex-direction:row}
+  #chatPanel{position:static;display:flex;width:340px;flex:none;border-radius:18px;border:3px solid #3f5a8c;padding:10px}
+  #btnChat,#chatClose{display:none}
+}
 #endOv{align-items:center;justify-content:center;flex-direction:column;background:#000e;padding:20px;text-align:center}
 #endOv h1{margin:0 0 6px;font-size:clamp(36px,11vw,64px)}
 #endRoles{margin:16px 0;display:grid;gap:6px;width:min(340px,90vw);text-align:left}
@@ -217,6 +257,9 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 .feed{position:relative;border:2px solid #22304f;border-radius:6px}
 .feed .fl{position:absolute;left:6px;top:4px;font-size:11px;font-weight:800;letter-spacing:1px;color:#fff;text-shadow:0 1px 3px #000}
 .feed .fr{position:absolute;right:6px;top:4px;font-size:11px;color:#ff3b5c;font-weight:800;text-shadow:0 1px 3px #000}
+#game.incams .hud,#game.incams #stick,#game.incams #actions,#game.incams #actions2,#game.incams #ventUI{visibility:hidden}
+.feed::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#0000 0 2px,#0003 2px 3px),radial-gradient(ellipse at center,#0000 55%,#000a 100%)}
+@media (orientation:portrait){#infoOv.cams #infoBody{grid-template-columns:1fr;grid-template-rows:repeat(4,1fr)}}
 .feed.off{background:repeating-linear-gradient(0deg,#1d1d22 0 2px,#3a3a42 2px 4px);animation:noisy .15s steps(3) infinite}
 @keyframes noisy{50%{background-position:0 5px}}
 .nosig{display:flex;align-items:center;justify-content:center;height:100%;min-height:80px;color:#ff8a98;font-weight:800;text-align:center;padding:12px}
@@ -316,13 +359,17 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 <div id="mg" class="ov"><div class="panel"><h2><span id="mgTitle"></span><button class="x" id="mgClose">✕</button></h2><div id="mgBody"></div></div></div>
 
 <div id="meeting" class="ov">
-  <div><h2 id="mtgTitle"></h2><div id="mtgSub"></div></div>
-  <div id="mtgPlayers"></div>
-  <button id="btnSkip" class="btn" style="margin:0;display:none">Saltar voto</button>
-  <div id="mtgInfo" class="hint"></div>
-  <div id="mtgResult"></div>
-  <div id="chatLog"></div>
-  <div id="chatRow"><input id="chatIn" class="field" maxlength="140" placeholder="Escribe al grupo…" autocomplete="off"><button id="chatSend">Enviar</button></div>
+  <div id="mtgMain">
+    <div id="mtgHead"><button id="btnChat" aria-label="Chat">💬<span id="chatBadge"></span></button><div><h2 id="mtgTitle"></h2><div id="mtgSub"></div></div></div>
+    <div id="mtgBar"><i></i></div>
+    <div id="mtgPlayers"></div>
+    <div id="mtgFoot"><div id="btnSkip" role="button" tabindex="0"></div><div id="mtgInfo"></div><div id="mtgResult"></div></div>
+  </div>
+  <div id="chatPanel">
+    <div id="chatHead"><span>Chat de la reunión</span><button class="x" id="chatClose">✕</button></div>
+    <div id="chatLog"></div>
+    <div id="chatRow"><input id="chatIn" class="field" maxlength="140" placeholder="Escribe al grupo…" autocomplete="off"><button id="chatSend">Enviar</button></div>
+  </div>
 </div>
 
 <div id="endOv" class="ov">
@@ -486,6 +533,7 @@ socket.on('idchange', ({ from, to }) => {
   G.players = new Map([...G.players].map(([k, v]) => { if (k === from) { v.id = to; return [to, v]; } return [k, v]; }));
   G.mates = G.mates.map(i => i === from ? to : i); if (G.hostId === from) { G.hostId = to; applyCfgUI(); }
   if (G.voted && G.voted.has(from)) { G.voted.delete(from); G.voted.add(to); }
+  if (G.sel === from) G.sel = to;
   if (G.state === 'meeting') renderMeeting();
 });
 socket.on('resync', s => {
@@ -1102,7 +1150,7 @@ function buildMap() {
     const body = new THREE.Mesh(new THREE.BoxGeometry(.5, .36, .62), new THREE.MeshLambertMaterial({ color: 0x20242d }));
     const lens = new THREE.Mesh(new THREE.CylinderGeometry(.12, .15, .2, 12), new THREE.MeshLambertMaterial({ color: 0x0b0d12 })); lens.rotation.x = Math.PI / 2; lens.position.z = .38;
     const lamp = new THREE.MeshBasicMaterial({ color: 0x3a0a10 }), led = new THREE.Mesh(new THREE.SphereGeometry(.07, 8, 6), lamp); led.position.set(.16, .2, .2);
-    grp.add(body, lens, led); grp.lookAt(c.look[0], c.pos[1] - .6, c.look[2]); scene.add(grp); camObjs.push({ lamp });
+    grp.add(body, lens, led); grp.lookAt(c.look[0], c.pos[1] - .6, c.look[2]); scene.add(grp); camObjs.push({ lamp, grp });
   });
   // ventilaciones: rejillas en el suelo
   S.VENTS.forEach(v => {
@@ -1128,7 +1176,7 @@ function addPlayer(p) {
   const mesh = createAvatar(p.look);
   const mate = G.role === 'impostor' && G.mates.includes(p.id);
   const lab = sprite(p.name + (p.id === myId ? ' (tú)' : ''), mate ? '#ff6b6b' : '#ffffff', 2.4, .6);
-  lab.position.y = 2.3; mesh.add(lab); mesh.rotation.order = 'YXZ'; scene.add(mesh);
+  lab.position.y = 2.3; lab.visible = p.id !== myId; mesh.add(lab); mesh.rotation.order = 'YXZ'; scene.add(mesh);   // tu propio nombre no hace falta verlo
   mesh.position.set(p.x, 0, p.z);
   G.players.set(p.id, { id: p.id, name: p.name, color: p.color, look: p.look, alive: p.alive !== false, x: p.x, z: p.z, ry: p.ry || 0, tx: p.x, tz: p.z, try: p.ry || 0, mv: false, mesh });
 }
@@ -1225,44 +1273,72 @@ socket.on('left', ({ id }) => {
 /* reuniones */
 function onMeeting(d) {
   G.state = 'meeting'; releaseLock(); closeMG(); closeSabMenu(); closeTestMenu(); clearBodies(); G.vent = null; renderVentUI(); stopEject(); sfx.stopAll(); showBanner(d); snd('report');
-  G.voted = new Set(); G.myVote = null; G.resultShown = false; G.mtgEnds = performance.now() + d.ends;
-  G.phase = d.discuss > 0 ? 'discuss' : 'vote'; G.phaseEnds = performance.now() + (d.discuss || 0);
+  G.voted = new Set(); G.myVote = null; G.sel = null; G.result = null; G.unread = 0; G.resultShown = false; G.mtgEnds = performance.now() + d.ends;
+  G.phase = d.discuss > 0 ? 'discuss' : 'vote'; G.phaseEnds = performance.now() + (d.discuss || 0); G.barTotal = { discuss: d.discuss || 0, vote: d.vote != null ? d.vote : Math.max(1, d.ends - (d.discuss || 0)) };
   if (d.caller === myId && d.kind === 'button') G.emerg = Math.max(0, G.emerg - 1);
-  $('mtgTitle').textContent = d.kind === 'body' ? `¡Cuerpo de ${d.victimName} encontrado!` : 'Reunión de emergencia';
-  $('mtgSub').textContent = `Convocada por ${nameOf(d.caller)} · `;
+  $('mtgTitle').textContent = '¿Quién es el impostor?';
+  $('mtgSub').textContent = d.kind === 'body' ? `Cuerpo de ${d.victimName} · lo encontró ${nameOf(d.caller)} · ` : `Reunión de emergencia de ${nameOf(d.caller)} · `;
   const t = el('span', '', ''); t.id = 'mtgTimer'; $('mtgSub').append(t);
-  $('chatLog').innerHTML = ''; $('mtgResult').style.display = 'none';
+  $('chatLog').innerHTML = ''; $('mtgResult').style.display = 'none'; updateChatBadge(); closeChat();
   $('chatIn').disabled = !G.alive; $('chatSend').disabled = !G.alive;
   ov('meeting', true); renderMeeting();
 }
 socket.on('meeting', onMeeting);
-socket.on('meetingPhase', d => { G.phase = d.phase; renderMeeting(); if (G.state === 'meeting' && G.alive) toast('¡Hora de votar!', 2000); });
+socket.on('meetingPhase', d => { G.phase = d.phase; G.sel = null; renderMeeting(); if (G.state === 'meeting' && G.alive) { toast('¡Hora de votar!', 2000); snd('click'); } });
+const meetingCanVote = () => G.alive && G.myVote === null && G.state === 'meeting' && !G.resultShown && G.phase === 'vote';
+function confirmBtns(target) {
+  const w = el('div', 'pconf'), ok = el('button', 'cbtn ok', '✓'), no = el('button', 'cbtn no', '✕'); ok.setAttribute('aria-label', 'Confirmar voto'); no.setAttribute('aria-label', 'Cancelar');
+  ok.onclick = e => { e.stopPropagation(); castVote(target); }; no.onclick = e => { e.stopPropagation(); G.sel = null; renderMeeting(); };
+  w.append(ok, no); return w;
+}
+function voteChips(ids, anonCount, start) {   // las caras de quienes han votado (o puntos grises si el voto es anónimo)
+  const w = el('div', 'vchips'); let i = start;
+  (ids || []).forEach(id => { const p = G.players.get(id), c = p ? portrait(p.look, colHex(p.color), 23) : el('span', 'dot'); c.style.setProperty('--i', i++); w.append(c); });
+  for (let k = 0; k < (anonCount || 0); k++) { const d = el('span', 'dot'); d.style.setProperty('--i', i++); w.append(d); }
+  return { w, next: i };
+}
 function renderMeeting() {
   const box = $('mtgPlayers'); box.innerHTML = '';
-  const canVote = G.alive && G.myVote === null && G.state === 'meeting' && !G.resultShown && G.phase === 'vote';
+  const can = meetingCanVote(), res = G.result, votesTo = {}, skipFrom = []; let k = 0;
+  if (res && res.votes) res.votes.forEach(v => { if (v.to === 'skip') skipFrom.push(v.from); else (votesTo[v.to] = votesTo[v.to] || []).push(v.from); });
   for (const p of G.players.values()) {
-    const row = el('div', 'prow' + (p.alive ? '' : ' dead'));
-    row.append(portrait(p.look, colHex(p.color), 38), el('span', 'pname', p.name + (p.id === myId ? ' (tú)' : '') + (G.role === 'impostor' && G.mates.includes(p.id) && p.id !== myId ? ' · impostor' : '')));
-    if (!p.alive) row.append(el('span', 'tag', 'eliminado'));
-    else if (G.voted.has(p.id)) row.append(el('span', 'tag ok', 'ha votado'));
-    if (canVote && p.alive && p.id !== myId) { const b = el('button', 'vbtn', 'Votar'); b.onclick = () => castVote(p.id); row.append(b); }
-    box.append(row);
+    const mate = G.role === 'impostor' && G.mates.includes(p.id) && p.id !== myId, selectable = can && p.alive && p.id !== myId;
+    const card = el('div', 'pcard' + (p.alive ? '' : ' dead') + (p.id === myId ? ' me' : '') + (selectable ? ' can' : '') + (G.sel === p.id && selectable ? ' sel' : '') + (mate ? ' imp' : '') + (res && res.ejected && res.ejected.id === p.id ? ' out' : ''));
+    card.dataset.id = p.id; card.append(portrait(p.look, colHex(p.color), 46));
+    const info = el('div', 'pname'); info.append(document.createTextNode(p.name + (p.id === myId ? ' (tú)' : '')));
+    if (mate) info.append(el('small', '', 'impostor')); else if (!p.alive) info.append(el('small', '', 'eliminado'));
+    if (res) { const c = voteChips(votesTo[p.id], res.counts ? res.counts[p.id] : 0, k); k = c.next; if (c.w.childNodes.length) info.append(c.w); }
+    card.append(info);
+    if (selectable && G.sel === p.id) card.append(confirmBtns(p.id));
+    if (!res && p.alive && G.voted.has(p.id)) card.append(el('span', 'sticker', 'HA VOTADO'));
+    if (selectable) card.onclick = () => { G.sel = G.sel === p.id ? null : p.id; renderMeeting(); snd('click'); };
+    box.append(card);
   }
-  $('btnSkip').style.display = canVote ? 'block' : 'none';
-  $('mtgInfo').textContent = G.resultShown ? '' : !G.alive ? 'Estás eliminado: solo puedes mirar.' : G.myVote !== null ? 'Voto enviado. Esperando al resto…' : G.phase === 'discuss' ? 'Tiempo de discusión: habla en el chat. La votación se abrirá enseguida.' : 'Habla en el chat y vota.';
+  const sk = $('btnSkip'); sk.innerHTML = ''; sk.className = (can ? 'can' : '') + (can && G.sel === 'skip' ? ' sel' : '');
+  sk.style.display = can || res ? 'flex' : 'none'; sk.append(el('span', 'sl', 'Saltar voto'));
+  if (res) { const c = voteChips(skipFrom, res.counts ? res.counts.skip : 0, k); if (c.w.childNodes.length) sk.append(c.w); }
+  if (can && G.sel === 'skip') sk.append(confirmBtns('skip'));
+  $('mtgInfo').textContent = G.resultShown ? '' : !G.alive ? 'Estás eliminado: solo puedes mirar.' : G.myVote !== null ? 'Has votado. Esperando al resto…' : G.phase === 'discuss' ? 'Discusión: habla en el chat 💬. La votación se abrirá enseguida.' : G.sel ? 'Confirma tu voto con ✓ o cancélalo con ✕.' : 'Toca a quien creas que es el impostor, o salta el voto.';
 }
-function castVote(t) { if (G.myVote !== null) return; G.myVote = t; socket.emit('vote', t); renderMeeting(); }
-$('btnSkip').onclick = () => castVote('skip');
+function castVote(t) { if (G.myVote !== null) return; G.myVote = t; G.sel = null; socket.emit('vote', t); snd('vote'); renderMeeting(); }
+$('btnSkip').onclick = e => { if (e.target.closest('.pconf') || !meetingCanVote()) return; G.sel = G.sel === 'skip' ? null : 'skip'; renderMeeting(); snd('click'); };
 function sendChat() { const v = $('chatIn').value.trim(); if (!v) return; socket.emit('chat', v); $('chatIn').value = ''; }
 $('chatSend').onclick = sendChat;
 $('chatIn').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+const chatVisible = () => $('chatPanel').classList.contains('on') || matchMedia('(min-width:900px) and (orientation:landscape)').matches;
+function updateChatBadge() { const b = $('chatBadge'); b.textContent = G.unread > 9 ? '9+' : String(G.unread || ''); b.classList.toggle('on', G.unread > 0); }
+function openChat() { $('chatPanel').classList.add('on'); G.unread = 0; updateChatBadge(); setTimeout(() => { $('chatLog').scrollTop = 1e9; if (G.alive) $('chatIn').focus(); }, 30); }
+function closeChat() { $('chatPanel').classList.remove('on'); }
+$('btnChat').onclick = openChat; $('chatClose').onclick = closeChat;
 socket.on('chat', m => {
-  const log = $('chatLog'), line = el('div'); const b = el('b', '', m.name); b.style.color = colHex(m.color);
-  line.append(b, document.createTextNode(': ' + m.text)); log.append(line); log.scrollTop = log.scrollHeight;
+  const log = $('chatLog'), line = el('div', 'msg'), p = G.players.get(m.id), bub = el('div', 'bub'), b = el('b', '', m.name);
+  if (p) line.append(portrait(p.look, colHex(m.color), 30)); b.style.color = '#3a4f86'; bub.append(b, document.createTextNode(m.text)); line.append(bub); log.append(line); log.scrollTop = log.scrollHeight;
+  if (!chatVisible() && m.id !== myId) { G.unread++; updateChatBadge(); snd('vote'); }
 });
 socket.on('voted', ({ id }) => { G.voted.add(id); renderMeeting(); if (id !== myId) snd('vote'); });
 function onResult(d) {
-  G.resultShown = true;
+  G.resultShown = true; G.result = d; G.sel = null; closeChat();
+  { const tm = $('mtgTimer'); if (tm) tm.textContent = 'resultado'; $('mtgBar').firstChild.style.width = '0%'; }
   const r = $('mtgResult'); r.innerHTML = ''; r.style.display = 'block';
   if (d.ejected) {
     const p = G.players.get(d.ejected.id); if (p) { p.alive = false; ghostify(p); }
@@ -1270,9 +1346,8 @@ function onResult(d) {
     r.append(el('b', '', `${d.ejected.name} ha sido expulsado.`));
     if (d.ejected.impostor !== null && d.ejected.impostor !== undefined) r.append(el('div', '', d.ejected.impostor ? 'Era un impostor.' : 'No era impostor.'));
   } else r.append(el('b', '', 'Nadie ha sido expulsado.'));
-  const vs = el('div', 'vs', d.votes ? d.votes.map(v => `${nameOf(v.from)} → ${v.to === 'skip' ? 'saltar' : nameOf(v.to)}`).join('  ·  ')
-    : 'Votos (anónimos): ' + Object.entries(d.counts || {}).map(([k, n]) => `${k === 'skip' ? 'saltar' : nameOf(k)} ${n}`).join('  ·  '));
-  r.append(vs); renderMeeting();
+  if (!d.votes) r.append(el('div', 'vs', 'Votos anónimos: solo se ve cuántos votos ha recibido cada uno.'));
+  renderMeeting();
   clearTimeout(G.ejectTimer); G.ejectTimer = setTimeout(() => { if (G.state === 'meeting' && G.resultShown) playEject(d); }, Math.max(0, (d.ms || 7000) * .34));   // primero se ven los votos y luego la expulsión
 }
 socket.on('meetingResult', onResult);
@@ -1542,7 +1617,7 @@ function openInfo(id) {
   const t = S.INFO.find(q => q.id === id); if (!t) return;
   mgOpen = true; releaseLock(); stick.x = stick.y = 0; $('knob').style.transform = ''; G.info = id; G._infoRows = null; G._dlAt = 0;
   $('infoTitle').textContent = t.name; $('infoRec').textContent = id === 'cams' ? 'Mientras miras, la luz roja de las cámaras parpadea para todos' : ''; const body = $('infoBody'); body.innerHTML = '';
-  $('infoOv').className = 'ov on ' + id;
+  $('infoOv').className = 'ov on ' + id; $('game').classList.toggle('incams', id === 'cams');
   if (id === 'admin') { const cv = document.createElement('canvas'); cv.id = 'admCv'; cv.width = 600; cv.height = 440; body.append(cv, el('div', 'admRooms')); body.lastChild.id = 'admRooms'; }
   if (id === 'cams') {
     S.CAMERAS.forEach((c, i) => { const f = el('div', 'feed'); f.append(el('div', 'fl', `CAM ${i + 1} · ${c.name}`), el('div', 'fr', '● REC')); body.append(f); });
@@ -1555,7 +1630,7 @@ function openInfo(id) {
 }
 function closeInfo() {
   if (!G.info) return;
-  const was = G.info; clearInterval(G.infoTimer); G.info = null; ov('infoOv', false); $('infoOv').className = 'ov';
+  const was = G.info; clearInterval(G.infoTimer); G.info = null; ov('infoOv', false); $('infoOv').className = 'ov'; $('game').classList.remove('incams');
   if (was === 'cams') { socket.emit('camera', { on: false }); sfx.loopStop('camhum'); try { renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); renderer.setScissorTest(false); renderer.setViewport(0, 0, window.innerWidth, window.innerHeight); } catch (e) {} }
 }
 $('infoClose').onclick = () => closeMG();
@@ -1570,6 +1645,7 @@ function renderCamFeeds() {
   const W = window.innerWidth, H = window.innerHeight, feeds = $('infoBody').querySelectorAll('.feed');
   if (!camFeed) camFeed = new THREE.PerspectiveCamera(68, 1.3, .1, 200);
   const f0 = scene.fog.near, f1 = scene.fog.far, a0 = ambLight.intensity, l0 = myLight.visible;
+  camObjs.forEach(o => { o.grp.visible = false; });   // desde dentro, el propio aparato taparía la imagen
   scene.fog.near = 70; scene.fog.far = 220; ambLight.intensity = .95; myLight.visible = false;
   renderer.setScissorTest(false); renderer.setViewport(0, 0, W, H); renderer.setClearColor(0x05070d, 1); renderer.clear();
   feeds.forEach((fe, i) => {
@@ -1579,6 +1655,7 @@ function renderCamFeeds() {
   });
   renderer.setScissorTest(false); renderer.setViewport(0, 0, W, H);
   scene.fog.near = f0; scene.fog.far = f1; ambLight.intensity = a0; myLight.visible = l0;
+  camObjs.forEach(o => { o.grp.visible = true; });
 }
 function drawAdmin() {
   // como en Among Us: se ve cuánta gente hay en cada sala (puntos de su color), no la posición exacta
@@ -1846,6 +1923,7 @@ function update(dt, now) {
 
   // reunión: cuenta atrás
   if (G.state === 'meeting' && !G.resultShown) { const t = $('mtgTimer'); if (t) t.textContent = G.phase === 'discuss' ? `discusión ${Math.max(0, Math.ceil((G.phaseEnds - now) / 1000))} s` : `votación ${Math.max(0, Math.ceil((G.mtgEnds - now) / 1000))} s`; }
+  if (G.state === 'meeting' && !G.resultShown && G.barTotal) { const bar = $('mtgBar'), left = G.phase === 'discuss' ? G.phaseEnds - now : G.mtgEnds - now, tot = Math.max(1, G.phase === 'discuss' ? G.barTotal.discuss : G.barTotal.vote); bar.className = G.phase === 'discuss' ? 'discuss' : ''; bar.firstChild.style.width = Math.max(0, Math.min(100, left / tot * 100)) + '%'; }
 }
 function drawMini() {
   const m = $('minimap'), c = m.getContext('2d'), w = m.width, h = m.height;
