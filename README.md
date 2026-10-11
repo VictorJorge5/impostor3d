@@ -2,7 +2,18 @@
 
 Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), en 1ª o 3ª persona.
 
-> Guía completa para ponerlo en internet: **DESPLIEGUE.md**.
+> Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
+
+## Novedades 2.0
+- **Despliegue en Vercel**: la web va por el CDN de Vercel (carga rápida, HTTPS, cabeceras de seguridad, despliegue en cada push) y se conecta al servidor de tiempo real indicado en `GAME_SERVER_URL`.
+- **Estado de la conexión** siempre visible (*Conectando… · Despertando el servidor… · En línea · 45 ms · Sin conexión*). En partida solo aparece si hay problemas.
+- **Invitar amigos** abre el menú de compartir del móvil (WhatsApp, Telegram…) y el enlace muestra una vista previa con imagen. Tocar el código lo copia.
+- **Enlace de invitación** con aviso "Te han invitado a la sala ABCD"; el código se escribe solo en mayúsculas e Intro entra.
+- **Pantalla siempre encendida** en la sala y en la partida, **vibración** en los momentos clave (rol, muerte, reunión, sabotaje, tarea, voto, final) y botón de **pantalla completa** en horizontal (Android/PC).
+- **Calidad gráfica adaptativa**: si el móvil va a menos de ~40 fps baja la resolución interna, y la sube si va sobrado.
+- **App instalable y arranque instantáneo** (service worker): three.js, caras e iconos quedan guardados en el móvil.
+- Servidor: CORS para la web de Vercel, `/health` con jugadores conectados, medición de ping y aviso a los jugadores antes de reiniciar.
+- **Pruebas automáticas** (`npm test`) y GitHub Actions en cada push.
 
 ## Probarlo en tu ordenador
 1. Instala Node.js 18 o superior.
@@ -11,10 +22,9 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), en 1
    Para jugar en la misma wifi, ellos entran a `http://TU_IP_LOCAL:3000`.
 
 ## Jugar por internet con amigos (gratis)
-Súbelo a un repositorio de GitHub y créalo como "Web Service" en Render.com:
-- Build command: `npm install`
-- Start command: `npm start`
-Render te da una URL pública con HTTPS que funciona desde cualquier móvil.
+- **Servidor de juego** en Render.com ("Web Service" o Blueprint con `render.yaml`): build `npm install`, start `npm start`.
+- **Web** en Vercel: importa el repositorio y define `GAME_SERVER_URL` con la URL de Render. Lo demás lo lee de `vercel.json`.
+- También vale solo Render: su propia URL sirve la página y el juego.
 
 ## Personajes
 - Los amigos de plantilla (Benjamín, Cristian, Pablo, Jaime, Santi, Víctor, José) llevan su **cara real**: la foto se recorta sin fondo, se alinea (ojos, barbilla, ancho de mejillas) a una cabeza común y se proyecta sobre una cabeza 3D. El **relieve** (nariz, cejas, labios, mentón) sale de los puntos faciales 3D de su propia foto. Lleva orejas, y los laterales y la nuca continúan con su piel y pelo (con degradado si lo llevan). El cuerpo lleva su ropa, complexión y altura.

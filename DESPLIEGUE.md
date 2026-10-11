@@ -1,6 +1,48 @@
 # Cómo poner Impostor 3D en internet
 
-## Opción A (recomendada): Render, gratis y con enlace fijo
+## Arquitectura profesional: web en Vercel + servidor de juego en Render
+
+```
+ Móviles ──HTTPS──▶  Vercel (la web: página, 3D, caras, PWA)   ← CDN mundial, HTTPS, vistas previas por rama
+    │
+    └────WebSocket──▶ Render (server.js: salas y partidas en tiempo real)
+```
+
+- **Vercel** sirve la página desde su CDN: carga muy rápida en cualquier sitio, cabeceras de seguridad, caché,
+  app instalable, imagen de vista previa al compartir por WhatsApp y un despliegue automático en cada `git push`.
+- **El servidor de juego** (Socket.IO) necesita un proceso siempre encendido que guarde las salas en memoria.
+  Las funciones de Vercel no sirven para eso (cada conexión puede ir a una instancia distinta y se cortan por tiempo),
+  así que sigue en Render (o Railway/Fly.io). La web de Vercel se conecta a él con la variable `GAME_SERVER_URL`.
+
+### 1. Servidor de juego (Render)
+Si ya lo tienes en Render, no hay que tocar nada: anota su URL (p. ej. `https://impostor3d.onrender.com`)
+y comprueba que `https://TU-URL/health` responde `{"ok":true,...}`. Si no, sigue la "Opción A" de más abajo.
+
+El servidor acepta conexiones de cualquier `*.vercel.app` y de `localhost`. Si pones un **dominio propio** en Vercel,
+añade en Render la variable `ALLOWED_ORIGINS=https://tudominio.com,https://www.tudominio.com`.
+
+### 2. Web (Vercel)
+1. vercel.com → "Add New… → Project" → importa el repositorio `impostor3d` de GitHub.
+2. Vercel lee `vercel.json` solo (build `npm run build`, carpeta `dist`). No cambies nada de "Build & Output".
+3. En "Environment Variables" añade `GAME_SERVER_URL` = la URL de Render, **sin barra final**. Pulsa "Deploy".
+4. Abre la URL de Vercel. Arriba verás una pastilla: *Conectando…* → *En línea · 60 ms*. Si pone
+   *Despertando el servidor…*, Render estaba dormido: espera hasta un minuto y entra sola.
+
+Cada `git push` a `main` publica una versión nueva; cada rama tiene su propia URL de vista previa.
+Si cambias `GAME_SERVER_URL`, vuelve a desplegar (Deployments → ⋯ → Redeploy) para que se aplique.
+
+### Probar en local lo mismo que hace Vercel
+```
+npm install
+npm start                                   # servidor de juego en :3000
+GAME_SERVER_URL=http://localhost:3000 npm run build
+npx serve dist -l 5000                      # la web "de Vercel" en :5000
+npm test                                    # pruebas automáticas (también corren en GitHub Actions)
+```
+
+---
+
+## Opción A: todo en Render (servidor de juego, y también sirve la web)
 
 1. **GitHub.** Entra en github.com (crea cuenta si no tienes) → "New repository" → nombre `impostor3d` → "Create repository".
 2. **Sube el juego.** Descomprime el zip. En el repositorio: "uploading an existing file" y arrastra el CONTENIDO de la carpeta
@@ -18,6 +60,7 @@
 
 ### Plan gratuito: lo que hay que saber
 - Tras ~15 minutos sin nadie, el servidor se duerme. La primera visita después tarda 30-60 s en responder. **Ábrelo 5 minutos antes de quedar.**
+- La web de Vercel avisa con "Despertando el servidor…" mientras tanto, y entra sola en cuanto responde.
 - Para que no se duerma, un monitor gratuito (p. ej. UptimeRobot) que visite `https://TU-URL/health` cada 5 minutos. El plan de pago (7 $/mes) no se duerme.
 - Si lo reinicias o lo vuelves a desplegar, las salas abiertas desaparecen (están en memoria).
 
