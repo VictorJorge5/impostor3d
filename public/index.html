@@ -10,7 +10,17 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
-<title>Impostor 3D</title>
+<title>Impostor 3D · Among Us en 3D con tus amigos</title>
+<meta name="description" content="Juego tipo Among Us en 3D para jugar con amigos desde el móvil o el PC. Crea una sala, comparte el enlace y descubre al impostor.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Impostor 3D">
+<meta property="og:title" content="Impostor 3D · ¿Quién es el impostor?">
+<meta property="og:description" content="Haz tareas, sabotea la nave y vota. Se juega desde el navegador del móvil, sin instalar nada.">
+<meta property="og:image" content="og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_ES">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="dark">
 <style>
 :root{--bg:#090c13;--hull:#141b2a;--line:#2a3550;--txt:#eaf0ff;--mut:#8d9bb9;--amber:#ffb347;--red:#ff3b5c;--mint:#5ef2c0;--steel:#9fb3d9}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -275,6 +285,14 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 .dlrow .dot{width:26px;height:26px;border-radius:50%;flex:none}
 #btnSound{pointer-events:auto;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:#0a0f1cd0;font-size:15px}
 @media (prefers-reduced-motion:reduce){#deathOv,#bannerOv,#roleOv b,.ti{animation:none}}
+#net{position:fixed;left:50%;top:max(8px,env(safe-area-inset-top));transform:translateX(-50%);z-index:45;display:none;align-items:center;gap:7px;padding:5px 11px;border-radius:99px;background:#0a0f1ce6;border:1px solid var(--line);font-size:12px;color:var(--steel);pointer-events:none;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis}
+#net.show{display:flex}#net i{width:8px;height:8px;border-radius:50%;background:var(--amber);flex:none}
+#net.ok i{background:var(--mint)}#net.off i{background:var(--red);animation:netb 1s infinite}#net.wait i{animation:netb 1s infinite}#net.slow i{background:var(--amber)}
+@keyframes netb{50%{opacity:.25}}
+.invite{margin:18px 0 0;padding:12px 14px;border-radius:12px;border:1px solid var(--amber);background:#2a1d06;color:var(--amber);font-weight:700;text-align:center}
+.code{cursor:pointer}
+.btn.big{padding:17px 16px;font-size:17px}
+#btnFull{display:none}
 @media (prefers-reduced-motion:reduce){#roleOv{animation:none}#sabBanner.on,#redFlash.on{animation:none}}
 </style>
 </head>
@@ -290,6 +308,7 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
     <button id="btnGuest" class="btn">Soy invitado: crear mi personaje con fotos</button>
     <button id="btnRandChar" class="btn">Jugador aleatorio</button>
     <button id="btnCreate" class="btn primary">Crear sala</button>
+    <div id="inviteMsg" class="invite" style="display:none"></div>
     <div class="sep">¿Te han pasado un código?</div>
     <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off"><button id="btnJoin" class="btn">Unirse</button></div>
   </div>
@@ -299,7 +318,8 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
   <div class="card">
     <div class="hint" style="margin-top:20px">Código de sala</div>
     <div class="code" id="roomCode">----</div>
-    <button id="btnShare" class="btn">Copiar enlace para invitar</button>
+    <button id="btnShare" class="btn amber big">Invitar amigos</button>
+    <p class="hint" style="margin:6px 0 0">Toca el código para copiarlo</p>
     <div class="plist" id="lobbyList"></div>
     <details id="setBox" class="setBox"><summary>Ajustes de partida <span id="setSum"></span></summary>
       <div id="setPresets"></div><div id="setList"></div>
@@ -331,7 +351,7 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 <div id="game" class="screen">
   <canvas id="cv"></canvas>
   <div id="topLeft" class="hud"><div id="barWrap"><div id="bar"></div></div><div id="taskList"></div></div>
-  <div id="topRight" class="hud"><canvas id="minimap" width="150" height="110"></canvas><button id="btnView">Vista: 3ª persona</button><button id="btnSound" class="sndBtn">🔊</button><button id="btnTest" style="display:none">Herramientas</button><button id="btnEndTest" style="display:none">Terminar prueba</button><button id="btnQuit">Salir</button></div>
+  <div id="topRight" class="hud"><canvas id="minimap" width="150" height="110"></canvas><button id="btnView">Vista: 3ª persona</button><button id="btnSound" class="sndBtn">🔊</button><button id="btnFull" aria-label="Pantalla completa">⛶ Pantalla completa</button><button id="btnTest" style="display:none">Herramientas</button><button id="btnEndTest" style="display:none">Terminar prueba</button><button id="btnQuit">Salir</button></div>
   <div id="testTag" class="hud" style="display:none">MODO PRUEBAS</div>
   <div id="ghost" class="hud">Eres un fantasma: sigue con las tareas y observa</div>
   <div id="keys" class="hud">WASD mover · clic + ratón mirar · E usar · R reportar · Q matar · G sabotaje · F ventilación · V vista</div>
@@ -392,9 +412,11 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 <input id="faceFile" type="file" accept="image/*" style="display:none">
 <input id="faceCam" type="file" accept="image/*" capture="user" style="display:none">
 <div id="toast"></div>
+<div id="net" role="status" aria-live="polite"><i></i><span id="netTxt"></span></div>
 
 <script src="three.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
+<script src="config.js"></script>
+<script src="vendor/socket.io.min.js"></script>
 <script src="shared.js"></script>
 <script src="sfx.js"></script>
 <script src="friends.js"></script>
@@ -403,7 +425,10 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 'use strict';
 const S = window.Shared;
 const $ = id => document.getElementById(id);
-const socket = io();
+// El servidor de tiempo real puede estar en otro dominio (la web en Vercel y el servidor en Render): lo dice config.js
+const SERVER = String((window.I3D_CONFIG && window.I3D_CONFIG.server) || '').replace(/\/+$/, '');
+const sockOpts = { transports: ['websocket', 'polling'], tryAllTransports: true, reconnectionDelayMax: 4000 };
+const socket = SERVER ? io(SERVER, sockOpts) : io(sockOpts);
 // ---- sonido ----
 let muted0 = false; try { muted0 = localStorage.getItem('i3d_mute') === '1'; } catch (e) {}
 const sfx = Sfx.create({ muted: muted0 });
@@ -434,23 +459,72 @@ const hexInt = h => parseInt(h.slice(1), 16);
 const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const angLerp = (a, b, t) => { let d = ((b - a + Math.PI) % TAU + TAU) % TAU - Math.PI; return a + d * Math.min(1, t); };
 function toast(t, ms) { const e = $('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('on'), ms || 2600); }
-function screen(id) { ['menu', 'lobby', 'chars', 'game'].forEach(s => $(s).classList.toggle('on', s === id)); }
+function screen(id) { ['menu', 'lobby', 'chars', 'game'].forEach(s => $(s).classList.toggle('on', s === id)); keepAwake(id === 'lobby' || id === 'game'); if (typeof renderNet === 'function') setTimeout(renderNet, 0); }
 function ov(id, on) { $(id).classList.toggle('on', !!on); }
 function releaseLock() { if (document.pointerLockElement) document.exitPointerLock(); }
 const nameOf = id => { const p = G.players.get(id); return p ? p.name : '?'; };
 
+/* ---------- conexión: estado, latencia y servidor dormido ---------- */
+const NET = { state: 'wait', ms: 0, since: performance.now(), everOk: false };
+function renderNet() {
+  const e = $('net'), t = $('netTxt'), slowStart = performance.now() - NET.since > 4000;
+  let cls = NET.state, txt;
+  if (NET.state === 'ok') { txt = NET.ms ? `En línea · ${NET.ms} ms` : 'En línea'; if (NET.ms > 250) cls = 'slow'; }
+  else if (NET.state === 'off') txt = 'Sin conexión · reconectando…';
+  else txt = slowStart && !NET.everOk ? 'Despertando el servidor… (puede tardar hasta 1 min)' : 'Conectando…';
+  e.className = 'show ' + cls; t.textContent = txt;
+  // en partida solo se muestra si hay problemas, para no tapar nada
+  if ((G.state === 'play' || G.state === 'meeting') && cls === 'ok') e.className = cls;
+}
+function pingNow() { if (!socket.connected) return; const t0 = performance.now(); socket.timeout(5000).emit('lat', err => { if (err) return; const v = Math.round(performance.now() - t0); NET.ms = NET.ms ? Math.round(NET.ms * .6 + v * .4) : v; renderNet(); }); }
+socket.on('connect', () => { NET.state = 'ok'; NET.everOk = true; NET.ms = 0; renderNet(); pingNow(); });
+socket.on('disconnect', () => { NET.state = 'off'; NET.since = performance.now(); renderNet(); });
+socket.on('connect_error', () => { if (NET.state !== 'off') NET.state = 'wait'; renderNet(); });
+setInterval(() => { if (document.visibilityState === 'visible') pingNow(); renderNet(); }, 4000);
+renderNet();
+
+/* ---------- móvil: vibración y pantalla siempre encendida ---------- */
+const buzz = pat => { try { if (navigator.vibrate && !document.hidden) navigator.vibrate(pat); } catch (e) {} };
+let wakeLock = null;
+async function keepAwake(on) {
+  try {
+    if (on && !wakeLock && 'wakeLock' in navigator && document.visibilityState === 'visible') { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+    else if (!on && wakeLock) { const w = wakeLock; wakeLock = null; await w.release(); }
+  } catch (e) { wakeLock = null; }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { if (G.state !== 'menu') keepAwake(true); if (!socket.connected) socket.connect(); pingNow(); } });
+// pantalla completa (Android y PC; el iPhone no lo permite fuera de "Añadir a pantalla de inicio")
+const fsOK = !!(document.fullscreenEnabled && document.documentElement.requestFullscreen) && !matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches;
+function updateFullBtn() { const b = $('btnFull'); b.style.display = fsOK ? '' : 'none'; b.textContent = document.fullscreenElement ? '⛶ Salir de pantalla completa' : '⛶ Pantalla completa'; }
+$('btnFull').onclick = async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else { await document.documentElement.requestFullscreen({ navigationUI: 'hide' }); try { await screen.orientation.lock('landscape'); } catch (e) {} }
+  } catch (e) { toast('Tu navegador no permite la pantalla completa'); }
+};
+document.addEventListener('fullscreenchange', updateFullBtn); updateFullBtn();
+
 /* ---------- menú y sala ---------- */
 const qs = new URLSearchParams(location.search);
-if (qs.get('room')) $('code').value = qs.get('room').toUpperCase().slice(0, 4);
+if (qs.get('room')) {
+  const rc = qs.get('room').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4); $('code').value = rc;
+  if (rc.length === 4) { const m = $('inviteMsg'); m.textContent = `Te han invitado a la sala ${rc}: elige tu personaje y pulsa "Unirse"`; m.style.display = 'block'; $('btnJoin').classList.add('amber'); }
+}
 
 const loadSess = () => { const s = lsGet('i3d_sess', null); return s && s.code && s.token && Date.now() - s.t < 15 * 60 * 1000 ? s : null; };
 const saveSess = r => { try { localStorage.setItem('i3d_sess', JSON.stringify({ code: r.code, token: r.token, t: Date.now() })); } catch (e) {} };
 const clearSess = () => { try { localStorage.removeItem('i3d_sess'); } catch (e) {} };
+let joining = false;
 function join(code) {
-  const a = activeChar();
-  socket.emit('join', { name: a.name, look: a.look, code }, res => {
+  if (joining) return;
+  const a = activeChar(); joining = true;
+  ['btnCreate', 'btnJoin'].forEach(i => { $(i).disabled = true; });
+  if (!socket.connected) toast(NET.everOk ? 'Reconectando con el servidor…' : 'Conectando con el servidor… la primera vez puede tardar hasta un minuto', 5000);
+  socket.timeout(75000).emit('join', { name: a.name, look: a.look, code }, (err, res) => {
+    joining = false; ['btnCreate', 'btnJoin'].forEach(i => { $(i).disabled = false; });
+    if (err) return toast('El servidor no responde. Inténtalo de nuevo en un momento.');
     if (!res || res.error) return toast((res && res.error) || 'No se pudo entrar');
-    myId = res.id; saveSess(res);
+    myId = res.id; saveSess(res); buzz(25);
   });
 }
 function backToMenu(msg) {
@@ -461,10 +535,20 @@ $('btnLeave').onclick = leaveRoom;
 $('btnQuit').onclick = () => { if (confirm('¿Salir de la partida? Perderás tu sitio.')) leaveRoom(); };
 $('btnCreate').onclick = () => join('');
 $('btnJoin').onclick = () => { const c = $('code').value.trim(); if (c.length < 4) return toast('Escribe el código de 4 letras'); join(c); };
+const inviteUrl = () => location.origin + location.pathname + '?room=' + $('roomCode').textContent;
+async function copyText(t, okMsg) { try { await navigator.clipboard.writeText(t); toast(okMsg); buzz(20); } catch (e) { prompt('Cópialo desde aquí:', t); } }
 $('btnShare').onclick = async () => {
-  const url = location.origin + location.pathname + '?room=' + $('roomCode').textContent;
-  try { await navigator.clipboard.writeText(url); toast('Enlace copiado'); } catch (e) { prompt('Copia este enlace:', url); }
+  const code = $('roomCode').textContent, url = inviteUrl();
+  if (navigator.share && matchMedia('(pointer:coarse)').matches) {   // en el móvil abre WhatsApp, Telegram... directamente
+    try { await navigator.share({ title: 'Impostor 3D', text: `¡Únete a mi partida de Impostor 3D! Sala ${code}`, url }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  copyText(url, 'Enlace copiado: pégalo en el grupo');
 };
+$('roomCode').onclick = () => copyText($('roomCode').textContent, 'Código copiado');
+// código de sala: solo letras válidas, en mayúsculas; Intro para entrar
+$('code').addEventListener('input', () => { const c = $('code'); c.value = c.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4); });
+$('code').addEventListener('keydown', e => { if (e.key === 'Enter') $('btnJoin').click(); });
 $('btnStart').onclick = () => socket.emit('start');
 $('btnAgain').onclick = () => socket.emit('again');
 
@@ -527,7 +611,7 @@ socket.on('connect', () => {
     else { clearSess(); if (G.state !== 'menu') backToMenu((res && res.error) || 'Has salido de la partida'); }
   });
 });
-socket.on('disconnect', () => { toast('Conexión perdida. Reconectando…', 6000); });
+socket.on('disconnect', () => { if (G.state !== 'menu') toast('Conexión perdida. Reconectando…', 6000); });
 socket.on('presence', d => { if (d.id === myId || (G.state !== 'play' && G.state !== 'meeting')) return; toast(`${d.name} se ha ${d.offline ? 'desconectado' : 'reconectado'}`, 2200); });
 socket.on('idchange', ({ from, to }) => {
   G.players = new Map([...G.players].map(([k, v]) => { if (k === from) { v.id = to; return [to, v]; } return [k, v]; }));
@@ -1058,7 +1142,7 @@ function sprite(text, color, sx, sy) {
 function initScene() {
   if (sceneOK) return;
   renderer = new THREE.WebGLRenderer({ canvas: $('cv'), antialias: false });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(AQ.pr);
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x05070d);
   scene.fog = new THREE.Fog(0x05070d, 12, 50);
@@ -1228,7 +1312,7 @@ function showRole() {
     const d = el('div', 'ti'); d.style.setProperty('--i', i); d.append(portrait(p.look, imp ? '#ff3b5c' : colHex(p.color), imp ? 64 : 52), el('span', '', p.id === myId ? 'Tú' : p.name)); team.append(d);
   });
   o.className = 'ov ' + (imp ? 'imp' : 'crew'); void o.offsetWidth; o.classList.add('on');
-  G.frozenUntil = performance.now() + 3200;
+  G.frozenUntil = performance.now() + 3200; buzz(imp ? [60, 40, 160] : 80);
   setTimeout(() => ov('roleOv', false), 3400);
   snd(imp ? 'introImp' : 'introCrew');
 }
@@ -1259,11 +1343,11 @@ socket.on('killed', ({ victim, body, by }) => {
   const near = Math.hypot(G.x - body.x, G.z - body.z);
   spawnBlood(body.x, body.z); snd('kill', { dist: near });
   if (near < 14 && G.state === 'play') { G.shakeUntil = now + 380; G.shakeAmp = Math.max(.12, .5 - near * .03); }
-  if (victim === myId) { G.alive = false; updateGhost(); closeMG(); closeSabMenu(); killCam(by); }
-  else if (by === myId) flashHit();
+  if (victim === myId) { G.alive = false; updateGhost(); closeMG(); closeSabMenu(); killCam(by); buzz([300, 80, 400]); }
+  else if (by === myId) { flashHit(); buzz(70); }
 });
 socket.on('killCd', cd => { G.killReadyAt = performance.now() + cd; });
-socket.on('taskDone', id => { G.done.add(id); updateTasksUI(); updateStationVisuals(); toast('Tarea completada'); snd('task'); });
+socket.on('taskDone', id => { buzz(30); G.done.add(id); updateTasksUI(); updateStationVisuals(); toast('Tarea completada'); snd('task'); });
 socket.on('progress', ({ done, total }) => { G.doneN = done; G.total = total; updateBar(); });
 socket.on('left', ({ id }) => {
   const p = G.players.get(id); if (p) { scene.remove(p.mesh); G.players.delete(id); }
@@ -1274,7 +1358,7 @@ socket.on('left', ({ id }) => {
 function onMeeting(d) {
   G.state = 'meeting'; releaseLock(); closeMG(); closeSabMenu(); closeTestMenu(); clearBodies(); G.vent = null; renderVentUI(); stopEject(); sfx.stopAll(); showBanner(d); snd('report');
   G.voted = new Set(); G.myVote = null; G.sel = null; G.result = null; G.unread = 0; G.resultShown = false; G.mtgEnds = performance.now() + d.ends;
-  G.phase = d.discuss > 0 ? 'discuss' : 'vote'; G.phaseEnds = performance.now() + (d.discuss || 0); G.barTotal = { discuss: d.discuss || 0, vote: d.vote != null ? d.vote : Math.max(1, d.ends - (d.discuss || 0)) };
+  buzz([120, 60, 120]); G.phase = d.discuss > 0 ? 'discuss' : 'vote'; G.phaseEnds = performance.now() + (d.discuss || 0); G.barTotal = { discuss: d.discuss || 0, vote: d.vote != null ? d.vote : Math.max(1, d.ends - (d.discuss || 0)) };
   if (d.caller === myId && d.kind === 'button') G.emerg = Math.max(0, G.emerg - 1);
   $('mtgTitle').textContent = '¿Quién es el impostor?';
   $('mtgSub').textContent = d.kind === 'body' ? `Cuerpo de ${d.victimName} · lo encontró ${nameOf(d.caller)} · ` : `Reunión de emergencia de ${nameOf(d.caller)} · `;
@@ -1320,7 +1404,7 @@ function renderMeeting() {
   if (can && G.sel === 'skip') sk.append(confirmBtns('skip'));
   $('mtgInfo').textContent = G.resultShown ? '' : !G.alive ? 'Estás eliminado: solo puedes mirar.' : G.myVote !== null ? 'Has votado. Esperando al resto…' : G.phase === 'discuss' ? 'Discusión: habla en el chat 💬. La votación se abrirá enseguida.' : G.sel ? 'Confirma tu voto con ✓ o cancélalo con ✕.' : 'Toca a quien creas que es el impostor, o salta el voto.';
 }
-function castVote(t) { if (G.myVote !== null) return; G.myVote = t; G.sel = null; socket.emit('vote', t); snd('vote'); renderMeeting(); }
+function castVote(t) { if (G.myVote !== null) return; buzz(25); G.myVote = t; G.sel = null; socket.emit('vote', t); snd('vote'); renderMeeting(); }
 $('btnSkip').onclick = e => { if (e.target.closest('.pconf') || !meetingCanVote()) return; G.sel = G.sel === 'skip' ? null : 'skip'; renderMeeting(); snd('click'); };
 function sendChat() { const v = $('chatIn').value.trim(); if (!v) return; socket.emit('chat', v); $('chatIn').value = ''; }
 $('chatSend').onclick = sendChat;
@@ -1362,6 +1446,7 @@ socket.on('resume', d => {
 function showEnd(d) {
   G.state = 'end'; G.hostId = d.hostId || G.hostId; applyCfgUI(); releaseLock(); closeMG(); ov('meeting', false); stopEject(); sfx.stopAll();
   const crewWin = d.winner === 'crew';
+  buzz((G.role === 'crew') === crewWin ? [40, 40, 40, 40, 120] : 250);
   const iWin = (G.role === 'crew') === crewWin;
   $('endTitle').textContent = crewWin ? 'Gana la tripulación' : 'Ganan los impostores';
   $('endTitle').style.color = crewWin ? '#5ef2c0' : '#ff3b5c';
@@ -1557,7 +1642,7 @@ function pushOutOfDoors() {
 }
 function setSab(s) { G.sab = s ? Object.assign({}, s, { local: performance.now() + (s.ends || 0) }) : null; if (G.sab) { G.sabReadyAt = Infinity; pushOutOfDoors(); } updateSabVisuals(); }
 socket.on('sabotage', s => {
-  setSab(s); closeSabMenu();
+  setSab(s); closeSabMenu(); if (G.role !== 'impostor') buzz(s.crisis ? [90, 50, 90, 50, 90] : 60);
   if (s.crisis) { snd('warn'); sfx.loopStart('alarm'); } else snd(s.type === 'luces' ? 'lights' : s.type === 'coms' ? 'static' : 'door');
   if (s.type === 'coms' && G.info && G.info !== 'vitals') { const was = G.info; closeMG(); toast('Se han caído las comunicaciones: sin ' + (was === 'cams' ? 'cámaras' : was === 'admin' ? 'panel de administración' : 'registro de puertas'), 3000); }
   toast(s.type === 'puertas' ? `Puertas cerradas: ${roomName(s.room)}` : `Sabotaje: ${SAB_NAME[s.type]}`, 2600);
@@ -1942,17 +2027,33 @@ function drawMini() {
   c.save(); c.translate(px, pz); c.rotate(-a + Math.PI); c.fillStyle = '#fff'; c.strokeStyle = '#000'; c.lineWidth = 1;
   c.beginPath(); c.moveTo(0, -6); c.lineTo(4.5, 5); c.lineTo(-4.5, 5); c.closePath(); c.fill(); c.stroke(); c.restore();
 }
+// Calidad adaptativa: si el móvil no llega a ~40 fps se baja la resolución interna, y se sube de nuevo si va sobrado
+const AQ = { pr: Math.min(window.devicePixelRatio || 1, 2), max: Math.min(window.devicePixelRatio || 1, 2), t0: 0, n: 0, sum: 0, good: 0 };
+function adaptQuality(now, dt) {
+  if (document.hidden || G.state !== 'play') { AQ.t0 = 0; return; }
+  if (!AQ.t0) { AQ.t0 = now; AQ.n = 0; AQ.sum = 0; return; }
+  AQ.n++; AQ.sum += dt;
+  if (now - AQ.t0 < 2500) return;
+  const fps = AQ.n / Math.max(.001, AQ.sum); AQ.t0 = now; AQ.n = 0; AQ.sum = 0;
+  let pr = AQ.pr;
+  if (fps < 38 && pr > .75) { pr = Math.max(.75, pr - .25); AQ.good = 0; }
+  else if (fps > 56 && pr < AQ.max) { if (++AQ.good >= 3) { pr = Math.min(AQ.max, pr + .25); AQ.good = 0; } }
+  else AQ.good = 0;
+  if (pr !== AQ.pr) { AQ.pr = pr; renderer.setPixelRatio(pr); resize(); }
+}
 function loop(now) {
   requestAnimationFrame(loop);
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (editing) { renderPreview(dt); return; }
   if (!sceneOK || (G.state !== 'play' && G.state !== 'meeting' && G.state !== 'end')) return;
-  update(dt, now);
+  update(dt, now); adaptQuality(now, dt);
   if ((frame++ & 3) === 0) { updateActions(now); updateSabBanner(now); if (G.state === 'play') drawMini(); }
   if (G.info === 'cams' && !infoNoSignal()) renderCamFeeds(); else renderer.render(scene, camera);
 }
 ensureChars(); renderMenuChar();
 requestAnimationFrame(loop);
+// App instalable y arranque rápido: guarda la página, three.js y las caras en el móvil (solo con HTTPS)
+if ('serviceWorker' in navigator && location.protocol === 'https:') window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 })();
 </script>
 </body>

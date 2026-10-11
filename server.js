@@ -27,17 +27,33 @@ const clientCfg = r => ({
   sabs: { luces: r.set.sabLuces, coms: r.set.sabComs, puertas: r.set.sabPuertas, reactor: r.set.sabReactor, o2: r.set.sabO2 },
   times: { reactor: r.set.reactorTime, o2: r.set.o2Time, doors: r.set.doorTime }
 });
+// Orígenes que pueden conectarse desde otra web (la página publicada en Vercel). Por defecto: cualquier *.vercel.app y localhost.
+// Para un dominio propio: ALLOWED_ORIGINS=https://impostor3d.es,https://www.impostor3d.es  ·  ALLOWED_ORIGINS=* abre a cualquiera.
+const EXTRA_ORIGINS = String(process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim().replace(/\/+$/, '')).filter(Boolean);
+const originOk = o => !o || EXTRA_ORIGINS.includes('*') || EXTRA_ORIGINS.includes(o) ||
+  /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(o) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o);
+const STARTED = Date.now();
+const SIO_CLIENT = path.join(path.dirname(require.resolve('socket.io')), '..', 'client-dist', 'socket.io.min.js');
 const app = express();
 app.set('trust proxy', 1);
-app.get('/health', (req, res) => res.json({ ok: true, rooms: rooms.size }));
+app.disable('x-powered-by');
+app.get('/health', (req, res) => {   // también sirve para "despertar" el servidor desde la página de Vercel
+  res.set({ 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' });
+  res.json({ ok: true, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0), uptime: Math.round((Date.now() - STARTED) / 1000) });
+});
+// el cliente de Socket.IO con la misma versión que el servidor (la página de Vercel lleva su propia copia, generada en el build)
+app.get('/vendor/socket.io.min.js', (req, res) => res.sendFile(SIO_CLIENT));
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, file) => {   // la página y la plantilla de amigos siempre frescas; el resto (caras, imágenes) en caché
-    if (/\.(html|js)$/.test(file) && !/three/.test(file)) res.setHeader('Cache-Control', 'no-cache');
+    if (/\.(html|js|webmanifest)$/.test(file) && !/three/.test(file)) res.setHeader('Cache-Control', 'no-cache');
     else res.setHeader('Cache-Control', 'public, max-age=86400');
   }
 }));
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: { origin: (o, cb) => cb(null, originOk(o)), methods: ['GET', 'POST'] },
+  pingInterval: 20000, pingTimeout: 25000, maxHttpBufferSize: 1e6
+});
 
 const REPORT_RANGE = 7, TASK_RANGE = 5.5, BUTTON_RANGE = 5.5;
 const RESULT_MS = ms(8), MAX_PLAYERS = 10, MIN_PLAYERS = 3, GRACE_MS = 60000, MAX_ROOMS = 300;
@@ -287,6 +303,7 @@ function snapshot(r, p) {
 
 io.on('connection', sock => {
   let room = null, me = null;
+  sock.on('lat', cb => { if (typeof cb === 'function') cb(Date.now()); });   // el cliente mide su latencia (ping)
 
   sock.on('join', (data, cb) => {
     cb = typeof cb === 'function' ? cb : () => {};
@@ -615,3 +632,12 @@ setInterval(() => {
 }, 66);
 
 server.listen(PORT, () => console.log(`Impostor 3D en http://localhost:${PORT}`));
+
+// Al reiniciar o redesplegar se avisa a los jugadores antes de cerrar (las salas viven en memoria)
+let closing = false;
+function shutdown() {
+  if (closing) return; closing = true;
+  io.emit('toast', 'El servidor se está reiniciando. Vuelve a entrar en un minuto.');
+  setTimeout(() => { io.close(); server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 3000).unref(); }, 800);
+}
+process.on('SIGTERM', shutdown); process.on('SIGINT', shutdown);
