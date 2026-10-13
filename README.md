@@ -4,6 +4,10 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 4.1 · caras bien visibles
+- En la partida las cabezas con foto van más grandes (estilo cabezón) y **siempre giran hacia la cámara** (hasta ~90°) levantando un poco la cara.
+- Cámara más baja (~46°) y más cerca, para ver las caras de frente en lugar de desde arriba.
+
 ## Novedades 4.0 · cámara cenital y visión real
 - **Una sola cámara, desde arriba** (inclinada ~55° y siempre mirando al norte), como en el original: se acabaron la 1ª y la 3ª persona y el arrastrar para girar. Los personajes van más grandes y, cuando te paras, se giran hacia la cámara para que **siempre se os vean las caras**.
 - **Control directo**: el personaje va hacia donde empujas el joystick (o WASD/flechas). Botón de lupa (o tecla **Z** / rueda del ratón) para alejar o acercar la cámara.

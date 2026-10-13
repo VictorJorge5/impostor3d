@@ -661,7 +661,7 @@ body.ready #splash{opacity:0;visibility:hidden}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v4.0</span></footer>
+    <footer class="foot"><span>Impostor 3D · v4.1</span></footer>
   </div>
 </div>
 
@@ -1096,7 +1096,7 @@ function createAvatar(look, name) {
     // Cabeza con la foto real: esfera completa, proyección plana por delante, continuación por los lados y la nuca,
     // relieve facial (nariz, cejas, labios, mentón) y orejas. La luz de la escena da el volumen al girar.
     const RX = .1917, RY = .318, RZ = .2, HS = 1.45, c0 = Math.cos(Math.PI * .10), c1 = Math.cos(Math.PI * .78);
-    const hg = new THREE.Group(); hg.position.set(0, 1.735, 0); hg.scale.setScalar(HS); g.add(hg);
+    const hg = new THREE.Group(); hg.position.set(0, 1.735, 0); hg.scale.setScalar(HS); g.add(hg); g.userData.hg = hg;
     const NW = 44, geo = new THREE.SphereGeometry(1, NW, 32, Math.PI * 1.5, Math.PI * 2, 0, Math.PI), P = geo.attributes.position, UV = geo.attributes.uv;  // la costura queda en la nuca
     const G2 = (a, b, sa, sb) => Math.exp(-(a * a) / (2 * sa * sa) - (b * b) / (2 * sb * sb));
     const relief = (q, r) => { const aq = Math.abs(q);
@@ -1185,7 +1185,7 @@ function createAvatar(look, name) {
     if (look.g === 3) { [-.095, .095].forEach(x => add(box(.15, .09, .025), dark, x, 1.64, .268)); add(box(.06, .014, .014), dark, 0, 1.66, .268); [-.17, .17].forEach(x => add(box(.012, .012, .2), dark, x, 1.66, .17)); }
   }
   if (look.t) {
-    const hg2 = new THREE.Group(); hg2.position.set(0, look.f ? 1.93 : 1.62, 0); if (look.f) hg2.scale.setScalar(1.1); g.add(hg2);
+    const hg2 = new THREE.Group(); hg2.position.set(0, look.f ? 1.93 : 1.62, 0); if (look.f) hg2.scale.setScalar(1.1); g.add(hg2); g.userData.hg2 = hg2;
     const hadd = (geo, mat, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); hg2.add(m); return m; };
     const dbl = c => new THREE.MeshLambertMaterial({ color: hexInt(c), side: THREE.DoubleSide }), dome = (r, k) => new THREE.SphereGeometry(r, 16, 10, 0, Math.PI * 2, 0, Math.PI * (k || .5));
     switch (look.t) {
@@ -1226,6 +1226,11 @@ function createAvatar(look, name) {
     const f = add(box(.07, .8, .02), strap, -.04, 1.03, .19); f.rotation.z = -.74;
     const bk = add(box(.07, .8, .02), strap, -.04, 1.03, -.19); bk.rotation.z = .74;
     add(box(.2, .24, .13), strap, -.33, .66, .17);
+  }
+  if (g.userData.hg) {   // cabeza con foto (y su sombrero) en una articulación propia: en la partida se agranda y mira a la cámara
+    const hp = new THREE.Group(); hp.position.set(0, 1.735, 0); hp.rotation.order = 'YXZ'; g.add(hp);
+    [g.userData.hg, g.userData.hg2].forEach(o => { if (!o) return; g.remove(o); o.position.y -= 1.735; hp.add(o); });
+    g.userData.head = hp;
   }
   const sc = look.ht / (look.f ? 220 : 190), w = [.9, 1, 1.18, 1.06][look.bd];
   g.scale.set(sc * w, sc, sc * w);
@@ -1936,7 +1941,7 @@ function buildMap() {
     });
   });
 }
-const AV_K = 1.22;   // en la partida los personajes van un poco más grandes: con la cámara desde arriba se os ven bien las caras
+const AV_K = 1.22, HEAD_K = 1.35;   // en la partida los personajes van un poco más grandes: con la cámara desde arriba se os ven bien las caras
 const blobGeo = new THREE.CircleGeometry(.72, 22), blobMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: .38, depthWrite: false });
 function clearWorld() {
   G.players.forEach(p => { scene.remove(p.mesh); if (p.blob) scene.remove(p.blob); if (p.pet) scene.remove(p.pet); }); G.players.clear();
@@ -1946,7 +1951,8 @@ function addPlayer(p) {
   const mesh = createAvatar(p.look, p.name);
   const mate = G.role === 'impostor' && G.mates.includes(p.id);
   const lab = sprite(p.name + (p.id === myId ? ' (tú)' : ''), mate ? '#ff6b6b' : '#ffffff', 2.4, .6);
-  lab.position.y = 2.3; lab.visible = p.id !== myId; mesh.add(lab); mesh.rotation.order = 'YXZ'; mesh.scale.multiplyScalar(AV_K); scene.add(mesh);   // tu propio nombre no hace falta verlo
+  const hd = mesh.userData.head; if (hd) { hd.scale.setScalar(HEAD_K); hd.position.y += .16; }   // cabezón: la cara se ve desde la cámara cenital
+  lab.position.y = hd ? 2.85 : 2.3; lab.visible = p.id !== myId; mesh.add(lab); mesh.rotation.order = 'YXZ'; mesh.scale.multiplyScalar(AV_K); scene.add(mesh);   // tu propio nombre no hace falta verlo
   mesh.position.set(p.x, 0, p.z);
   const blob = new THREE.Mesh(blobGeo, blobMat); blob.scale.setScalar(AV_K); blob.rotation.x = -Math.PI / 2; blob.position.set(p.x, .025, p.z); blob.renderOrder = 1; scene.add(blob);
   const lk = S.cleanLook(p.look), pet = lk.pet ? createPet(lk.pet, lk) : null; if (pet) { pet.scale.multiplyScalar(AV_K); pet.position.set(p.x - 1, 0, p.z); scene.add(pet); }
@@ -2779,6 +2785,11 @@ function update(dt, now) {
     const bob = p.dying ? 0 : animRig(p.mesh, p.mv && !p.vent, dt, now, !p.alive);
     p.mesh.position.set(p.x, p.alive ? bob : 0.25 + Math.sin(now / 500 + p.x) * 0.1, p.z);
     p.mesh.rotation.y = p.ry; p.mesh.rotation.x = 0;
+    { const hd = p.mesh.userData.head; if (hd) {   // la cabeza se gira hacia la cámara (hasta ~90°) y se levanta un poco: siempre se os ve la cara
+      const ok = p.alive && !p.dying, need = angLerp(0, -p.ry, 1), want = ok ? Math.max(-1.6, Math.min(1.6, need)) : 0;
+      const up = ok ? -.4 * Math.max(0, Math.cos(Math.abs(need) - Math.abs(want)) * 2 - 1) : 0;   // solo levanta la cara si de verdad mira hacia la cámara
+      hd.rotation.y = angLerp(hd.rotation.y, want, dt * 8); hd.rotation.x += (up - hd.rotation.x) * Math.min(1, dt * 6);
+    } }
     let dying = false;
     if (p.dying) {   // animación de muerte: la víctima cae hacia atrás
       const k = Math.min(1, (now - p.dying.t0) / p.dying.dur); dying = k < 1; const e = k * k;
@@ -2824,10 +2835,10 @@ function update(dt, now) {
   // cámara cenital: siempre desde el sur e inclinada ~58°, para que se os vean las caras. Te sigue con suavidad
   // y se aleja un poco si la sala da mucha visión (o en vertical, donde cabe menos de lado).
   const hx = G.x, hz = G.z, asp = camera.aspect || 1.6;
-  const Dt = (G.zoom ? 19 : 12.5) * Math.max(1, Math.min(1.7, 1.25 / asp)) * Math.max(1, Math.min(1.45, FOW.Rn / 10));
+  const Dt = (G.zoom ? 17 : 11) * Math.max(1, Math.min(1.7, 1.25 / asp)) * Math.max(1, Math.min(1.45, FOW.Rn / 10));
   if (!G.camD || Math.hypot(G.camX - hx, G.camZ - hz) > 14) { G.camD = Dt; G.camX = hx; G.camZ = hz; }
   G.camD += (Dt - G.camD) * Math.min(1, dt * 4); G.camX += (hx - G.camX) * Math.min(1, dt * 9); G.camZ += (hz - G.camZ) * Math.min(1, dt * 9);
-  const EL = .96;
+  const EL = .8;   // ~46°: más de frente, para ver las caras
   camera.position.set(G.camX, 1 + Math.sin(EL) * G.camD, G.camZ + .35 + Math.cos(EL) * G.camD); camera.lookAt(G.camX, 1, G.camZ + .35);
   if (now < G.shakeUntil) { const a = G.shakeAmp * ((G.shakeUntil - now) / 380); camera.position.x += (Math.random() - .5) * a; camera.position.y += (Math.random() - .5) * a; camera.position.z += (Math.random() - .5) * a; }
   myLight.position.set(hx, 2.8, hz);
