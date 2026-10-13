@@ -4,6 +4,27 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), en 1
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 2.2 · tareas como en el original
+Cada consola tiene ahora su propio minijuego animado (en `public/tasks.js`), pensado para el dedo y con sonido y vibración:
+
+| Tarea | Sala | Cómo se hace |
+|---|---|---|
+| Conectar cables | Eléctrica | Arrastra cada cable hasta el conector de su color |
+| Calibrar distribuidor | Eléctrica | Pulsa "Calibrar" cuando la aguja pase por la zona iluminada (3 diales) |
+| Descargar datos | Navegación | Pulsa "Descargar" y mira cómo viajan los archivos a la nube |
+| Trazar rumbo | Navegación | Lleva la nave de punto en punto sin salirte de la ruta |
+| Iniciar reactor | Reactor | Memoriza la secuencia y repítela (4 rondas) |
+| Desbloquear colectores | Reactor | Pulsa del 1 al 10 en orden |
+| Escáner médico | Enfermería | Quédate en la plataforma mientras te escanea (sale tu cara y tus datos) |
+| Analizar muestra | Enfermería | Inicia el análisis, espera y elige el tubo anómalo |
+| Repostar motor | Motores | Mantén pulsado hasta llenar el depósito |
+| Alinear motor | Motores | Mueve la palanca hasta centrar la línea del motor |
+| Pasar tarjeta | Almacén | Saca la tarjeta y deslízala por el lector, ni rápido ni lento |
+| Vaciar basura | Almacén | Baja la palanca y mantenla hasta que caiga todo |
+| Limpiar filtro | Cafetería | Arrastra las hojas hasta la rejilla |
+
+Los paneles de sabotaje también cambian: palancas para las luces y teclado con pantalla LED para comunicaciones y oxígeno.
+
 ## Novedades 2.1 · diseño premium para móvil
 - **Nueva identidad visual**: tipografías propias (Chakra Petch e Inter, servidas desde la web, sin Google), fondo espacial animado, tarjetas de cristal, botones con brillo y animaciones de entrada.
 - **Pantalla de carga** con el logo mientras se descarga el motor 3D.

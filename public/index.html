@@ -482,6 +482,33 @@ body.ready #splash{opacity:0;visibility:hidden}
 #mtgMain{background:linear-gradient(180deg,#1b2a4d,#101a33);border:1px solid #6d8fd655;box-shadow:0 30px 60px -20px #000,inset 0 1px 0 #ffffff14;border-radius:22px}
 .pcard{border-radius:14px}
 
+
+/* ---- minijuegos de tareas ---- */
+#mg .panel{width:min(640px,97vw);max-height:96vh;padding:12px 14px 14px;border-radius:22px}
+#mg .panel h2{margin:0 0 8px;font-size:17px}
+.mgBox{display:flex;flex-direction:column;align-items:center;gap:8px}
+.mgStage{position:relative;line-height:0}
+.mgStage canvas{display:block;border-radius:16px;border:1px solid #9fb6ff33;box-shadow:inset 0 0 0 1px #000,0 14px 30px -14px #000;touch-action:none}
+.mgStage.bad{animation:shake .32s}
+.mgStage.won::after{content:"";position:absolute;inset:0;border-radius:16px;background:radial-gradient(circle,#4ef0b833,#06121099 70%);animation:wonIn .35s ease-out both}
+.mgStage.won::before{content:"✓";position:absolute;left:50%;top:50%;z-index:1;width:84px;height:84px;margin:-42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:900 46px/1 var(--fd);color:#05261c;background:var(--mint);box-shadow:0 0 0 8px #4ef0b833,0 0 40px #4ef0b8;animation:wonPop .45s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes wonIn{from{opacity:0}to{opacity:1}}
+@keyframes wonPop{from{transform:scale(0) rotate(-30deg)}to{transform:none}}
+.mgHint{min-height:1.3em;text-align:center;font-size:13px;color:var(--steel);line-height:1.35;max-width:560px}
+.mgHint.ok{color:var(--mint);font-weight:700}.mgHint.bad{color:#ff8094;font-weight:700}
+.kpad{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:center;width:min(440px,100%)}
+.kNote{grid-row:span 2;align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding:10px 14px;border-radius:6px;background:#fff6c4;color:#3b2f00;transform:rotate(-3deg);box-shadow:0 10px 20px -8px #000;font-family:var(--fd)}
+.kNote small{font-size:10px;letter-spacing:1.5px}.kNote b{font-size:24px;letter-spacing:3px}
+.kScr{display:flex;gap:6px;justify-content:center;padding:10px;border-radius:12px;background:#07130d;border:1px solid #4ef0b833;box-shadow:inset 0 0 18px #000}
+.kScr span{width:30px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#0c1f16;color:#4ef0b8;font:700 24px/1 var(--fd);text-shadow:0 0 10px #4ef0b8}
+.kScr.ok span{color:#fff;background:#1b6b4e}.kScr.bad{animation:shake .3s}.kScr.bad span{color:#ff6b81;text-shadow:0 0 10px #ff3d5e;background:#2a0d14}
+.kKeys{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.kKeys button{height:44px;border-radius:12px;border:1px solid #9fb6ff33;background:linear-gradient(180deg,#2a3350,#1a2136);color:#eef2ff;font:700 19px/1 var(--fd);box-shadow:0 4px 0 #0a0e18;transition:transform .06s}
+.kKeys button:active{transform:translateY(3px);box-shadow:0 1px 0 #0a0e18}
+@media (max-height:420px){.kKeys button{height:36px;font-size:17px}.kScr span{height:34px}}
+.hbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:radial-gradient(circle,#2a1d06,#120c02);box-shadow:0 0 0 6px #ffb54722}
+.hbtn .i{width:56px;height:56px;stroke-width:1.6}
+.hbtn.on{box-shadow:0 0 0 10px #ffb54740,0 0 40px #ffb547;animation:ring 1s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.stars,.stars::before,.stars::after,.screen.on,.btn::after,#splash .logo{animation:none!important}}
 
 /* ================= HUD de partida (móvil en horizontal primero) ================= */
@@ -609,7 +636,7 @@ body.ready #splash{opacity:0;visibility:hidden}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v2.1</span></footer>
+    <footer class="foot"><span>Impostor 3D · v2.2</span></footer>
   </div>
 </div>
 
@@ -734,6 +761,7 @@ body.ready #splash{opacity:0;visibility:hidden}
 <script src="shared.js"></script>
 <script src="sfx.js"></script>
 <script src="friends.js"></script>
+<script src="tasks.js"></script>
 <script>
 (() => {
 'use strict';
@@ -1815,88 +1843,38 @@ socket.on('left', ({ hostId }) => { G.hostId = hostId; applyCfgUI(); if (hostId 
 
 /* ---------- minijuegos ---------- */
 function flash(node) { node.classList.remove('shake'); void node.offsetWidth; node.classList.add('shake'); }
-const MG = {
-  wires(body, done) {
-    const cols = ['#e53935', '#1e88e5', '#fdd835', '#43a047'];
-    const L = shuffle(cols.slice()), R = shuffle(cols.slice()); let sel = null, ok = 0;
-    const wrap = el('div', 'wires'), cl = el('div', 'wcol'), cr = el('div', 'wcol'); wrap.append(cl, cr); body.append(wrap);
-    const lb = [], rb = [];
-    L.forEach((c, i) => { const b = el('button', 'wire'); b.style.background = c;
-      b.onclick = () => { if (b.disabled) return; sel = i; lb.forEach(x => x.classList.remove('sel')); b.classList.add('sel'); }; lb.push(b); cl.append(b); });
-    R.forEach(c => { const b = el('button', 'wire'); b.style.background = c;
-      b.onclick = () => {
-        if (b.disabled || sel === null) return;
-        if (L[sel] === c) { lb[sel].disabled = b.disabled = true; lb[sel].classList.remove('sel'); lb[sel].textContent = b.textContent = '✓'; sel = null; if (++ok === 4) done(); }
-        else { lb[sel].classList.remove('sel'); sel = null; flash(wrap); }
-      }; rb.push(b); cr.append(b); });
-  },
-  code(body, done) {
-    const code = String(Math.floor(10000 + Math.random() * 90000)); let cur = '';
-    const show = el('div', 'codeShow', code), inp = el('div', 'codeIn', ''), pad = el('div', 'pad');
-    body.append(show, inp, pad);
-    const press = k => {
-      if (k === '⌫') cur = cur.slice(0, -1); else if (k === 'C') cur = ''; else if (cur.length < 5) cur += k;
-      inp.textContent = cur;
-      if (cur.length === 5) { if (cur === code) done(); else { flash(inp); cur = ''; setTimeout(() => inp.textContent = '', 250); } }
-    };
-    ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '⌫'].forEach(k => { const b = el('button', '', k); b.onclick = () => press(k); pad.append(b); });
-  },
-  hold(body, done) {
-    const wrap = el('div', 'hold'), b = el('button', 'hbtn', 'MANTÉN'), bar = el('div', 'hbar'), fill = el('i'); bar.append(fill); wrap.append(b, bar); body.append(wrap);
-    let p = 0, holding = false, fin = false;
-    const down = e => { e.preventDefault(); holding = true; b.classList.add('on'); }, up = () => { holding = false; b.classList.remove('on'); };
-    b.addEventListener('pointerdown', down); window.addEventListener('pointerup', up); b.addEventListener('contextmenu', e => e.preventDefault());
-    const iv = setInterval(() => {
-      if (!mgOpen) { clearInterval(iv); window.removeEventListener('pointerup', up); return; }
-      p = Math.max(0, Math.min(1, p + (holding ? 0.05 / 3.2 : -0.05 / 1.6)));
-      fill.style.width = p * 100 + '%';
-      if (p >= 1 && !fin) { fin = true; clearInterval(iv); window.removeEventListener('pointerup', up); done(); }
-    }, 50);
-  },
-  switches(body, done) {
-    const wrap = el('div', 'seq'); body.append(wrap); const st = Array.from({ length: 5 }, () => Math.random() < .5); if (st.every(Boolean)) st[0] = false; if (st.filter(v => !v).length < 2) st[1] = false;
-    const bs = []; const paint = () => bs.forEach((b, i) => { b.textContent = st[i] ? 'ON' : 'OFF'; b.classList.toggle('ok', st[i]); });
-    st.forEach((v, i) => { const b = el('button', '', ''); b.onclick = () => { st[i] = !st[i]; paint(); if (st.every(Boolean)) done(); }; bs.push(b); wrap.append(b); }); paint();
-    body.append(el('div', 'hint', 'Pon los 5 interruptores en ON para restablecer la luz.'));
-  },
-  seq(body, done) {
-    const grid = el('div', 'seq'); body.append(grid); let next = 1; const bs = [];
-    shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).forEach(n => {
-      const b = el('button', '', n);
-      b.onclick = () => {
-        if (b.classList.contains('ok')) return;
-        if (n === next) { b.classList.add('ok'); if (++next === 10) done(); }
-        else { next = 1; bs.forEach(x => x.classList.remove('ok')); flash(grid); }
-      }; bs.push(b); grid.append(b);
-    });
-  }
-};
+// los minijuegos están en tasks.js; aquí solo se les da sonido, vibración y quién eres
+let mgTok = 0;
+const MG = Tasks.create({
+  snd, buzz, token: () => mgTok, alive: t => mgOpen && t === mgTok,
+  me: () => { const p = G.players.get(myId) || activeChar(); return { name: p.name, look: p.look, portrait: size => portrait(p.look, null, size) }; }
+});
 function openTask(st) {
   if (mgOpen) return;
   mgOpen = true; releaseLock(); stick.x = stick.y = 0; $('knob').style.transform = '';
-  $('mgTitle').textContent = st.name; $('mgBody').innerHTML = ''; ov('mg', true);
+  mgTok++; $('mgTitle').textContent = st.name; $('mgBody').innerHTML = ''; ov('mg', true);
   let fin = false;
   MG[st.type]($('mgBody'), () => {
-    if (fin) return; fin = true; $('mgTitle').textContent = '✔ Completada';
-    setTimeout(() => { closeMG(); completeTask(st.id); }, 450);
+    if (fin) return; fin = true; $('mgTitle').textContent = '✔ Tarea completada';
+    setTimeout(() => { if (!mgOpen) return; closeMG(); completeTask(st.id); }, 500);
   });
 }
 function closeMG() {
-  mgOpen = false; ov('mg', false); closeInfo();
+  mgOpen = false; mgTok++; ov('mg', false); closeInfo();
   if (G.holding) { socket.emit('hold', { panel: G.holding, on: false }); G.holding = null; }
   G.mgPanel = null;
 }
 function openPanel(pn) {
   if (mgOpen) return;
   mgOpen = true; releaseLock(); stick.x = stick.y = 0; $('knob').style.transform = ''; G.mgPanel = pn.id;
-  $('mgTitle').textContent = pn.name; const body = $('mgBody'); body.innerHTML = ''; ov('mg', true);
+  mgTok++; $('mgTitle').textContent = pn.name; const body = $('mgBody'); body.innerHTML = ''; ov('mg', true);
   if (pn.type === 'holdPanel') return holdPanelUI(pn, body);
   let fin = false;
   MG[pn.type](body, () => { if (fin) return; fin = true; $('mgTitle').textContent = '✔ Arreglado'; setTimeout(() => { closeMG(); socket.emit('fix', { panel: pn.id }); }, 400); });
 }
 function holdPanelUI(pn, body) {
   // Reactor: hay que mantener este panel mientras otro jugador mantiene el del otro extremo
-  const wrap = el('div', 'hold'), b = el('button', 'hbtn', 'MANTÉN'), st = el('div', 'hint', ''); wrap.append(b, st); body.append(wrap);
+  const wrap = el('div', 'hold'), b = el('button', 'hbtn'), st = el('div', 'hint', ''); b.append(ico('hand'), el('span', '', 'MANTÉN')); wrap.append(b, st); body.append(wrap);
   const down = e => { e.preventDefault(); b.classList.add('on'); G.holding = pn.id; socket.emit('hold', { panel: pn.id, on: true }); };
   const up = () => { b.classList.remove('on'); if (G.holding === pn.id) { G.holding = null; socket.emit('hold', { panel: pn.id, on: false }); } };
   b.addEventListener('pointerdown', down); window.addEventListener('pointerup', up); b.addEventListener('contextmenu', e => e.preventDefault());
@@ -2190,6 +2168,7 @@ function playEject(d) {
 }
 function stopEject() { if (G.eject && G.eject.raf) cancelAnimationFrame(G.eject.raf); G.eject = null; clearTimeout(G.ejectTimer); ov('ejectOv', false); }
 if (location.search.includes('debug=1')) window.__i3d_anim = { drawEject, makeEject, ejectText, playEject, spawnBlood, killCam, showBanner };
+if (location.search.includes('debug=1')) window.__i3d_tasks = { open: i => openTask(S.STATIONS[i]), panel: id => openPanel(S.PANELS.find(p => p.id === id)), isOpen: () => mgOpen };
 
 /* ---------- entrada ---------- */
 const cv = $('cv');

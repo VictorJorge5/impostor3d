@@ -31,20 +31,20 @@
   const roomAt = (i, j) => ROOMS.find(m => i >= m.r[0] && i < m.r[0] + m.r[2] && j >= m.r[1] && j < m.r[1] + m.r[3]);
 
   // [nombre, sala, celdaX, celdaY, tipo de minijuego]
-  const STATIONS = [
-    ['Conectar cables',       'electrica',  25, 3,  'wires'],
-    ['Calibrar distribuidor', 'electrica',  23, 5,  'seq'],
-    ['Descargar datos',       'navegacion', 13, 2,  'hold'],
-    ['Introducir rumbo',      'navegacion', 16, 2,  'code'],
-    ['Iniciar reactor',       'reactor',    2,  2,  'seq'],
-    ['Reparar cableado',      'reactor',    6,  5,  'wires'],
-    ['Escáner médico',        'enfermeria', 2,  17, 'hold'],
-    ['Analizar muestra',      'enfermeria', 6,  19, 'code'],
-    ['Repostar motor',        'motores',    24, 17, 'hold'],
-    ['Alinear motor',         'motores',    27, 19, 'seq'],
-    ['Registrar inventario',  'almacen',    13, 19, 'code'],
-    ['Vaciar basura',         'almacen',    16, 19, 'hold'],
-    ['Cables de la cafetería','cafeteria',  12, 9,  'wires']
+  const STATIONS = [   // [nombre, sala, i, j, minijuego (public/tasks.js)]
+    ['Conectar cables',        'electrica',  25, 3,  'wires'],
+    ['Calibrar distribuidor',  'electrica',  23, 5,  'calibrate'],
+    ['Descargar datos',        'navegacion', 13, 2,  'download'],
+    ['Trazar rumbo',           'navegacion', 16, 2,  'course'],
+    ['Iniciar reactor',        'reactor',    2,  2,  'simon'],
+    ['Desbloquear colectores', 'reactor',    6,  5,  'manifolds'],
+    ['Escáner médico',         'enfermeria', 2,  17, 'scan'],
+    ['Analizar muestra',       'enfermeria', 6,  19, 'samples'],
+    ['Repostar motor',         'motores',    24, 17, 'fuel'],
+    ['Alinear motor',          'motores',    27, 19, 'align'],
+    ['Pasar tarjeta',          'almacen',    13, 19, 'card'],
+    ['Vaciar basura',          'almacen',    16, 19, 'trash'],
+    ['Limpiar filtro',         'cafeteria',  12, 9,  'leaves']
   ].map((s, id) => ({ id, name: s[0], room: s[1], i: s[2], j: s[3], type: s[4] }));
 
   const cellPos = o => ({ x: (o.i + 0.5) * CELL, z: (o.j + 0.5) * CELL });

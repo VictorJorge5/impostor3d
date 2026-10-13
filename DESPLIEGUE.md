@@ -29,6 +29,7 @@ añade en Render la variable `ALLOWED_ORIGINS=https://tudominio.com,https://www.
    *Despertando el servidor…*, Render estaba dormido: espera hasta un minuto y entra sola.
 
 Cada `git push` a `main` publica una versión nueva; cada rama tiene su propia URL de vista previa.
+El proyecto `impostor3d` de Vercel está conectado a este repositorio (Settings → Git), con `main` como rama de producción.
 Si cambias `GAME_SERVER_URL`, vuelve a desplegar (Deployments → ⋯ → Redeploy) para que se aplique.
 
 ### Probar en local lo mismo que hace Vercel
