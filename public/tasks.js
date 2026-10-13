@@ -490,6 +490,57 @@
       S.cv._solve = async () => { for (let n = 0; n < 20; n++) { const l = leaves.filter(q => !q.out).pop(); if (!l) break; await S.drag([[l.x, l.y], [W * .4, l.y], [vent.x + vent.w / 2, vent.y + vent.h / 2]], 14); await wait(30); } };
     };
 
+    /* 14 · Destruir asteroides: toca los asteroides para dispararles antes de que crucen */
+    T.asteroids = (body) => {
+      const S = mk(body, 1.6), { g, W } = S, Hh = S.H, GOAL = 15;
+      const stars = Array.from({ length: 70 }, () => ({ x: rand(0, W), y: rand(0, Hh), r: rand(.5, 1.6), v: rand(8, 30) }));
+      let rocks = [], shots = [], boom = [], hits = 0, spawnT = 0, cross = { x: W / 2, y: Hh / 2 };
+      S.hint(`Toca los asteroides para destruirlos (${GOAL}).`);
+      const mkRock = () => { const r = rand(13, 24), pts = Array.from({ length: 9 }, (_, k) => [Math.cos(k / 9 * TAU) * r * rand(.75, 1.1), Math.sin(k / 9 * TAU) * r * rand(.75, 1.1)]); return { x: W + r, y: rand(r + 10, Hh - r - 10), vx: -rand(50, 95), vy: rand(-18, 18), r, a: 0, va: rand(-2, 2), pts }; };
+      S.on({ down: p => {
+        cross = { x: p.x, y: p.y }; shots.push({ x: p.x, y: p.y, t: 0 }); snd('click');
+        const k = rocks.findIndex(q => Math.hypot(q.x - p.x, q.y - p.y) < q.r + 12);
+        if (k >= 0) { const q = rocks.splice(k, 1)[0]; hits++; snd('spark'); buzz(12); for (let i = 0; i < 16; i++) boom.push({ x: q.x, y: q.y, vx: rand(-120, 120), vy: rand(-120, 120), t: 0 }); S.hint(`Destruidos: ${hits}/${GOAL}`); if (hits >= GOAL) { snd('fixed'); S.hint('¡Zona despejada!', 'ok'); S.win(); } }
+      } });
+      S.loop((dt, t) => {
+        g.fillStyle = '#030611'; g.fillRect(0, 0, W, Hh);
+        stars.forEach(st => { st.x -= st.v * dt; if (st.x < 0) st.x += W; g.fillStyle = 'rgba(255,255,255,.75)'; g.fillRect(st.x, st.y, st.r, st.r); });
+        if (!S.finished && (spawnT -= dt) <= 0) { rocks.push(mkRock()); spawnT = rand(.35, .75); }
+        rocks = rocks.filter(q => q.x > -40); rocks.forEach(q => {
+          q.x += q.vx * dt; q.y += q.vy * dt; q.a += q.va * dt;
+          g.save(); g.translate(q.x, q.y); g.rotate(q.a); g.beginPath(); q.pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath();
+          g.fillStyle = '#6b5a4a'; g.fill(); g.strokeStyle = '#a58c72'; g.lineWidth = 2; g.stroke(); g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.arc(q.r * .25, -q.r * .2, q.r * .25, 0, TAU); g.fill(); g.restore();
+        });
+        shots = shots.filter(s2 => (s2.t += dt) < .14); shots.forEach(s2 => { g.strokeStyle = `rgba(78,240,184,${1 - s2.t / .14})`; g.lineWidth = 3; g.beginPath(); g.moveTo(W / 2, Hh + 4); g.lineTo(s2.x, s2.y); g.stroke(); });
+        boom = boom.filter(b => (b.t += dt) < .5); boom.forEach(b => { b.x += b.vx * dt; b.y += b.vy * dt; g.fillStyle = `rgba(255,${180 + Math.random() * 75 | 0},90,${1 - b.t / .5})`; g.fillRect(b.x, b.y, 3, 3); });
+        g.strokeStyle = '#4ef0b8'; g.lineWidth = 2; g.beginPath(); g.arc(cross.x, cross.y, 14, 0, TAU); g.moveTo(cross.x - 22, cross.y); g.lineTo(cross.x - 8, cross.y); g.moveTo(cross.x + 8, cross.y); g.lineTo(cross.x + 22, cross.y); g.moveTo(cross.x, cross.y - 22); g.lineTo(cross.x, cross.y - 8); g.moveTo(cross.x, cross.y + 8); g.lineTo(cross.x, cross.y + 22); g.stroke();
+        g.fillStyle = 'rgba(0,0,0,.5)'; rr(g, 10, 10, 120, 26, 8); g.fill(); txt(g, `${hits} / ${GOAL}`, 70, 23, 14, '#4ef0b8');
+      });
+      S.cv._solve = async () => { for (let n = 0; n < 400 && !S.finished; n++) { const q = rocks.find(r => r.x < W - 10 && r.x > 10); if (q) S.tap(q.x + q.vx * .02, q.y); await wait(60); } };
+    };
+
+    /* 15 · Activar escudos: toca los hexágonos rojos hasta que el escudo esté completo */
+    T.shields = (body) => {
+      const S = mk(body, 1.35), { g, W } = S, Hh = S.H, R = Math.min(W, Hh) * .13, cx = W / 2, cy = Hh / 2;
+      const cells = [[0, 0]].concat(Array.from({ length: 6 }, (_, k) => [Math.cos(k / 6 * TAU + Math.PI / 6) * R * 1.8, Math.sin(k / 6 * TAU + Math.PI / 6) * R * 1.8])).map(([x, y]) => ({ x: cx + x, y: cy + y, on: Math.random() < .45, pop: 0 }));
+      if (cells.every(c => c.on)) cells[2].on = false; if (cells.filter(c => !c.on).length < 3) { cells[4].on = false; cells[6].on = false; }
+      const hex = (x, y, r) => { g.beginPath(); for (let k = 0; k < 6; k++) { const a = k / 6 * TAU; g.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); } g.closePath(); };
+      S.hint('Toca los hexágonos rojos para activar cada sección del escudo.');
+      S.on({ down: p => { const c = cells.find(q => Math.hypot(q.x - p.x, q.y - p.y) < R * .95); if (!c || c.on) return; c.on = true; c.pop = .3; snd('note', { f: 520 + cells.filter(q => q.on).length * 60 }); buzz(10); if (cells.every(q => q.on)) { snd('fixed'); S.hint('Escudos activados.', 'ok'); S.win(); } } });
+      S.loop((dt, t) => {
+        bg(g, W, Hh);
+        const lit = cells.filter(c => c.on).length / cells.length;
+        g.save(); g.globalAlpha = .25 + lit * .5; g.strokeStyle = '#5aa9ff'; g.lineWidth = 3; g.shadowColor = '#5aa9ff'; g.shadowBlur = 20 * lit; g.beginPath(); g.arc(cx, cy, R * 3.1, 0, TAU); g.stroke(); g.restore();
+        cells.forEach(c => {
+          c.pop = Math.max(0, c.pop - dt); const r = R * (1 - c.pop * .5);
+          hex(c.x, c.y, r); g.fillStyle = c.on ? '#e8f4ff' : '#c4162f'; g.save(); if (c.on) { g.shadowColor = '#5aa9ff'; g.shadowBlur = 18; } else { g.shadowColor = '#ff3d5e'; g.shadowBlur = 10 + Math.sin(t * 6) * 6; } g.fill(); g.restore();
+          g.strokeStyle = c.on ? '#5aa9ff' : '#ff8094'; g.lineWidth = 3; g.stroke();
+          hex(c.x, c.y, r * .55); g.strokeStyle = c.on ? 'rgba(90,169,255,.6)' : 'rgba(0,0,0,.3)'; g.lineWidth = 2; g.stroke();
+        });
+      });
+      S.cv._solve = async () => { for (const c of cells) if (!c.on) { S.tap(c.x, c.y); await wait(50); } };
+    };
+
     /* Sabotaje de luces: sube las 5 palancas */
     T.switches = (body) => {
       const S = mk(body, 1.8), { g, W } = S, Hh = S.H;
