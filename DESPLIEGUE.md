@@ -103,7 +103,7 @@ Para probar sin amigos: en los ajustes elige el conjunto **Pruebas**, sube "Juga
 | Tarda mucho en abrir | Servidor dormido (plan gratuito). Espera un minuto y recarga. |
 | "No existe esa sala" | El código está mal escrito o el servidor se reinició. Crea una sala nueva. |
 | "La partida ya ha empezado" | No se puede entrar a mitad de una partida. Esperad a que termine y "Volver a la sala", o crea otra sala. |
-| Va a tirones | Cierra otras apps. En móviles muy antiguos juega en 1ª persona y con menos jugadores. |
+| Va a tirones | Cierra otras apps. En móviles muy antiguos juega con menos jugadores (la calidad gráfica también se ajusta sola). |
 | El botón de copiar enlace no copia | Sin HTTPS el navegador no deja copiar solo; el juego muestra el enlace para copiarlo a mano. |
 | La foto del invitado queda desplazada | Reencuadra: ojos sobre los dos puntos naranjas y la cabeza llenando el óvalo. |
 
