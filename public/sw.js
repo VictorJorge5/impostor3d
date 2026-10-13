@@ -4,7 +4,7 @@
 // Nunca toca el tráfico del juego (Socket.IO) ni otros dominios.
 const VERSION = '__BUILD__';
 const CACHE = 'i3d-' + VERSION;
-const SHELL = ['./', 'index.html', 'config.js', 'shared.js', 'sfx.js', 'friends.js', 'three.min.js', 'vendor/socket.io.min.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
+const SHELL = ['./', 'index.html', 'config.js', 'shared.js', 'sfx.js', 'friends.js', 'three.min.js', 'vendor/socket.io.min.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'fonts/chakra-petch-latin-700-normal.woff2', 'fonts/chakra-petch-latin-700-italic.woff2', 'fonts/chakra-petch-latin-600-normal.woff2', 'fonts/inter-latin-wght-normal.woff2'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).catch(() => {}).then(() => self.skipWaiting()));
@@ -13,7 +13,7 @@ self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('i3d-') && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
-const STATIC = /\/(three\.min\.js|vendor\/[^/]+|faces\/[^/]+|icon-\d+\.png|og-image\.png)$/;
+const STATIC = /\/(three\.min\.js|vendor\/[^/]+|faces\/[^/]+|fonts\/[^/]+|icon-\d+\.png|og-image\.png)$/;
 self.addEventListener('fetch', e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;

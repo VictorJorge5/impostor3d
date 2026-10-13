@@ -4,6 +4,16 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), en 1
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 2.1 · diseño premium para móvil
+- **Nueva identidad visual**: tipografías propias (Chakra Petch e Inter, servidas desde la web, sin Google), fondo espacial animado, tarjetas de cristal, botones con brillo y animaciones de entrada.
+- **Pantalla de carga** con el logo mientras se descarga el motor 3D.
+- **Menú**: tu personaje destacado, carrusel deslizable para elegir quién juega, "Crear partida" como acción principal y caja de código grande.
+- **Guía "Cómo se juega"** (botón ?) que se abre sola la primera vez, y botón para **instalar la app** en Android.
+- **Sala**: código en formato ticket (toca para copiar), jugadores en cuadrícula con su color, corona de anfitrión, huecos libres y botón de empezar fijo abajo.
+- **HUD de partida**: botones de acción redondos con iconos (Usar, Reportar, Matar, Sabotaje, Rejilla) siempre en su sitio y que se encienden cuando se pueden usar, con cuenta atrás encima; **joystick flotante** que aparece donde pones el pulgar; lista de tareas plegable con contador; barra de iconos (vista, sonido, pantalla completa, salir); aviso para girar el móvil.
+- **Gráficos**: paredes con paneles de nave y franja de luz, suelo con relieve, luz ambiental de cielo y suelo, sombras bajo los personajes, antialiasing y viñeta.
+- Pantalla final con tarjetas de rol y menús (sabotaje, tareas, ajustes) con el mismo estilo.
+
 ## Novedades 2.0
 - **Despliegue en Vercel**: la web va por el CDN de Vercel (carga rápida, HTTPS, cabeceras de seguridad, despliegue en cada push) y se conecta al servidor de tiempo real indicado en `GAME_SERVER_URL`.
 - **Estado de la conexión** siempre visible (*Conectando… · Despertando el servidor… · En línea · 45 ms · Sin conexión*). En partida solo aparece si hay problemas.
