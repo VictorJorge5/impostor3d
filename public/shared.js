@@ -1,6 +1,6 @@
 // Mapa y reglas compartidas entre servidor y cliente
 (function (root) {
-  const CELL = 4, W = 44, H = 30, WALL_H = 4.5, TASKS_PER = 4, TABLE_R = 1.8;
+  const CELL = 4, W = 44, H = 30, WALL_H = 3, TASKS_PER = 4, TABLE_R = 1.8;
 
   const COLORS = [
     ['Rojo', '#e53935'], ['Azul', '#1e88e5'], ['Verde', '#43a047'], ['Amarillo', '#fdd835'],
@@ -91,10 +91,10 @@
   ];
   // Cámaras de seguridad: posición (x, altura, z) y punto al que miran
   const CAMERAS = [
-    { id: 0, name: 'Pasillo de motores',   pos: [38.5, 3.7, 27],  look: [36, 1.0, 62] },
-    { id: 1, name: 'Pasillo sur',          pos: [62, 3.7, 93.5],  look: [38, 1.0, 96] },
-    { id: 2, name: 'Pasillo de Admin',     pos: [87.5, 3.7, 34],  look: [84, 1.0, 62] },
-    { id: 3, name: 'Pasillo de Navegación', pos: [133.5, 3.7, 30], look: [136, 1.0, 54] }
+    { id: 0, name: 'Pasillo de motores',   pos: [38.5, 2.6, 27],  look: [36, 1.0, 62] },
+    { id: 1, name: 'Pasillo sur',          pos: [62, 2.6, 93.5],  look: [38, 1.0, 96] },
+    { id: 2, name: 'Pasillo de Admin',     pos: [87.5, 2.6, 34],  look: [84, 1.0, 62] },
+    { id: 3, name: 'Pasillo de Navegación', pos: [133.5, 2.6, 30], look: [136, 1.0, 54] }
   ];
   // Red de ventilaciones (solo las usa el impostor): dos grupos de salas conectadas
   const VENTS = [

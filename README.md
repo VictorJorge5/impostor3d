@@ -1,8 +1,16 @@
 # Impostor 3D
 
-Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), en 1ª o 3ª persona.
+Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con vista cenital y vuestras caras.
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
+
+## Novedades 4.0 · cámara cenital y visión real
+- **Una sola cámara, desde arriba** (inclinada ~55° y siempre mirando al norte), como en el original: se acabaron la 1ª y la 3ª persona y el arrastrar para girar. Los personajes van más grandes y, cuando te paras, se giran hacia la cámara para que **siempre se os vean las caras**.
+- **Control directo**: el personaje va hacia donde empujas el joystick (o WASD/flechas). Botón de lupa (o tecla **Z** / rueda del ratón) para alejar o acercar la cámara.
+- **Visión limitada de verdad**: solo ves un círculo a tu alrededor; las paredes y las puertas cerradas cortan la vista (niebla de guerra calculada con rayos y aplicada en el shader de todo el escenario). Fuera de tu visión el mapa queda en penumbra y **los jugadores y cuerpos que no ves no aparecen** (tampoco puedes reportar ni matar a quien no ves).
+- El ajuste **Visión** de la sala ahora cuenta de verdad: 1× ≈ 7,5 m de radio; el impostor ve más (1,25× por defecto) y, con el **apagón**, la tripulación apenas ve a 2 m mientras el impostor sigue viendo bien. Los fantasmas lo ven todo.
+- Las paredes que quedan entre la cámara y tú se abren en un círculo para que nunca te tapen; paredes más bajas y sin techo.
+- Las cámaras de seguridad siguen viendo a todo el que pasa por sus pasillos, aunque tú no tengas visión directa.
 
 ## Novedades 3.1 · personajes vivos, mascotas y luces
 - **Animación de los personajes**: brazos y piernas que se balancean al andar, rebote suave, un leve vaivén en reposo, giros suaves y los fantasmas flotan con las piernas colgando.
@@ -96,8 +104,8 @@ Las fotos no salen del móvil: a la sala solo se envía la textura de la cabeza.
 Se guarda en el navegador y se comparte con "Copiar código" / "Importar código".
 
 ## Controles
-- PC: WASD mover, clic + ratón para mirar, E usar, R reportar, Q matar, V cambiar de vista.
-- Móvil: joystick izquierdo para moverte, arrastra el resto de la pantalla para mirar, botones a la derecha.
+- PC: WASD o flechas para moverte, E usar, R reportar, Q matar, G sabotaje, F rejilla, Z (o la rueda) acercar/alejar.
+- Móvil: pon el pulgar izquierdo en cualquier sitio para moverte (vas hacia donde empujas), botones a la derecha.
 
 ## Ajustes de partida (como en Among Us)
 En la sala, el anfitrión abre **"Ajustes de partida"**: ve todos los valores con deslizadores, interruptores y desplegables, y los demás jugadores los ven en solo lectura y se actualizan al instante.
