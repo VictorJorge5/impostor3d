@@ -154,9 +154,9 @@ function startMeeting(r, caller, kind, body) {
   list(r).forEach(p => { p.vent = null; p.vote = null; });
   const victim = body ? r.players.get(body.pid) : null, dMs = ms(r.set.discuss), vMs = ms(r.set.voteTime), now = Date.now();
   r.meetingPhase = dMs > 0 ? 'discuss' : 'vote'; r.discussEnds = now + dMs; r.meetingEnds = now + dMs + vMs;
-  r.meetingCaller = caller.id; r.meetingKind = kind; r.meetingVictimName = victim ? victim.name : null; r.lastResult = null;
+  r.meetingCaller = caller.id; r.meetingKind = kind; r.meetingVictimName = victim ? victim.name : null; r.meetingVictim = victim ? victim.id : null; r.lastResult = null;
   io.to(r.code).emit('meeting', {
-    caller: caller.id, kind, victimName: victim ? victim.name : null, victimColor: victim ? victim.color : null,
+    caller: caller.id, kind, victim: victim ? victim.id : null, victimName: victim ? victim.name : null, victimColor: victim ? victim.color : null,
     ends: dMs + vMs, discuss: dMs, vote: vMs
   });
   if (r.set.taskbar === 'reuniones') emitProgress(r);
@@ -293,7 +293,7 @@ function snapshot(r, p) {
     sabCd: p.role === 'impostor' ? (r.sabReadyAt === Infinity ? -1 : Math.max(0, (r.sabReadyAt || 0) - Date.now())) : 0
   };
   if (r.state === 'meeting' || r.state === 'result') s.meeting = {
-    ends: Math.max(0, (r.meetingEnds || 0) - Date.now()), phase: r.meetingPhase, discussLeft: r.meetingPhase === 'discuss' ? Math.max(0, r.discussEnds - Date.now()) : 0, caller: r.meetingCaller, kind: r.meetingKind, victimName: r.meetingVictimName,
+    ends: Math.max(0, (r.meetingEnds || 0) - Date.now()), phase: r.meetingPhase, discussLeft: r.meetingPhase === 'discuss' ? Math.max(0, r.discussEnds - Date.now()) : 0, caller: r.meetingCaller, kind: r.meetingKind, victim: r.meetingVictim, victimName: r.meetingVictimName,
     voted: list(r).filter(q => q.alive && q.vote !== null).map(q => q.id)
   };
   if (r.state === 'result') s.result = r.lastResult;
@@ -454,7 +454,7 @@ io.on('connection', sock => {
       const v = S.VENTS[+d.id]; if (!v || me.vent != null) return;
       const vp = S.cellPos(v); if (dist(me, vp) > 4.8) return;
       me.vent = v.id; me.x = vp.x; me.z = vp.z; me.mv = 0;
-      io.to(room.code).emit('ventfx', { x: vp.x, z: vp.z, out: false });
+      io.to(room.code).emit('ventfx', { id: me.id, x: vp.x, z: vp.z, out: false });
     } else if (d.action === 'move') {
       const cur = me.vent == null ? null : S.VENTS[me.vent], nx = S.VENTS[+d.id];
       if (!cur || !nx || !cur.links.includes(nx.id)) return;
@@ -462,7 +462,7 @@ io.on('connection', sock => {
     } else if (d.action === 'exit') {
       if (me.vent == null) return;
       const v = S.VENTS[me.vent], vp = S.cellPos(v); me.vent = null;
-      io.to(room.code).emit('ventfx', { x: vp.x, z: vp.z, out: true });
+      io.to(room.code).emit('ventfx', { id: me.id, x: vp.x, z: vp.z, out: true });
     } else return;
     me.roomNow = roomIdAt(me); me.roomCand = me.roomNow;
     sock.emit('ventState', { id: me.vent, x: me.x, z: me.z });
@@ -536,6 +536,7 @@ io.on('connection', sock => {
       r.players.delete(old); p.id = sock.id; r.players.set(p.id, p);
       if (r.hostId === old) r.hostId = p.id;
       r.bodies.forEach(b => { if (b.pid === old) b.pid = p.id; });
+      if (r.meetingCaller === old) r.meetingCaller = p.id; if (r.meetingVictim === old) r.meetingVictim = p.id;
       list(r).forEach(q => { if (q.vote === old) q.vote = p.id; });
       io.to(r.code).emit('idchange', { from: old, to: p.id });
       if (oldSock) oldSock.disconnect(true);

@@ -4,6 +4,16 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), en 1
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 3.1 · personajes vivos, mascotas y luces
+- **Animación de los personajes**: brazos y piernas que se balancean al andar, rebote suave, un leve vaivén en reposo, giros suaves y los fantasmas flotan con las piernas colgando.
+- **Rejillas animadas**: el impostor gira y se hunde al entrar, salta al salir y la tapa se abre y se cierra.
+- **Muerte con más impacto**: la víctima sale despedida girando y agitando los brazos; onda roja en el suelo, el doble de sangre, un charco que se extiende y el hueso, como en el original.
+- **Mascotas** que te siguen por la nave dando saltitos: perrito, gatito, robot, minitripulante (del color de tu ropa), pollito y dron.
+- El editor permite quitar la **mochila** (Víctor ya puede quitársela), elegir zapatillas o sandalias y, en las caras con foto, el volumen del pelo y si es rizado.
+- **Votación**: una tarjeta destacada dice quién encontró el cuerpo y de quién era (o quién convocó la reunión), y su tarjeta lleva el sello "LO ENCONTRÓ"/"CONVOCÓ".
+- **Iluminación**: una luz de color real en cada sala que tiñe el suelo, las paredes y a los jugadores. Con el sabotaje de luces parpadean y se apagan (y vuelven parpadeando); en las crisis todo late en rojo.
+- **Tareas nuevas**: *Destruir asteroides* en Armería (toca 15 asteroides) y *Activar escudos* en Escudos (toca los hexágonos rojos).
+
 ## Novedades 3.0 · mapa tipo The Skeld, ropa y fútbol
 - **Mapa nuevo inspirado en The Skeld**: 14 salas (Cafetería, Motor superior e inferior, Reactor, Seguridad, Enfermería, Eléctrica, Almacén, Administración, Comunicaciones, Escudos, Navegación, Oxígeno y Armería) unidas solo por pasillos largos. Eléctrica es una sala sin salida y hay rutas separadas a cada lado de la nave.
 - **Escenario premium**: suelo propio en cada sala, techo con lámparas, paredes con la luz de su sala, marcos de puerta iluminados, compuertas blindadas, ventanal al espacio en Navegación y decoración con volumen (núcleo del reactor animado, motores, camilla, mesas con taburetes, sillón del piloto y cajas).
@@ -30,6 +40,8 @@ Cada consola tiene ahora su propio minijuego animado (en `public/tasks.js`), pen
 | Pasar tarjeta | Administración | Saca la tarjeta y deslízala por el lector, ni rápido ni lento |
 | Vaciar basura | Almacén | Baja la palanca y mantenla hasta que caiga todo |
 | Limpiar filtro | Oxígeno | Arrastra las hojas hasta la rejilla |
+| Destruir asteroides | Armería | Toca los asteroides antes de que crucen la pantalla (15) |
+| Activar escudos | Escudos | Toca los hexágonos rojos hasta completar el escudo |
 
 Los paneles de sabotaje también cambian: palancas para las luces y teclado con pantalla LED para comunicaciones y oxígeno.
 

@@ -67,7 +67,9 @@
     ['Alinear motor',          'motores',        2,  2,  'align'],
     ['Pasar tarjeta',          'administracion', 29, 13, 'card'],
     ['Vaciar basura',          'almacen',        22, 26, 'trash'],
-    ['Limpiar filtro',         'oxigeno',        28, 9,  'leaves']
+    ['Limpiar filtro',         'oxigeno',        28, 9,  'leaves'],
+    ['Destruir asteroides',    'armeria',        31, 1,  'asteroids'],
+    ['Activar escudos',        'escudos',        35, 21, 'shields']
   ].map((s, id) => ({ id, name: s[0], room: s[1], i: s[2], j: s[3], type: s[4] }));
 
   const cellPos = o => ({ x: (o.i + 0.5) * CELL, z: (o.j + 0.5) * CELL });
@@ -184,9 +186,10 @@
     brows: ['Normales', 'Finas', 'Gruesas'],
     sleeve: ['Larga', 'Corta'],
     pants: ['Largo', 'Corto'],
-    acc: ['Nada', 'Bandolera', 'Bufanda', 'Cadena de oro', 'Capa', 'Pajarita']
+    acc: ['Nada', 'Bandolera', 'Bufanda', 'Cadena de oro', 'Capa', 'Pajarita'],
+    pet: ['Ninguna', 'Perrito', 'Gatito', 'Robot', 'Minitripulante', 'Pollito', 'Dron']
   };
-  const LOOK_SIZES = { s: SKINS.length, h: OPT.hair.length, hc: HAIR_COLORS.length, b: OPT.beard.length, g: OPT.glasses.length, t: OPT.hat.length, tc: CLOTHES.length, sh: CLOTHES.length, pa: CLOTHES.length, bd: OPT.build.length, ej: OPT.brows.length, hv: 4, hr: 2, ss: 2, mo: 2, ml: OPT.sleeve.length, pl: OPT.pants.length, ac: OPT.acc.length, tp: OPT.top.length, kit: OPT.kit.length, num: 100, nn: 2 };
+  const LOOK_SIZES = { s: SKINS.length, h: OPT.hair.length, hc: HAIR_COLORS.length, b: OPT.beard.length, g: OPT.glasses.length, t: OPT.hat.length, tc: CLOTHES.length, sh: CLOTHES.length, pa: CLOTHES.length, bd: OPT.build.length, ej: OPT.brows.length, hv: 4, hr: 2, ss: 2, mo: 2, ml: OPT.sleeve.length, pl: OPT.pants.length, ac: OPT.acc.length, tp: OPT.top.length, kit: OPT.kit.length, num: 100, nn: 2, pet: OPT.pet.length };
   // Equipaciones (colores de cada club, sin escudos): camiseta, raya, rayas verticales, ribete, mangas, pantalón, medias y color del dorsal
   const KITS = [null,
     { shirt: '#f4f4f2', alt: null,      trim: '#c9a227', sleeve: '#f4f4f2', shorts: '#f4f4f2', socks: '#f4f4f2', num: '#1b2a5b', edge: '#c9a227', boots: '#111111' },
@@ -206,7 +209,7 @@
     o.ht = 155 + r(41); o.hv = 0; o.hr = 0; o.ss = 0; o.mo = 0;
     o.ml = Math.random() < 0.7 ? 0 : 1; o.pl = Math.random() < 0.8 ? 0 : 1; o.ac = Math.random() < 0.8 ? 0 : 1 + r(OPT.acc.length - 1);
     o.t = Math.random() < 0.65 ? 0 : 1 + r(OPT.hat.length - 1); o.tp = Math.random() < 0.55 ? 0 : r(OPT.top.length);
-    o.kit = Math.random() < 0.82 ? 0 : 1 + r(OPT.kit.length - 1); o.num = o.kit ? 1 + r(23) : 0; o.nn = 0;
+    o.pet = Math.random() < 0.7 ? 0 : 1 + r(OPT.pet.length - 1); o.kit = Math.random() < 0.82 ? 0 : 1 + r(OPT.kit.length - 1); o.num = o.kit ? 1 + r(23) : 0; o.nn = 0;
     return o;
   };
   const cleanLook = l => {
