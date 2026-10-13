@@ -94,9 +94,17 @@
         tone(o, { f: 392, dur: .9, vol: .08, at: 2.0, attack: .05 }); tone(o, { f: 554, dur: .9, vol: .08, at: 2.0, attack: .05 });
       },
       win: o => { [523, 659, 784, 1046, 1319].forEach((f, i) => tone(o, { f, type: 'triangle', dur: .45, vol: .2, at: i * .12 })); [523, 659, 784].forEach(f => tone(o, { f, type: 'triangle', dur: 1.0, vol: .1, at: .62 })); },
+      // minijuegos de tareas
+      spark: o => { noise(o, { type: 'highpass', f: 3500, q: .7, dur: .12, vol: .3 }); tone(o, { f: 1800, f2: 500, type: 'square', dur: .1, vol: .08, lp: 4000 }); },
+      err: o => { tone(o, { f: 150, type: 'square', dur: .16, vol: .16, lp: 1200 }); tone(o, { f: 120, type: 'square', dur: .2, vol: .16, at: .14, lp: 1200 }); },
+      note: (o, p) => tone(o, { f: (p && p.f) || 660, type: 'triangle', dur: .3, vol: .2 }),
+      scan: o => { tone(o, { f: 300, f2: 900, dur: 1.2, vol: .08, attack: .3 }); noise(o, { f: 2400, q: 2, dur: 1.4, vol: .05, attack: .4 }); },
+      pour: o => noise(o, { type: 'lowpass', f: 700, q: .6, dur: .22, vol: .09 }),
+      rumble: o => noise(o, { type: 'lowpass', f: 260, q: .8, dur: .25, vol: .2 }),
+      whoosh: o => noise(o, { f: 500, f2: 3000, q: 1.2, dur: .3, vol: .2 }),
       lose: o => { [440, 349, 294, 220].forEach((f, i) => tone(o, { f, type: 'triangle', dur: .55, vol: .22, at: i * .22 })); tone(o, { f: 110, dur: 1.2, vol: .18, at: .5, attack: .1 }); }
     };
-    const DUR = { click: .1, vote: .15, task: .7, kill: .6, report: 1.1, eject: 2.5, ejectImp: 1.1, ejectNo: 1.4, warn: .45, fixed: .8, vent: .45, door: .5, lights: 1.1, static: .55, camOn: .4, introCrew: 3.4, introImp: 3.4, win: 1.6, lose: 1.6 };
+    const DUR = { spark: .2, err: .4, note: .35, scan: 1.5, pour: .3, rumble: .3, whoosh: .35, click: .1, vote: .15, task: .7, kill: .6, report: 1.1, eject: 2.5, ejectImp: 1.1, ejectNo: 1.4, warn: .45, fixed: .8, vent: .45, door: .5, lights: 1.1, static: .55, camOn: .4, introCrew: 3.4, introImp: 3.4, win: 1.6, lose: 1.6 };
 
     // Sonidos continuos (se paran a mano): sirena de crisis y zumbido de las cámaras
     const LOOPS = {
@@ -124,7 +132,7 @@
         const fn = SOUNDS[name]; if (!fn || muted || !ensure()) return false;
         if (ctx.resume && ctx.state === 'suspended') { try { ctx.resume(); } catch (e) { /* ... */ } }
         const g = o && o.dist != null ? Math.max(0.06, 1 / (1 + o.dist / 9)) : 1;
-        try { fn(bus(g * (o && o.gain != null ? o.gain : 1))); } catch (e) { return false; }
+        try { fn(bus(g * (o && o.gain != null ? o.gain : 1)), o); } catch (e) { return false; }
         return true;
       },
       loopStart(name) {
