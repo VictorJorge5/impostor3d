@@ -4,6 +4,14 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), en 1
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 3.0 · mapa tipo The Skeld, ropa y fútbol
+- **Mapa nuevo inspirado en The Skeld**: 14 salas (Cafetería, Motor superior e inferior, Reactor, Seguridad, Enfermería, Eléctrica, Almacén, Administración, Comunicaciones, Escudos, Navegación, Oxígeno y Armería) unidas solo por pasillos largos. Eléctrica es una sala sin salida y hay rutas separadas a cada lado de la nave.
+- **Escenario premium**: suelo propio en cada sala, techo con lámparas, paredes con la luz de su sala, marcos de puerta iluminados, compuertas blindadas, ventanal al espacio en Navegación y decoración con volumen (núcleo del reactor animado, motores, camilla, mesas con taburetes, sillón del piloto y cajas).
+- **Consolas 3D distintas para cada tarea** (escáner médico con haz que sube y baja, depósito de combustible, ordenador con gráfica, filtro con ventilador...) con un anillo en el suelo cuando la tarea es tuya. Paneles de sabotaje con franjas de aviso y terminales con pantalla.
+- **Minijuegos a pantalla completa** con aspecto de dispositivo y la sala indicada; mientras están abiertos la escena de fondo apenas se repinta, para que vayan fluidos.
+- **Ropa**: equipaciones de **Real Madrid, FC Barcelona, Atlético de Madrid, España** y portero (colores de cada club, sin escudos), con **dorsal** y **nombre en la espalda**; prendas nuevas (sudadera con capucha, chaqueta y corbata, polo, camisa de cuadros, tirantes); **13 sombreros** (gorra hacia atrás, vaquero, copa, fiesta, corona, boina, auriculares, vikingo, pescador, halo...) y accesorios (bufanda, cadena de oro, capa, pajarita). El editor va por pestañas: Cuerpo, Cara, Ropa, Fútbol y Extras.
+- Pruebas automáticas del mapa: desde la cafetería se llega a todo, las salas solo se tocan a través de pasillos y la decoración no bloquea nada.
+
 ## Novedades 2.2 · tareas como en el original
 Cada consola tiene ahora su propio minijuego animado (en `public/tasks.js`), pensado para el dedo y con sonido y vibración:
 
@@ -11,17 +19,17 @@ Cada consola tiene ahora su propio minijuego animado (en `public/tasks.js`), pen
 |---|---|---|
 | Conectar cables | Eléctrica | Arrastra cada cable hasta el conector de su color |
 | Calibrar distribuidor | Eléctrica | Pulsa "Calibrar" cuando la aguja pase por la zona iluminada (3 diales) |
-| Descargar datos | Navegación | Pulsa "Descargar" y mira cómo viajan los archivos a la nube |
+| Descargar datos | Comunicaciones | Pulsa "Descargar" y mira cómo viajan los archivos a la nube |
 | Trazar rumbo | Navegación | Lleva la nave de punto en punto sin salirte de la ruta |
 | Iniciar reactor | Reactor | Memoriza la secuencia y repítela (4 rondas) |
 | Desbloquear colectores | Reactor | Pulsa del 1 al 10 en orden |
 | Escáner médico | Enfermería | Quédate en la plataforma mientras te escanea (sale tu cara y tus datos) |
 | Analizar muestra | Enfermería | Inicia el análisis, espera y elige el tubo anómalo |
-| Repostar motor | Motores | Mantén pulsado hasta llenar el depósito |
-| Alinear motor | Motores | Mueve la palanca hasta centrar la línea del motor |
-| Pasar tarjeta | Almacén | Saca la tarjeta y deslízala por el lector, ni rápido ni lento |
+| Repostar motor | Motor inferior | Mantén pulsado hasta llenar el depósito |
+| Alinear motor | Motor superior | Mueve la palanca hasta centrar la línea del motor |
+| Pasar tarjeta | Administración | Saca la tarjeta y deslízala por el lector, ni rápido ni lento |
 | Vaciar basura | Almacén | Baja la palanca y mantenla hasta que caiga todo |
-| Limpiar filtro | Cafetería | Arrastra las hojas hasta la rejilla |
+| Limpiar filtro | Oxígeno | Arrastra las hojas hasta la rejilla |
 
 Los paneles de sabotaje también cambian: palancas para las luces y teclado con pantalla LED para comunicaciones y oxígeno.
 
@@ -144,14 +152,14 @@ Para pruebas automáticas existe la variable de entorno `TIME_SCALE` (por ejempl
 | Sabotaje | Efecto | Cómo se arregla |
 |---|---|---|
 | Luces | La tripulación casi no ve | Panel de la Eléctrica: poner los 5 interruptores en ON |
-| Comunicaciones | La tripulación pierde la lista de tareas y el minimapa | Panel de Navegación: introducir un código |
+| Comunicaciones | La tripulación pierde la lista de tareas y el minimapa | Panel de Comunicaciones: introducir un código |
 | Puertas | Cierra las puertas de una sala 12 s | Se abren solas |
-| Reactor (crisis, 45 s) | Si no se arregla, ganan los impostores | Dos jugadores mantienen a la vez los paneles del Reactor y de Motores |
-| Oxígeno (crisis, 50 s) | Si no se arregla, ganan los impostores | Introducir el código en los dos depuradores (Navegación y Almacén) |
+| Reactor (crisis, 45 s) | Si no se arregla, ganan los impostores | Dos jugadores mantienen a la vez los dos paneles del Reactor |
+| Oxígeno (crisis, 50 s) | Si no se arregla, ganan los impostores | Introducir el código en los dos depuradores (Oxígeno y Administración) |
 Los paneles se iluminan en rojo y salen marcados en el minimapa. Una reunión (por cuerpo reportado) anula el sabotaje.
 
 ### Ventilaciones (solo el impostor; botón "Ventilación" o tecla F)
-Hay 8 rejillas en el suelo, en dos redes: Reactor-Navegación-Eléctrica-Cafetería (NE) y Cafetería (SO)-Enfermería-Almacén-Motores.
+Hay 11 rejillas en cuatro redes, como en el original: Reactor-Motor superior-Motor inferior · Enfermería-Seguridad-Eléctrica · Cafetería-Administración · Navegación-Armería-Escudos.
 Dentro de una ventilación nadie te ve: no puedes matar, sabotear ni moverte por el mapa, solo viajar a las rejillas conectadas o salir. Si alguien está cerca verá un anillo al entrar o salir.
 
 
@@ -165,8 +173,8 @@ Dentro de una ventilación nadie te ve: no puedes matar, sabotear ni moverte por
 ### Terminales de información (cualquier jugador vivo; botón "Usar" junto al terminal)
 | Terminal | Dónde | Qué da |
 |---|---|---|
-| **Cámaras de seguridad** | Almacén | 4 vistas en directo del mapa 3D (pasillos oeste, este y norte, y la cafetería), a pantalla completa y sin el HUD encima (en el móvil en vertical se apilan en una columna). Mientras alguien mira, **la luz roja de las cámaras parpadea para todos** |
-| **Panel de administración** | Cafetería | Cuánta gente hay en cada sala, con puntos de su color (no la posición exacta). Un impostor dentro de una ventilación no aparece |
+| **Cámaras de seguridad** | Seguridad | 4 vistas en directo del mapa 3D (pasillo de motores, pasillo sur, pasillo de Administración y pasillo de Navegación), a pantalla completa y sin el HUD encima (en el móvil en vertical se apilan en una columna). Mientras alguien mira, **la luz roja de las cámaras parpadea para todos** |
+| **Panel de administración** | Administración | Cuánta gente hay en cada sala, con puntos de su color (no la posición exacta). Un impostor dentro de una ventilación no aparece |
 | **Signos vitales** | Enfermería | Todos los jugadores con su electrocardiograma: VIVO o MUERTO en directo |
 | **Registro de puertas** | Eléctrica | Quién ha entrado o salido de cada sala y hace cuántos segundos (se ignoran los rebotes en el umbral; las ventilaciones no dejan rastro) |
 
