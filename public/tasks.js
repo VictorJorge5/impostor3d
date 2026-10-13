@@ -53,7 +53,7 @@
       const wrap = document.createElement('div'); wrap.className = 'mgStage';
       const cv = document.createElement('canvas'), hintEl = document.createElement('div'); hintEl.className = 'mgHint';
       wrap.append(cv); body.append(wrap, hintEl);
-      const availH = Math.max(150, window.innerHeight - 122), availW = Math.max(240, (body.clientWidth || 340));
+      const availH = Math.max(150, window.innerHeight - (window.innerHeight < 500 ? 92 : 130)), availW = Math.max(240, (body.clientWidth || 340));
       const W = Math.round(Math.min(availW, availH * aspect, 600)), Hh = Math.round(W / aspect);
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       cv.width = W * dpr; cv.height = Hh * dpr; cv.style.width = W + 'px'; cv.style.height = Hh + 'px';

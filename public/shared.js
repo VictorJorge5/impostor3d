@@ -1,6 +1,6 @@
 // Mapa y reglas compartidas entre servidor y cliente
 (function (root) {
-  const CELL = 4, W = 30, H = 22, WALL_H = 4.5, TASKS_PER = 4, TABLE_R = 1.8;
+  const CELL = 4, W = 44, H = 30, WALL_H = 4.5, TASKS_PER = 4, TABLE_R = 1.8;
 
   const COLORS = [
     ['Rojo', '#e53935'], ['Azul', '#1e88e5'], ['Verde', '#43a047'], ['Amarillo', '#fdd835'],
@@ -8,19 +8,42 @@
     ['Marrón', '#6d4c41'], ['Blanco', '#eceff1']
   ];
 
+  // Distribución inspirada en The Skeld: 14 salas unidas por pasillos largos.
+  // A la izquierda los motores, el reactor y seguridad; en el centro cafetería, administración y almacén; a la derecha armería, oxígeno, navegación, escudos y comunicaciones.
   // r = [x, y, ancho, alto] en celdas
   const ROOMS = [
-    { id: 'reactor',    name: 'Reactor',    r: [1, 1, 7, 6],   c: '#6e4747' },
-    { id: 'electrica',  name: 'Eléctrica',  r: [22, 1, 7, 6],  c: '#6e6a3c' },
-    { id: 'enfermeria', name: 'Enfermería', r: [1, 15, 7, 6],  c: '#3c6e64' },
-    { id: 'motores',    name: 'Motores',    r: [22, 15, 7, 6], c: '#474c6e' },
-    { id: 'cafeteria',  name: 'Cafetería',  r: [11, 8, 8, 6],  c: '#5f5f6b' },
-    { id: 'navegacion', name: 'Navegación', r: [11, 1, 8, 4],  c: '#3c5c7e' },
-    { id: 'almacen',    name: 'Almacén',    r: [11, 17, 8, 4], c: '#6e5c3c' }
+    { id: 'cafeteria',      name: 'Cafetería',       r: [17, 1, 9, 7],  c: '#5f5f6b' },
+    { id: 'motores',        name: 'Motor superior',  r: [1, 2, 7, 6],   c: '#474c6e' },
+    { id: 'enfermeria',     name: 'Enfermería',      r: [11, 6, 5, 4],  c: '#3c6e64' },
+    { id: 'seguridad',      name: 'Seguridad',       r: [12, 11, 4, 4], c: '#5a3d4a' },
+    { id: 'reactor',        name: 'Reactor',         r: [1, 11, 5, 6],  c: '#6e4747' },
+    { id: 'motorinf',       name: 'Motor inferior',  r: [1, 21, 7, 6],  c: '#474c6e' },
+    { id: 'electrica',      name: 'Eléctrica',       r: [11, 16, 4, 4], c: '#6e6a3c' },
+    { id: 'almacen',        name: 'Almacén',         r: [16, 19, 7, 8], c: '#6e5c3c' },
+    { id: 'administracion', name: 'Administración',  r: [24, 13, 6, 5], c: '#4f466e' },
+    { id: 'comunicaciones', name: 'Comunicaciones',  r: [26, 26, 5, 3], c: '#3c5e6e' },
+    { id: 'escudos',        name: 'Escudos',         r: [33, 21, 6, 5], c: '#3c4e7e' },
+    { id: 'navegacion',     name: 'Navegación',      r: [37, 11, 6, 7], c: '#3c5c7e' },
+    { id: 'oxigeno',        name: 'Oxígeno',         r: [28, 9, 4, 3],  c: '#3c6e5a' },
+    { id: 'armeria',        name: 'Armería',         r: [30, 1, 6, 6],  c: '#6e4c3c' }
   ];
   const CORRIDORS = [
-    [3, 6, 2, 6], [3, 10, 8, 2], [25, 6, 2, 6], [19, 10, 8, 2], [3, 11, 2, 5], [25, 11, 2, 5],
-    [14, 4, 2, 5], [14, 13, 2, 5], [7, 2, 5, 2], [18, 2, 5, 2], [7, 18, 5, 2], [18, 18, 5, 2]
+    [8, 3, 9, 2],    // motor superior → cafetería (pasa por la enfermería)
+    [12, 5, 2, 1],   // entrada de la enfermería
+    [8, 6, 2, 17],   // pasillo oeste: motor superior → motor inferior
+    [6, 13, 2, 2],   // entrada del reactor
+    [10, 12, 2, 2],  // entrada de seguridad
+    [8, 23, 8, 2],   // pasillo sur: motor inferior → almacén
+    [12, 20, 2, 3],  // entrada de eléctrica (sala sin salida)
+    [20, 8, 2, 11],  // cafetería → almacén
+    [22, 14, 2, 2],  // entrada de administración
+    [26, 3, 4, 2],   // cafetería → armería
+    [33, 7, 2, 8],   // armería → navegación
+    [32, 10, 1, 1],  // entrada de oxígeno
+    [35, 13, 2, 2],  // entrada de navegación
+    [39, 18, 2, 5],  // navegación → escudos
+    [23, 23, 10, 2], // almacén → escudos
+    [27, 25, 2, 1]   // entrada de comunicaciones
   ];
 
   const grid = Array.from({ length: H }, () => Array(W).fill(true));
@@ -32,55 +55,58 @@
 
   // [nombre, sala, celdaX, celdaY, tipo de minijuego]
   const STATIONS = [   // [nombre, sala, i, j, minijuego (public/tasks.js)]
-    ['Conectar cables',        'electrica',  25, 3,  'wires'],
-    ['Calibrar distribuidor',  'electrica',  23, 5,  'calibrate'],
-    ['Descargar datos',        'navegacion', 13, 2,  'download'],
-    ['Trazar rumbo',           'navegacion', 16, 2,  'course'],
-    ['Iniciar reactor',        'reactor',    2,  2,  'simon'],
-    ['Desbloquear colectores', 'reactor',    6,  5,  'manifolds'],
-    ['Escáner médico',         'enfermeria', 2,  17, 'scan'],
-    ['Analizar muestra',       'enfermeria', 6,  19, 'samples'],
-    ['Repostar motor',         'motores',    24, 17, 'fuel'],
-    ['Alinear motor',          'motores',    27, 19, 'align'],
-    ['Pasar tarjeta',          'almacen',    13, 19, 'card'],
-    ['Vaciar basura',          'almacen',    16, 19, 'trash'],
-    ['Limpiar filtro',         'cafeteria',  12, 9,  'leaves']
+    ['Conectar cables',        'electrica',      14, 16, 'wires'],
+    ['Calibrar distribuidor',  'electrica',      11, 16, 'calibrate'],
+    ['Descargar datos',        'comunicaciones', 30, 28, 'download'],
+    ['Trazar rumbo',           'navegacion',     42, 14, 'course'],
+    ['Iniciar reactor',        'reactor',        1,  11, 'simon'],
+    ['Desbloquear colectores', 'reactor',        1,  16, 'manifolds'],
+    ['Escáner médico',         'enfermeria',     14, 8,  'scan'],
+    ['Analizar muestra',       'enfermeria',     11, 9,  'samples'],
+    ['Repostar motor',         'motorinf',       1,  22, 'fuel'],
+    ['Alinear motor',          'motores',        2,  2,  'align'],
+    ['Pasar tarjeta',          'administracion', 29, 13, 'card'],
+    ['Vaciar basura',          'almacen',        22, 26, 'trash'],
+    ['Limpiar filtro',         'oxigeno',        28, 9,  'leaves']
   ].map((s, id) => ({ id, name: s[0], room: s[1], i: s[2], j: s[3], type: s[4] }));
 
   const cellPos = o => ({ x: (o.i + 0.5) * CELL, z: (o.j + 0.5) * CELL });
   // Paneles donde la tripulación arregla los sabotajes
   const PANELS = [
-    { id: 'luces',    name: 'Panel de luces',            room: 'electrica',  i: 27, j: 5,  type: 'switches' },
-    { id: 'coms',     name: 'Panel de comunicaciones',   room: 'navegacion', i: 12, j: 4,  type: 'code' },
-    { id: 'reactorA', name: 'Control del reactor',       room: 'reactor',    i: 1,  j: 4,  type: 'holdPanel' },
-    { id: 'reactorB', name: 'Control del reactor',       room: 'motores',    i: 28, j: 16, type: 'holdPanel' },
-    { id: 'o2a',      name: 'Depurador de oxígeno',      room: 'navegacion', i: 18, j: 1,  type: 'code' },
-    { id: 'o2b',      name: 'Depurador de oxígeno',      room: 'almacen',    i: 11, j: 20, type: 'code' }
+    { id: 'luces',    name: 'Panel de luces',            room: 'electrica',      i: 14, j: 19, type: 'switches' },
+    { id: 'coms',     name: 'Panel de comunicaciones',   room: 'comunicaciones', i: 26, j: 28, type: 'code' },
+    { id: 'reactorA', name: 'Control del reactor',       room: 'reactor',        i: 3,  j: 11, type: 'holdPanel' },
+    { id: 'reactorB', name: 'Control del reactor',       room: 'reactor',        i: 3,  j: 16, type: 'holdPanel' },
+    { id: 'o2a',      name: 'Depurador de oxígeno',      room: 'oxigeno',        i: 31, j: 11, type: 'code' },
+    { id: 'o2b',      name: 'Depurador de oxígeno',      room: 'administracion', i: 24, j: 17, type: 'code' }
   ];
   // Terminales de información (las puede usar cualquier jugador vivo; las desactiva el sabotaje de comunicaciones salvo los signos vitales)
   const INFO = [
-    { id: 'cams',    name: 'Cámaras de seguridad',    short: 'Cámaras', room: 'almacen',    i: 12, j: 17 },
-    { id: 'admin',   name: 'Panel de administración', short: 'Admin',   room: 'cafeteria',  i: 18, j: 12 },
-    { id: 'vitals',  name: 'Signos vitales',          short: 'Vitales', room: 'enfermeria', i: 5,  j: 15 },
-    { id: 'doorlog', name: 'Registro de puertas',     short: 'Puertas', room: 'electrica',  i: 23, j: 1 }
+    { id: 'cams',    name: 'Cámaras de seguridad',    short: 'Cámaras', room: 'seguridad',      i: 15, j: 11 },
+    { id: 'admin',   name: 'Panel de administración', short: 'Admin',   room: 'administracion', i: 26, j: 15 },
+    { id: 'vitals',  name: 'Signos vitales',          short: 'Vitales', room: 'enfermeria',     i: 15, j: 9 },
+    { id: 'doorlog', name: 'Registro de puertas',     short: 'Puertas', room: 'electrica',      i: 11, j: 19 }
   ];
   // Cámaras de seguridad: posición (x, altura, z) y punto al que miran
   const CAMERAS = [
-    { id: 0, name: 'Pasillo oeste',  pos: [13, 3.7, 41],  look: [46, 1.0, 44] },
-    { id: 1, name: 'Pasillo este',   pos: [107, 3.7, 41], look: [74, 1.0, 44] },
-    { id: 2, name: 'Cafetería',      pos: [75, 3.9, 33],  look: [58, 0.8, 46] },
-    { id: 3, name: 'Pasillo norte',  pos: [60, 3.7, 19],  look: [60, 1.0, 34] }
+    { id: 0, name: 'Pasillo de motores',   pos: [38.5, 3.7, 27],  look: [36, 1.0, 62] },
+    { id: 1, name: 'Pasillo sur',          pos: [62, 3.7, 93.5],  look: [38, 1.0, 96] },
+    { id: 2, name: 'Pasillo de Admin',     pos: [87.5, 3.7, 34],  look: [84, 1.0, 62] },
+    { id: 3, name: 'Pasillo de Navegación', pos: [133.5, 3.7, 30], look: [136, 1.0, 54] }
   ];
   // Red de ventilaciones (solo las usa el impostor): dos grupos de salas conectadas
   const VENTS = [
-    { id: 0, room: 'reactor',    i: 5,  j: 1,  links: [1] },
-    { id: 1, room: 'navegacion', i: 17, j: 4,  links: [0, 2] },
-    { id: 2, room: 'electrica',  i: 28, j: 1,  links: [1, 3] },
-    { id: 3, room: 'cafeteria',  i: 18, j: 8,  links: [2] },
-    { id: 4, room: 'cafeteria',  i: 12, j: 13, links: [5] },
-    { id: 5, room: 'enfermeria', i: 1,  j: 20, links: [4, 6] },
-    { id: 6, room: 'almacen',    i: 18, j: 17, links: [5, 7] },
-    { id: 7, room: 'motores',    i: 23, j: 20, links: [6] }
+    { id: 0,  room: 'reactor',        i: 2,  j: 13, links: [1, 2] },
+    { id: 1,  room: 'motores',        i: 6,  j: 7,  links: [0] },
+    { id: 2,  room: 'motorinf',       i: 6,  j: 21, links: [0] },
+    { id: 3,  room: 'enfermeria',     i: 11, j: 6,  links: [4, 5] },
+    { id: 4,  room: 'seguridad',      i: 13, j: 14, links: [3, 5] },
+    { id: 5,  room: 'electrica',      i: 13, j: 17, links: [3, 4] },
+    { id: 6,  room: 'cafeteria',      i: 25, j: 1,  links: [7] },
+    { id: 7,  room: 'administracion', i: 28, j: 17, links: [6] },
+    { id: 8,  room: 'navegacion',     i: 38, j: 11, links: [9, 10] },
+    { id: 9,  room: 'armeria',        i: 35, j: 2,  links: [8] },
+    { id: 10, room: 'escudos',        i: 37, j: 25, links: [8] }
   ];
   // Puertas de cada sala: las celdas de suelo pegadas a su borde
   const DOORS = {};
@@ -97,7 +123,19 @@
   const isClosedCell = (x, z) => closedCells.size > 0 && closedCells.has(Math.floor(x / CELL) + ',' + Math.floor(z / CELL));
 
   const stationPos = st => ({ x: (st.i + 0.5) * CELL, z: (st.j + 0.5) * CELL });
-  const BUTTON = { x: 60, z: 44 }; // mesa de la cafetería
+  // Decoración con volumen (no se puede atravesar): x, z en metros y radio de choque. El cliente dibuja cada tipo.
+  const DECOR = [
+    { kind: 'core',   room: 'reactor',    x: 14,  z: 54,  r: 2.4 },
+    { kind: 'table',  room: 'cafeteria',  x: 75,  z: 12,  r: 1.45 },
+    { kind: 'table',  room: 'cafeteria',  x: 97,  z: 25,  r: 1.45 },
+    { kind: 'bed',    room: 'enfermeria', x: 52,  z: 38.6, r: 1.25 },
+    { kind: 'chair',  room: 'navegacion', x: 160, z: 58,  r: 1.1, rot: -Math.PI / 2 },
+    { kind: 'crates', room: 'almacen',    x: 90,  z: 78.5, r: 1.5 },
+    { kind: 'crates', room: 'almacen',    x: 66.5, z: 105.5, r: 1.3 },
+    { kind: 'engine', room: 'motores',    x: 17,  z: 21,  r: 1.6, len: 7 },
+    { kind: 'engine', room: 'motorinf',   x: 17,  z: 99,  r: 1.6, len: 7 }
+  ];
+  const BUTTON = { x: 86, z: 18 }; // mesa de la cafetería
 
   const isSolid = (x, z) => {
     const i = Math.floor(x / CELL), j = Math.floor(z / CELL);
@@ -117,6 +155,11 @@
       const p = cellPos(pn); dx = x - p.x; dz = z - p.z;
       if (dx * dx + dz * dz < (0.8 + r) * (0.8 + r)) return true;
     }
+    for (const d of DECOR) {
+      if (d.len) {   // cilindro tumbado a lo largo del eje x (motores)
+        if (Math.abs(x - d.x) < d.len / 2 + r && Math.abs(z - d.z) < d.r + r) return true;
+      } else { dx = x - d.x; dz = z - d.z; if (dx * dx + dz * dz < (d.r + r) * (d.r + r)) return true; }
+    }
     if (closedCells.size && (isClosedCell(x - r, z - r) || isClosedCell(x + r, z - r) || isClosedCell(x - r, z + r) || isClosedCell(x + r, z + r))) return true;
     return false;
   };
@@ -134,14 +177,24 @@
     hair: ['Calvo', 'Corto', 'Pinchos', 'Largo', 'Moño', 'Cresta', 'Rizos', 'Rapado', 'Media melena'],
     beard: ['Sin barba', 'Barba corta', 'Barba', 'Bigote', 'Perilla'],
     glasses: ['Sin gafas', 'Redondas', 'Cuadradas', 'De sol'],
-    hat: ['Nada', 'Gorra', 'Gorro', 'Cinta'],
+    hat: ['Nada', 'Gorra', 'Gorro', 'Cinta', 'Gorra hacia atrás', 'Sombrero vaquero', 'Sombrero de copa', 'Gorro de fiesta', 'Corona', 'Boina', 'Auriculares', 'Casco vikingo', 'Gorro de pescador', 'Halo'],
+    top: ['Camiseta', 'Sudadera con capucha', 'Chaqueta y corbata', 'Polo', 'Camisa de cuadros', 'Camiseta de tirantes'],
+    kit: ['Ninguna', 'Real Madrid', 'FC Barcelona', 'Atlético de Madrid', 'España', 'Portero'],
     build: ['Delgado', 'Normal', 'Corpulento', 'Atlético'],
     brows: ['Normales', 'Finas', 'Gruesas'],
     sleeve: ['Larga', 'Corta'],
     pants: ['Largo', 'Corto'],
-    acc: ['Nada', 'Bandolera']
+    acc: ['Nada', 'Bandolera', 'Bufanda', 'Cadena de oro', 'Capa', 'Pajarita']
   };
-  const LOOK_SIZES = { s: SKINS.length, h: OPT.hair.length, hc: HAIR_COLORS.length, b: OPT.beard.length, g: OPT.glasses.length, t: OPT.hat.length, tc: CLOTHES.length, sh: CLOTHES.length, pa: CLOTHES.length, bd: OPT.build.length, ej: OPT.brows.length, hv: 4, hr: 2, ss: 2, mo: 2, ml: OPT.sleeve.length, pl: OPT.pants.length, ac: OPT.acc.length };
+  const LOOK_SIZES = { s: SKINS.length, h: OPT.hair.length, hc: HAIR_COLORS.length, b: OPT.beard.length, g: OPT.glasses.length, t: OPT.hat.length, tc: CLOTHES.length, sh: CLOTHES.length, pa: CLOTHES.length, bd: OPT.build.length, ej: OPT.brows.length, hv: 4, hr: 2, ss: 2, mo: 2, ml: OPT.sleeve.length, pl: OPT.pants.length, ac: OPT.acc.length, tp: OPT.top.length, kit: OPT.kit.length, num: 100, nn: 2 };
+  // Equipaciones (colores de cada club, sin escudos): camiseta, raya, rayas verticales, ribete, mangas, pantalón, medias y color del dorsal
+  const KITS = [null,
+    { shirt: '#f4f4f2', alt: null,      trim: '#c9a227', sleeve: '#f4f4f2', shorts: '#f4f4f2', socks: '#f4f4f2', num: '#1b2a5b', edge: '#c9a227', boots: '#111111' },
+    { shirt: '#a50044', alt: '#004d98', trim: '#edbb00', sleeve: '#a50044', shorts: '#0b2d6b', socks: '#0b2d6b', num: '#edbb00', edge: '#0b2d6b', boots: '#f2f2f2' },
+    { shirt: '#cb3524', alt: '#ffffff', trim: '#1d3a8a', sleeve: '#cb3524', shorts: '#1d3a8a', socks: '#cb3524', num: '#1d3a8a', edge: '#ffffff', boots: '#111111' },
+    { shirt: '#c60b1e', alt: null,      trim: '#ffc400', sleeve: '#c60b1e', shorts: '#0d1e4a', socks: '#0d1e4a', num: '#ffc400', edge: '#0d1e4a', boots: '#ffc400' },
+    { shirt: '#c8ff2e', alt: null,      trim: '#111111', sleeve: '#c8ff2e', shorts: '#111111', socks: '#c8ff2e', num: '#111111', edge: '#ffffff', boots: '#ff4f00' }
+  ];
   const HEX = /^#[0-9a-fA-F]{6}$/, FACE_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/, FACE_PATH = /^faces\/[a-z0-9_-]{1,24}\.(jpg|png)$/;
   const COLOR_KEYS = ['cs', 'ch', 'ct', 'csh', 'cp', 'cz', 'cl']; // colores libres (anulan la paleta)
   const randomLook = () => {
@@ -151,7 +204,9 @@
     o.g = Math.random() < 0.65 ? 0 : 1 + r(3);
     o.t = Math.random() < 0.7 ? 0 : 1 + r(3);
     o.ht = 155 + r(41); o.hv = 0; o.hr = 0; o.ss = 0; o.mo = 0;
-    o.ml = Math.random() < 0.7 ? 0 : 1; o.pl = Math.random() < 0.8 ? 0 : 1; o.ac = Math.random() < 0.85 ? 0 : 1;
+    o.ml = Math.random() < 0.7 ? 0 : 1; o.pl = Math.random() < 0.8 ? 0 : 1; o.ac = Math.random() < 0.8 ? 0 : 1 + r(OPT.acc.length - 1);
+    o.t = Math.random() < 0.65 ? 0 : 1 + r(OPT.hat.length - 1); o.tp = Math.random() < 0.55 ? 0 : r(OPT.top.length);
+    o.kit = Math.random() < 0.82 ? 0 : 1 + r(OPT.kit.length - 1); o.num = o.kit ? 1 + r(23) : 0; o.nn = 0;
     return o;
   };
   const cleanLook = l => {
@@ -220,6 +275,6 @@
     return out;
   };
 
-  const api = { INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
+  const api = { DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Shared = api;
 })(this);

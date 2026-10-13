@@ -556,6 +556,7 @@ const WALK = []; const walkSet = new Set();
   for (let j = 0; j < S.H; j++) for (let i = 0; i < S.W; i++) {
     if (S.grid[j][i]) continue; const x = (i + .5) * S.CELL, z = (j + .5) * S.CELL;
     if (props.some(p => Math.hypot(p.x - x, p.z - z) < 2.2) || Math.hypot(S.BUTTON.x - x, S.BUTTON.z - z) < 3.4) continue;
+    if (S.blocked(x, z, 1.4)) continue;   // decoración y bordes: los bots no se quedan pegados
     WALK.push([i, j]); walkSet.add(i + ',' + j);
   }
 })();
