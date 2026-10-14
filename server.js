@@ -128,15 +128,16 @@ function startGame(r) {
     if (set.hostRole === 'impostor') { nImp = Math.max(1, nImp); if (hi > 0) [ps[0], ps[hi]] = [ps[hi], ps[0]]; }
     else if (set.hostRole === 'tripulante') { nImp = Math.min(nImp, ps.length - 1); if (hi >= 0 && hi < ps.length - 1) [ps[ps.length - 1], ps[hi]] = [ps[hi], ps[ps.length - 1]]; }
   } else nImp = Math.max(1, nImp);
-  const ids = S.STATIONS.map(q => q.id);
-  const common = shuffle(ids.slice()).slice(0, Math.min(set.commonTasks || 0, set.tasksPer)); r.common = common;
+  // se reparten "tareas" (una consola suelta o una cadena de pasos); cada paso cuenta en la barra
+  const units = shuffle(S.TASK_UNITS.map((u, k) => k)), nCommon = Math.min(set.commonTasks || 0, set.tasksPer);
+  const common = units.slice(0, nCommon).flatMap(k => S.pickUnit(S.TASK_UNITS[k])); r.common = common;
   ps.forEach((p, i) => {
     p.role = i < nImp ? 'impostor' : 'crew';
     p.alive = true; p.done = []; p.vote = null; p.emergencies = set.emergencies; p.vent = null;
     p.killReadyAt = now + killCdMs(r);
-    p.tasks = common.concat(shuffle(ids.filter(q => !common.includes(q))).slice(0, set.tasksPer - common.length));
+    p.tasks = common.concat(shuffle(units.slice(nCommon)).slice(0, set.tasksPer - nCommon).flatMap(k => S.pickUnit(S.TASK_UNITS[k])));
   });
-  r.totalTasks = ps.filter(p => p.role === 'crew').length * set.tasksPer;
+  r.totalTasks = ps.filter(p => p.role === 'crew').reduce((n, p) => n + p.tasks.length, 0);
   placeSpawns(r); settleRooms(r);
   const imps = ps.filter(p => p.role === 'impostor').map(p => p.id);
   for (const p of ps) {
@@ -377,6 +378,7 @@ io.on('connection', sock => {
   sock.on('task', id => {
     if (!room || room.state !== 'play' || me.role !== 'crew') return;
     if (!me.tasks.includes(id) || me.done.includes(id)) return;
+    const pv = S.taskPrev(me.tasks)[id]; if (pv != null && !me.done.includes(pv)) return;   // las tareas por pasos van en orden
     const st = S.STATIONS[id];
     if (!st) return;
     const sp = S.stationPos(st);
@@ -595,7 +597,7 @@ function botTick(r, p, now, dt) {
   }
   if (p.role === 'crew') {
     if (!p.nextTaskAt) p.nextTaskAt = now + ms(12 + Math.random() * 28);
-    const left = p.tasks.filter(t => !p.done.includes(t));
+    const pv = S.taskPrev(p.tasks), left = p.tasks.filter(t => !p.done.includes(t) && (pv[t] == null || p.done.includes(pv[t])));
     if (now >= p.nextTaskAt && left.length) {
       p.done.push(left[Math.floor(Math.random() * left.length)]); r.doneTasks++; p.nextTaskAt = now + ms(12 + Math.random() * 28);
       if (r.set.taskbar === 'siempre') emitProgress(r); checkWin(r); if (r.state !== 'play') return;

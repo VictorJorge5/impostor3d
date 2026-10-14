@@ -54,23 +54,47 @@
   const roomAt = (i, j) => ROOMS.find(m => i >= m.r[0] && i < m.r[0] + m.r[2] && j >= m.r[1] && j < m.r[1] + m.r[3]);
 
   // [nombre, sala, celdaX, celdaY, tipo de minijuego]
-  const STATIONS = [   // [nombre, sala, i, j, minijuego (public/tasks.js)]
+  // [nombre, sala, i, j, minijuego (public/tasks.js), cadena, paso]. Las tareas con cadena van por pasos, como en el
+  // original: primero descargas los datos y luego los subes. Si un paso tiene varias consolas, a cada uno le toca una.
+  const STATIONS = [
     ['Conectar cables',        'electrica',      14, 16, 'wires'],
     ['Calibrar distribuidor',  'electrica',      11, 16, 'calibrate'],
-    ['Descargar datos',        'comunicaciones', 30, 28, 'download'],
+    ['Descargar datos',        'comunicaciones', 30, 28, 'download', 'datos', 0],
     ['Trazar rumbo',           'navegacion',     42, 14, 'course'],
     ['Iniciar reactor',        'reactor',        1,  11, 'simon'],
     ['Desbloquear colectores', 'reactor',        1,  16, 'manifolds'],
     ['Escáner médico',         'enfermeria',     14, 8,  'scan'],
     ['Analizar muestra',       'enfermeria',     11, 9,  'samples'],
-    ['Repostar motor',         'motorinf',       1,  22, 'fuel'],
+    ['Repostar motor inferior', 'motorinf',      1,  22, 'fuel', 'combustible', 2],
     ['Alinear motor',          'motores',        2,  2,  'align'],
     ['Pasar tarjeta',          'administracion', 29, 13, 'card'],
     ['Vaciar basura',          'almacen',        22, 26, 'trash'],
     ['Limpiar filtro',         'oxigeno',        28, 9,  'leaves'],
     ['Destruir asteroides',    'armeria',        31, 1,  'asteroids'],
-    ['Activar escudos',        'escudos',        35, 21, 'shields']
-  ].map((s, id) => ({ id, name: s[0], room: s[1], i: s[2], j: s[3], type: s[4] }));
+    ['Activar escudos',        'escudos',        35, 21, 'shields'],
+    ['Subir datos',            'administracion', 26, 13, 'upload', 'datos', 1],
+    ['Descargar datos',        'cafeteria',      25, 6,  'download', 'datos', 0],
+    ['Descargar datos',        'armeria',        30, 5,  'download', 'datos', 0],
+    ['Descargar datos',        'navegacion',     37, 15, 'download', 'datos', 0],
+    ['Llenar bidón',           'almacen',        16, 22, 'fillcan', 'combustible', 0],
+    ['Repostar motor superior', 'motores',       1,  6,  'fuel', 'combustible', 1],
+    ['Desviar energía',        'reactor',        5, 12, 'divert', 'energia', 0],
+    ['Aceptar energía',        'navegacion',     41, 17, 'accept', 'energia', 1],
+    ['Aceptar energía',        'escudos',        38, 23, 'accept', 'energia', 1],
+    ['Aceptar energía',        'oxigeno',        28, 11, 'accept', 'energia', 1],
+    ['Aceptar energía',        'seguridad',      15, 13, 'accept', 'energia', 1]
+  ].map((s, id) => ({ id, name: s[0], room: s[1], i: s[2], j: s[3], type: s[4], chain: s[5] || null, step: s[6] || 0 }));
+  // Tareas que se reparten: cada una es una lista de pasos y cada paso una lista de consolas posibles
+  const CHAINS = {};
+  STATIONS.forEach(s => { if (!s.chain) return; const c = CHAINS[s.chain] || (CHAINS[s.chain] = []); (c[s.step] || (c[s.step] = [])).push(s.id); });
+  const TASK_UNITS = STATIONS.filter(s => !s.chain).map(s => [[s.id]]).concat(Object.values(CHAINS));
+  const pickUnit = u => u.map(opts => opts[Math.floor(Math.random() * opts.length)]);
+  // Paso anterior de cada consola dentro de las tareas de un jugador (hay que hacerlo antes): { id: idAnterior }
+  const taskPrev = ids => {
+    const prev = {};
+    ids.forEach(id => { const s = STATIONS[id]; if (!s || !s.chain || !s.step) return; const p = ids.find(q => STATIONS[q] && STATIONS[q].chain === s.chain && STATIONS[q].step === s.step - 1); if (p != null) prev[id] = p; });
+    return prev;
+  };
 
   const cellPos = o => ({ x: (o.i + 0.5) * CELL, z: (o.j + 0.5) * CELL });
   // Paneles donde la tripulación arregla los sabotajes
@@ -278,6 +302,6 @@
     return out;
   };
 
-  const api = { DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
+  const api = { CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Shared = api;
 })(this);

@@ -69,3 +69,16 @@ test('cada tarea, panel y terminal está en la sala que indica', () => {
   S.STATIONS.concat(S.PANELS, S.INFO, S.VENTS).forEach(o => { const rm = S.roomAt(o.i, o.j); assert.ok(rm && rm.id === o.room && !S.grid[o.j][o.i], `${o.name || 'ventilación ' + o.id} en ${o.room}`); });
   const btn = S.roomAt(Math.floor(S.BUTTON.x / S.CELL), Math.floor(S.BUTTON.z / S.CELL)); assert.equal(btn.id, 'cafeteria');
 });
+
+test('tareas por pasos: cada cadena tiene todos sus pasos y se encadenan en orden', () => {
+  const seen = new Set();
+  S.TASK_UNITS.forEach(u => u.forEach(opts => { assert.ok(opts.length > 0); opts.forEach(id => { assert.ok(!seen.has(id), 'consola repetida ' + id); seen.add(id); }); }));
+  assert.equal(seen.size, S.STATIONS.length, 'todas las consolas se pueden repartir');
+  assert.ok(Object.keys(S.CHAINS).length >= 3, 'hay al menos 3 tareas por pasos');
+  for (const u of Object.values(S.CHAINS)) for (let n = 0; n < 20; n++) {
+    const ids = S.pickUnit(u), pv = S.taskPrev(ids.concat([0, 1]));
+    assert.equal(ids.length, u.length);
+    ids.forEach((id, k) => { assert.equal(S.STATIONS[id].step, k); assert.equal(pv[id], k ? ids[k - 1] : undefined); });
+  }
+  const dl = S.CHAINS.datos; assert.ok(dl[0].length > 1 && S.STATIONS[dl[1][0]].room === 'administracion', 'datos: se descargan en varias salas y se suben en Admin');
+});
