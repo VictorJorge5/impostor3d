@@ -151,13 +151,21 @@
       S.cv._solve = async () => { for (let i = 0; i < 3; i++) { for (let k = 0; k < 1500 && !inZone(rows[i]); k++) await wait(4); S.tap(bx + bw / 2, ry(i)); await wait(80); } };
     };
 
-    /* 3 · Descargar datos: pulsa y espera a que los archivos viajen a la nube */
-    T.download = (body) => {
-      const S = mk(body, 1.65), { g, W } = S, Hh = S.H;
+    /* 3 · Descargar / subir datos (tarea por pasos): de la sala a la tableta y de la tableta a la sede central */
+    T.download = (body, o) => dataXfer(body, o || {}, false);
+    T.upload = (body, o) => dataXfer(body, o || {}, true);
+    const dataXfer = (body, o, up) => {
+      const S = mk(body, 1.65), { g, W } = S, Hh = S.H, verb = up ? 'Subir' : 'Descargar';
       let st = 'idle', p = 0, files = [], eta = 'Calculando…', etaT = 0;
       const b = { x: W / 2 - 75, y: Hh * .72, w: 150, h: Math.min(44, Hh * .17) };
-      S.hint('Pulsa "Descargar" y espera a que termine.');
-      S.on({ down: q => { if (st === 'idle' && hit(q, b)) { st = 'run'; snd('click'); S.hint('Descargando… no cierres la ventana.'); } } });
+      S.hint(up ? 'Pulsa "Subir" y espera a que los datos lleguen a la sede central.' : 'Pulsa "Descargar" y espera a que termine. Luego tendrás que subirlos en Administración.');
+      S.on({ down: q => { if (st === 'idle' && hit(q, b)) { st = 'run'; snd('click'); S.hint((up ? 'Subiendo' : 'Descargando') + '… no cierres la ventana.'); } } });
+      const tablet = (x, y, label) => {
+        g.fillStyle = '#0b0f19'; rr(g, x - 26, y - 30, 52, 62, 8); g.fill(); g.strokeStyle = '#9fb6ff'; g.lineWidth = 2; g.stroke();
+        g.fillStyle = st === 'run' ? '#3fe0ff' : '#24304d'; rr(g, x - 20, y - 24, 40, 46, 4); g.fill(); g.fillStyle = '#9fb6ff'; g.beginPath(); g.arc(x, y + 27, 2, 0, TAU); g.fill();
+        txt(g, label, x, y + 42, 12, '#a9b8dc');
+      };
+      const cloud = (x, y, label) => { g.fillStyle = '#dfe9ff'; [[0, 0, 22], [-20, 6, 16], [20, 6, 16]].forEach(([dx, dy, r]) => { g.beginPath(); g.arc(x + dx, y + dy - 6, r, 0, TAU); g.fill(); }); rr(g, x - 36, y + 2, 72, 22, 11); g.fill(); txt(g, label, x, y + 42, 12, '#a9b8dc'); };
       const folder = (x, y, open, label) => {
         g.fillStyle = '#ffb547'; rr(g, x - 34, y - 26, 30, 10, 3); g.fill(); g.fillStyle = shade('#ffb547', -.12); rr(g, x - 34, y - 20, 68, 46, 6); g.fill();
         if (open) { g.fillStyle = '#ffd27a'; g.beginPath(); g.moveTo(x - 38, y - 6); g.lineTo(x + 38, y - 6); g.lineTo(x + 32, y + 26); g.lineTo(x - 32, y + 26); g.closePath(); g.fill(); }
@@ -165,12 +173,12 @@
       };
       S.loop((dt, t) => {
         bg(g, W, Hh);
-        const fy = Hh * .36; folder(W * .2, fy, st === 'run', 'Navegación');
-        g.fillStyle = '#dfe9ff'; [[0, 0, 22], [-20, 6, 16], [20, 6, 16]].forEach(([dx, dy, r]) => { g.beginPath(); g.arc(W * .8 + dx, fy + dy - 6, r, 0, TAU); g.fill(); }); rr(g, W * .8 - 36, fy + 2, 72, 22, 11); g.fill(); txt(g, 'Nube', W * .8, fy + 42, 12, '#a9b8dc');
+        const fy = Hh * .36;
+        if (up) { tablet(W * .2, fy, 'Tableta'); cloud(W * .8, fy, 'Sede central'); } else { folder(W * .2, fy, st === 'run', o.room || 'Sala'); tablet(W * .8, fy, 'Tableta'); }
         if (st === 'run') {
           p = Math.min(1, p + dt / 5.5); etaT -= dt; if (etaT <= 0) { etaT = .7; const s = Math.max(0, Math.round((1 - p) * 5.5 + rand(-1, 2))); eta = p > .97 ? 'Casi listo' : `Quedan ${s} s`; }
           if (Math.random() < dt * 6) files.push({ k: 0 });
-          if (p >= 1) { st = 'end'; snd('fixed'); S.hint('¡Descarga completada!', 'ok'); S.win(); }
+          if (p >= 1) { st = 'end'; snd('fixed'); S.hint(up ? '¡Datos subidos!' : '¡Descarga completada! Ahora súbelos en Administración.', 'ok'); S.win(); }
         }
         files = files.filter(f => (f.k += dt / .9) < 1);
         files.forEach(f => { const x = lerp(W * .2, W * .8, f.k), y = fy - Math.sin(f.k * Math.PI) * Hh * .2; g.fillStyle = '#fff'; rr(g, x - 7, y - 9, 14, 18, 2); g.fill(); g.fillStyle = '#7d8bb0'; g.fillRect(x - 4, y - 4, 8, 1.5); g.fillRect(x - 4, y, 8, 1.5); g.fillRect(x - 4, y + 4, 6, 1.5); });
@@ -179,7 +187,7 @@
         const gr = g.createLinearGradient(bx, 0, bx + bw, 0); gr.addColorStop(0, '#3fe0ff'); gr.addColorStop(1, '#4ef0b8');
         g.fillStyle = gr; rr(g, bx, by, Math.max(14, bw * p), 14, 7); g.fill();
         txt(g, Math.round(p * 100) + '%', bx + bw / 2, by - 12, 13, '#eef2ff'); if (st === 'run') txt(g, eta, bx + bw, by + 26, 11, '#8d99bb', 'right');
-        if (st === 'idle') btn(g, b, 'DESCARGAR', { color: '#3fe0ff', size: 15 });
+        if (st === 'idle') btn(g, b, verb.toUpperCase(), { color: '#3fe0ff', size: 15 });
       });
       S.cv._solve = async () => S.tap(b.x + b.w / 2, b.y + b.h / 2);
     };
@@ -337,15 +345,16 @@
     };
 
     /* 9 · Repostar motor: mantén pulsado hasta llenar el depósito */
-    T.fuel = (body) => {
+    T.fillcan = (body, o) => T.fuel(body, o, true);   // primer paso de "Repostar motores": llenar el bidón en el Almacén
+    T.fuel = (body, o, can) => {
       const S = mk(body, 1.35), { g, W } = S, Hh = S.H;
       let lvl = 0, holding = false, tickT = 0;
       const b = { x: W * .64, y: Hh * .62, w: W * .3, h: Math.min(54, Hh * .22) }, tank = { x: W * .1, y: Hh * .1, w: W * .44, h: Hh * .8 };
-      S.hint('Mantén pulsado el botón hasta llenar el depósito.');
+      S.hint(can ? 'Mantén pulsado para llenar el bidón. Luego llévalo a los motores.' : 'Mantén pulsado el botón hasta llenar el depósito del motor.');
       S.on({ down: p => { if (hit(p, b)) { holding = true; buzz(10); } }, up: () => { holding = false; } });
       S.loop((dt, t) => {
         bg(g, W, Hh);
-        if (holding && !S.finished) { lvl = Math.min(1, lvl + dt / 3.4); tickT -= dt; if (tickT <= 0) { tickT = .18; snd('pour'); } if (lvl >= 1) { holding = false; snd('fixed'); S.hint('¡Depósito lleno!', 'ok'); S.win(); } }
+        if (holding && !S.finished) { lvl = Math.min(1, lvl + dt / 3.4); tickT -= dt; if (tickT <= 0) { tickT = .18; snd('pour'); } if (lvl >= 1) { holding = false; snd('fixed'); S.hint(can ? '¡Bidón lleno! Ve a repostar el motor.' : '¡Depósito lleno!', 'ok'); S.win(); } }
         metal(g, tank.x - 8, tank.y - 8, tank.w + 16, tank.h + 16, 18);
         g.fillStyle = '#0b0f19'; rr(g, tank.x, tank.y, tank.w, tank.h, 12); g.fill();
         g.save(); rr(g, tank.x, tank.y, tank.w, tank.h, 12); g.clip();
@@ -355,7 +364,7 @@
         if (holding) for (let k = 0; k < 5; k++) { g.fillStyle = 'rgba(255,255,255,.4)'; g.beginPath(); g.arc(tank.x + ((k * 37 + t * 60) % tank.w), tank.y + tank.h - ((t * 80 + k * 41) % Math.max(1, tank.h * lvl)), 2.4, 0, TAU); g.fill(); }
         g.restore();
         for (let k = 1; k < 4; k++) { g.fillStyle = 'rgba(255,255,255,.25)'; g.fillRect(tank.x + tank.w - 14, tank.y + tank.h * k / 4, 10, 2); }
-        txt(g, Math.round(lvl * 100) + '%', tank.x + tank.w / 2, tank.y + tank.h / 2, 22, '#fff');
+        txt(g, Math.round(lvl * 100) + '%', tank.x + tank.w / 2, tank.y + tank.h / 2, 22, '#fff'); txt(g, can ? 'BIDÓN' : 'MOTOR', tank.x + tank.w / 2, tank.y + 22, 12, 'rgba(255,255,255,.6)');
         lamp(g, b.x + b.w / 2 - 22, Hh * .3, 9, lvl < 1 && !holding, '#ff3d5e'); lamp(g, b.x + b.w / 2 + 22, Hh * .3, 9, lvl >= 1 || holding, '#4ef0b8');
         btn(g, b, holding ? 'LLENANDO' : 'MANTÉN', { color: '#ffb547', down: holding, size: 15 });
       });
@@ -541,6 +550,54 @@
       S.cv._solve = async () => { for (const c of cells) if (!c.on) { S.tap(c.x, c.y); await wait(50); } };
     };
 
+    /* 16 · Desviar energía (Reactor, paso 1): sube la palanca de la sala que te toca; el resto están bloqueadas */
+    const POWER_ROOMS = ['Navegación', 'Escudos', 'Oxígeno', 'Seguridad', 'Armería', 'Comunicaciones'];
+    T.divert = (body, o) => {
+      const S = mk(body, 1.7), { g, W } = S, Hh = S.H, target = (o && o.target) || POWER_ROOMS[0];
+      const names = POWER_ROOMS.includes(target) ? POWER_ROOMS : [target].concat(POWER_ROOMS.slice(0, 5)), ti = names.indexOf(target);
+      const n = names.length, col = i => ({ x: W * (.08 + i * .84 / (n - 1)), top: Hh * .2, bot: Hh * .72 });
+      let lv = 0, drag = false, flow = 0;
+      S.hint(`Sube la palanca de ${target} hasta arriba.`);
+      S.on({
+        down: p => { const i = names.findIndex((_, k) => Math.abs(p.x - col(k).x) < 26 && p.y > col(k).top - 20 && p.y < col(k).bot + 20); if (i < 0) return; if (i !== ti) { S.fail(`Esa sala no. Desvía la energía a ${target}.`); return; } drag = true; snd('click'); },
+        move: p => { if (!drag) return; const c = col(ti); lv = clamp((c.bot - p.y) / (c.bot - c.top), 0, 1); if (lv >= .97) { lv = 1; drag = false; snd('fixed'); buzz([15, 30, 15]); S.hint(`Energía desviada a ${target}. Ve allí a aceptarla.`, 'ok'); S.win(); } },
+        up: () => { drag = false; }
+      });
+      S.loop((dt, t) => {
+        bg(g, W, Hh); flow += dt;
+        names.forEach((nm, i) => {
+          const c = col(i), on = i === ti, k = on ? lv : 0;
+          metal(g, c.x - 14, c.top - 14, 28, c.bot - c.top + 28, 12, '#11151f', '#0a0d14');
+          if (on) { g.fillStyle = '#ffd23f'; g.save(); g.shadowColor = '#ffd23f'; g.shadowBlur = 10 + Math.sin(t * 5) * 4; g.fillRect(c.x - 3, c.bot - (c.bot - c.top) * k, 6, (c.bot - c.top) * k); g.restore(); }
+          const ky = lerp(c.bot, c.top, k); rr(g, c.x - 18, ky - 10, 36, 20, 6); g.fillStyle = on ? '#ffd23f' : '#4a5168'; g.fill();
+          lamp(g, c.x, c.top - 26, 6, on && (k > .97 || Math.sin(t * 8) > 0), '#ffd23f');
+          txt(g, nm.length > 8 ? nm.slice(0, 7) + '.' : nm, c.x, c.bot + 30, 11, on ? '#ffd23f' : '#6f7895');
+        });
+      });
+      S.cv._solve = async () => { const c = col(ti); await S.drag([[c.x, c.bot], [c.x, (c.bot + c.top) / 2], [c.x, c.top - 6]], 40); };
+    };
+
+    /* 17 · Aceptar energía (paso 2): pulsa el interruptor y mira cómo llega la corriente */
+    T.accept = (body) => {
+      const S = mk(body, 1.6), { g, W } = S, Hh = S.H;
+      const b = { x: W / 2 - 70, y: Hh * .66, w: 140, h: Math.min(48, Hh * .18) };
+      let st = 'idle', k = 0, sparks = [];
+      S.hint('Pulsa "Aceptar" para recibir la energía desviada desde el Reactor.');
+      S.on({ down: p => { if (st === 'idle' && hit(p, b)) { st = 'run'; snd('click'); buzz(10); } } });
+      S.loop((dt, t) => {
+        bg(g, W, Hh);
+        if (st === 'run') { k = Math.min(1, k + dt / 1.4); if (Math.random() < dt * 30) sparks.push({ x: lerp(W * .12, W * .88, Math.random() * k), y: Hh * .38 + rand(-8, 8), t: 0 }); if (k >= 1) { st = 'end'; snd('fixed'); S.hint('¡Energía aceptada!', 'ok'); S.win(); } }
+        const y = Hh * .38, x0 = W * .12, x1 = W * .88;
+        g.strokeStyle = '#11151f'; g.lineWidth = 14; g.lineCap = 'round'; g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke();
+        if (k > 0) { g.save(); g.strokeStyle = '#ffd23f'; g.shadowColor = '#ffd23f'; g.shadowBlur = 16; g.lineWidth = 6; g.beginPath(); g.moveTo(x0, y); for (let x = x0; x <= lerp(x0, x1, k); x += 10) g.lineTo(x, y + Math.sin(x * .3 + t * 30) * 3); g.stroke(); g.restore(); }
+        lamp(g, x0, y, 16, true, '#ffd23f'); txt(g, 'Reactor', x0, y + 30, 11, '#a9b8dc');
+        lamp(g, x1, y, 16, k >= 1, '#4ef0b8'); txt(g, 'Esta sala', x1, y + 30, 11, '#a9b8dc');
+        sparks = sparks.filter(q => (q.t += dt) < .3); sparks.forEach(q => { g.fillStyle = `rgba(255,230,120,${1 - q.t / .3})`; g.fillRect(q.x, q.y - q.t * 30, 3, 3); });
+        if (st === 'idle') btn(g, b, 'ACEPTAR', { color: '#ffd23f', size: 15 });
+      });
+      S.cv._solve = async () => S.tap(b.x + b.w / 2, b.y + b.h / 2);
+    };
+
     /* Sabotaje de luces: sube las 5 palancas */
     T.switches = (body) => {
       const S = mk(body, 1.8), { g, W } = S, Hh = S.H;
@@ -583,9 +640,9 @@
 
     // Adaptador: el juego llama MG[tipo](body, done)
     const MG = {};
-    Object.keys(T).forEach(k => { MG[k] = (body, done) => {   // cada minijuego vive en su propia caja: al cerrarlo se va con ella y no deja escuchas colgando
+    Object.keys(T).forEach(k => { MG[k] = (body, done, opts) => {   // cada minijuego vive en su propia caja: al cerrarlo se va con ella y no deja escuchas colgando
       const box = document.createElement('div'); box.className = 'mgBox'; body.append(box);
-      box.addEventListener('mgwin', () => done(), { once: true }); T[k](box);
+      box.addEventListener('mgwin', () => done(), { once: true }); T[k](box, opts || {});
     }; });
     return MG;
   }

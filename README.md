@@ -4,6 +4,17 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 4.2 · tareas por pasos
+Como en el original, algunas tareas tienen varios pasos en salas distintas y hay que hacerlos en orden. La lista muestra solo el paso que toca y cuántos llevas (por ejemplo *Subir datos · Administración (1/2)*); el "!" y el anillo del suelo solo aparecen en la consola del paso actual, y el servidor no acepta un paso antes que el anterior.
+
+| Tarea | Pasos |
+|---|---|
+| Descargar y subir datos | Descargar datos en Cafetería, Comunicaciones, Armería o Navegación (te toca una) → Subir datos en Administración |
+| Repostar motores | Llenar el bidón en el Almacén → Repostar el motor superior → Repostar el motor inferior |
+| Desviar energía | Subir la palanca de tu sala en el Reactor → Aceptar la energía en esa sala (Navegación, Escudos, Oxígeno o Seguridad) |
+
+Cada paso cuenta en la barra de tareas; "Tareas por tripulante" cuenta cada tarea entera (una tarea por pasos vale por una).
+
 ## Novedades 4.1 · caras bien visibles
 - En la partida las cabezas con foto van más grandes (estilo cabezón) y **siempre giran hacia la cámara** (hasta ~90°) levantando un poco la cara.
 - Cámara más baja (~46°) y más cerca, para ver las caras de frente en lugar de desde arriba.
@@ -41,13 +52,14 @@ Cada consola tiene ahora su propio minijuego animado (en `public/tasks.js`), pen
 |---|---|---|
 | Conectar cables | Eléctrica | Arrastra cada cable hasta el conector de su color |
 | Calibrar distribuidor | Eléctrica | Pulsa "Calibrar" cuando la aguja pase por la zona iluminada (3 diales) |
-| Descargar datos | Comunicaciones | Pulsa "Descargar" y mira cómo viajan los archivos a la nube |
+| Descargar / subir datos | Varias salas → Administración | Pulsa "Descargar" (o "Subir") y mira cómo viajan los archivos |
 | Trazar rumbo | Navegación | Lleva la nave de punto en punto sin salirte de la ruta |
 | Iniciar reactor | Reactor | Memoriza la secuencia y repítela (4 rondas) |
 | Desbloquear colectores | Reactor | Pulsa del 1 al 10 en orden |
 | Escáner médico | Enfermería | Quédate en la plataforma mientras te escanea (sale tu cara y tus datos) |
 | Analizar muestra | Enfermería | Inicia el análisis, espera y elige el tubo anómalo |
-| Repostar motor | Motor inferior | Mantén pulsado hasta llenar el depósito |
+| Llenar bidón / repostar motor | Almacén → motores | Mantén pulsado hasta llenar el bidón o el depósito |
+| Desviar / aceptar energía | Reactor → una sala | Sube la palanca de la sala que te toca; allí pulsa "Aceptar" |
 | Alinear motor | Motor superior | Mueve la palanca hasta centrar la línea del motor |
 | Pasar tarjeta | Administración | Saca la tarjeta y deslízala por el lector, ni rápido ni lento |
 | Vaciar basura | Almacén | Baja la palanca y mantenla hasta que caiga todo |
