@@ -269,6 +269,7 @@
     bool('Reuniones', 'anonVotes', 'Votos anónimos', false, 'Solo se ve cuántos votos recibió cada uno'),
     num('Tareas', 'tasksPer', 'Tareas por tripulante', 1, 8, 1, 4),
     num('Tareas', 'commonTasks', 'Tareas comunes', 0, 2, 1, 1, '', 'Las mismas para todos los tripulantes'),
+    bool('Tareas', 'visualTasks', 'Tareas visuales', true, 'Los demás ven el escáner médico, los asteroides, la basura y los escudos: hacerlas delante de alguien demuestra que eres inocente'),
     sel('Tareas', 'taskbar', 'Barra de progreso de tareas', [['siempre', 'Siempre'], ['reuniones', 'Solo tras las reuniones'], ['nunca', 'Nunca']], 'siempre'),
     num('Sabotajes', 'sabCd', 'Enfriamiento de sabotajes', 5, 60, 5, 30, ' s'),
     num('Sabotajes', 'reactorTime', 'Tiempo para arreglar el reactor', 15, 120, 5, 45, ' s'),
@@ -302,6 +303,7 @@
     return out;
   };
 
-  const api = { CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
+  const VISUAL_TASKS = ['scan', 'asteroids', 'trash', 'shields'];   // tareas que se ven desde fuera
+  const api = { VISUAL_TASKS, CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Shared = api;
 })(this);

@@ -23,7 +23,7 @@ const sabMs = (r, t) => t === 'puertas' ? ms(r.set.doorTime) : t === 'reactor' ?
 const sabEnabled = (r, t) => ({ luces: r.set.sabLuces, coms: r.set.sabComs, puertas: r.set.sabPuertas, reactor: r.set.sabReactor, o2: r.set.sabO2 })[t];
 // Lo que necesita saber el cliente de los ajustes
 const clientCfg = r => ({
-  speed: r.set.speed, visCrew: r.set.visCrew, visImp: r.set.visImp, killRange: KILL_RANGES[r.set.killRange], taskbar: r.set.taskbar, test: r.set.testMode, vents: r.set.vents, info: r.set.infoTools,
+  visual: r.set.visualTasks !== false, speed: r.set.speed, visCrew: r.set.visCrew, visImp: r.set.visImp, killRange: KILL_RANGES[r.set.killRange], taskbar: r.set.taskbar, test: r.set.testMode, vents: r.set.vents, info: r.set.infoTools,
   sabs: { luces: r.set.sabLuces, coms: r.set.sabComs, puertas: r.set.sabPuertas, reactor: r.set.sabReactor, o2: r.set.sabO2 },
   times: { reactor: r.set.reactorTime, o2: r.set.o2Time, doors: r.set.doorTime }
 });
@@ -92,8 +92,25 @@ function endGame(r, w, reason) {
   clearCams(r); clearTimeout(r.timer); clearTimeout(r.phaseTimer);
   if (r.sab) { clearTimeout(r.sab.timer); r.sab = null; }
   r.state = 'end';
-  r.endInfo = { winner: w, reason: reason || null, hostId: r.hostId, roles: list(r).map(p => ({ id: p.id, name: p.name, color: p.color, look: p.look, role: p.role })) };
-  io.to(r.code).emit('end', { winner: w, reason: reason || null, hostId: r.hostId, roles: list(r).map(p => ({ id: p.id, name: p.name, color: p.color, look: p.look, role: p.role })) });
+  r.endInfo = { winner: w, reason: reason || null, hostId: r.hostId, roles: endStats(r), mvp: mvpOf(r, reason === 'test' ? null : w) };
+  io.to(r.code).emit('end', r.endInfo);
+}
+// Resultados: lo que hizo cada uno en la partida y el jugador más valioso del equipo ganador
+function endStats(r) {
+  return list(r).map(p => {
+    const st = p.st || {};
+    return { id: p.id, name: p.name, color: p.color, look: p.look, role: p.role, alive: p.alive, kills: st.kills || 0, tasks: (p.done || []).length, total: (p.tasks || []).length, reports: st.reports || 0, calls: st.calls || 0, votesOk: st.votesOk || 0, sabs: st.sabs || 0 };
+  });
+}
+function mvpScore(p) {
+  const st = p.st || {};
+  return p.role === 'impostor' ? (st.kills || 0) * 4 + (st.sabs || 0) + (p.alive ? 2 : 0)
+    : (p.done || []).length + (st.votesOk || 0) * 3 + (st.reports || 0) * 2 + (p.alive ? 1 : 0);
+}
+function mvpOf(r, w) {
+  const team = list(r).filter(p => p.role && (w === 'crew' || w === 'impostor' ? p.role === w : true));
+  let best = null, bs = -1; team.forEach(p => { const s = mvpScore(p); if (s > bs) { bs = s; best = p; } });
+  return best && bs > 0 ? best.id : null;
 }
 function checkWin(r) {
   if (r.state !== 'play') return;
@@ -102,7 +119,7 @@ function checkWin(r) {
 }
 
 function doKill(r, killer, t) {
-  t.alive = false; clearHolds(r, t.id);
+  t.alive = false; clearHolds(r, t.id); killer.st = killer.st || {}; killer.st.kills = (killer.st.kills || 0) + 1;
   killer.killReadyAt = Date.now() + killCdMs(r);
   const body = { id: ++r.bodySeq, pid: t.id, color: t.color, look: t.look, x: t.x, z: t.z };
   r.bodies.push(body);
@@ -133,7 +150,7 @@ function startGame(r) {
   const common = units.slice(0, nCommon).flatMap(k => S.pickUnit(S.TASK_UNITS[k])); r.common = common;
   ps.forEach((p, i) => {
     p.role = i < nImp ? 'impostor' : 'crew';
-    p.alive = true; p.done = []; p.vote = null; p.emergencies = set.emergencies; p.vent = null;
+    p.alive = true; p.done = []; p.vote = null; p.emergencies = set.emergencies; p.vent = null; p.st = {}; p.fx = null;
     p.killReadyAt = now + killCdMs(r);
     p.tasks = common.concat(shuffle(units.slice(nCommon)).slice(0, set.tasksPer - nCommon).flatMap(k => S.pickUnit(S.TASK_UNITS[k])));
   });
@@ -151,8 +168,9 @@ function startGame(r) {
 
 function startMeeting(r, caller, kind, body) {
   r.state = 'meeting'; r.bodies = []; clearCams(r);
+  caller.st = caller.st || {}; if (kind === 'body') caller.st.reports = (caller.st.reports || 0) + 1; else caller.st.calls = (caller.st.calls || 0) + 1;
   if (r.sab) endSab(r, false);
-  list(r).forEach(p => { p.vent = null; p.vote = null; });
+  list(r).forEach(p => { p.vent = null; p.vote = null; p.fx = null; });
   const victim = body ? r.players.get(body.pid) : null, dMs = ms(r.set.discuss), vMs = ms(r.set.voteTime), now = Date.now();
   r.meetingPhase = dMs > 0 ? 'discuss' : 'vote'; r.discussEnds = now + dMs; r.meetingEnds = now + dMs + vMs;
   r.meetingCaller = caller.id; r.meetingKind = kind; r.meetingVictimName = victim ? victim.name : null; r.meetingVictim = victim ? victim.id : null; r.lastResult = null;
@@ -175,7 +193,9 @@ function resolveMeeting(r) {
   clearTimeout(r.timer); clearTimeout(r.phaseTimer);
   const alive = list(r).filter(p => p.alive);
   const tally = {}; let skips = 0;
-  alive.forEach(p => {
+  alive.forEach(p => {   // votar a un impostor cuenta para el MVP de la tripulación
+    const vt = p.vote && p.vote !== 'skip' ? r.players.get(p.vote) : null;
+    if (vt && vt.role === 'impostor' && p.role === 'crew') { p.st = p.st || {}; p.st.votesOk = (p.st.votesOk || 0) + 1; }
     if (p.vote === null || p.vote === 'skip') skips++;
     else tally[p.vote] = (tally[p.vote] || 0) + 1;
   });
@@ -376,7 +396,8 @@ io.on('connection', sock => {
   });
 
   sock.on('task', id => {
-    if (!room || room.state !== 'play' || me.role !== 'crew') return;
+    // también los fantasmas; el impostor puede hacer sus tareas, pero no suman a la barra de la tripulación
+    if (!room || room.state !== 'play' || !me.role) return;
     if (!me.tasks.includes(id) || me.done.includes(id)) return;
     const pv = S.taskPrev(me.tasks)[id]; if (pv != null && !me.done.includes(pv)) return;   // las tareas por pasos van en orden
     const st = S.STATIONS[id];
@@ -384,8 +405,9 @@ io.on('connection', sock => {
     const sp = S.stationPos(st);
     if (Math.hypot(me.x - sp.x, me.z - sp.z) > TASK_RANGE) return;
     me.done.push(id);
-    room.doneTasks++;
     sock.emit('taskDone', id);
+    if (me.role !== 'crew') return;
+    room.doneTasks++;
     if (room.set.taskbar === 'siempre') emitProgress(room);
     checkWin(room);
   });
@@ -416,7 +438,17 @@ io.on('connection', sock => {
     if (Date.now() < room.sabReadyAt) return sock.emit('toast', 'El sabotaje se está recargando');
     let roomId = null;
     if (d.type === 'puertas') { roomId = String(d.room || ''); if (!S.ROOMS.some(q => q.id === roomId)) return; }
+    me.st = me.st || {}; me.st.sabs = (me.st.sabs || 0) + 1;
     startSab(room, d.type, roomId);
+  });
+  // Tareas visuales: el resto ve el escáner, los asteroides, la basura o los escudos mientras un tripulante los hace
+  sock.on('taskfx', d => {
+    if (!room || room.state !== 'play' || !d) return;
+    const id = +d.id, st = S.STATIONS[id];
+    if (!d.on) { if (me.fx === id) { me.fx = null; io.to(room.code).emit('taskfx', { pid: me.id, st: id, on: false }); } return; }
+    if (!st || !S.VISUAL_TASKS.includes(st.type) || room.set.visualTasks === false || !me.alive || me.role !== 'crew' || !me.tasks.includes(id)) return;
+    if (dist(me, S.stationPos(st)) > TASK_RANGE) return;
+    me.fx = id; io.to(room.code).emit('taskfx', { pid: me.id, st: id, on: true });
   });
   // Modo pruebas: el anfitrión provoca cualquier sabotaje sin importar su rol ni la recarga
   sock.on('testSabotage', d => {
@@ -425,9 +457,9 @@ io.on('connection', sock => {
     if (d.type === 'puertas') { roomId = String(d.room || ''); if (!S.ROOMS.some(q => q.id === roomId)) return; }
     startSab(room, d.type, roomId);
   });
-  // La tripulación arregla un panel (luces, comunicaciones, oxígeno)
+  // Cualquiera vivo arregla un panel (luces, comunicaciones, oxígeno): también el impostor, para disimular
   sock.on('fix', d => {
-    if (!room || room.state !== 'play' || !me.alive || me.role !== 'crew' || !room.sab || !d) return;
+    if (!room || room.state !== 'play' || !me.alive || !me.role || !room.sab || !d) return;
     const cfg = SABS[room.sab.type], id = String(d.panel || '');
     if (!cfg.panels || !cfg.panels.includes(id) || cfg.mode === 'simul') return;
     const pn = S.PANELS.find(q => q.id === id); if (!pn || dist(me, S.cellPos(pn)) > TASK_RANGE + 0.5) return;
@@ -437,7 +469,7 @@ io.on('connection', sock => {
   });
   // Reactor: dos jugadores mantienen los dos paneles a la vez
   sock.on('hold', d => {
-    if (!room || room.state !== 'play' || !me.alive || me.role !== 'crew' || !room.sab || !d) return;
+    if (!room || room.state !== 'play' || !me.alive || !me.role || !room.sab || !d) return;
     const cfg = SABS[room.sab.type], id = String(d.panel || '');
     if (cfg.mode !== 'simul' || !cfg.panels.includes(id)) return;
     if (d.on) {

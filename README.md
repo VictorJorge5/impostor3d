@@ -4,6 +4,13 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 4.3 · más juego para todos
+- **El impostor puede arreglar sabotajes** (luces, comunicaciones, oxígeno y reactor) y **hacer sus tareas** con los mismos minijuegos, para disimular. Sus tareas no suman a la barra de la tripulación.
+- **Puedes votarte a ti mismo** en las reuniones.
+- **Tareas visuales**: cuando un tripulante hace el escáner médico, los asteroides, la basura o los escudos, los demás lo ven (haz verde sobre él, rayos desde Armería, basura cayendo, cúpula azul del escudo). Si lo ves con tus ojos, es inocente; el impostor puede hacer la tarea, pero no se ve nada. Se puede desactivar en los ajustes de la sala (*Tareas visuales*).
+- **Los fantasmas siguen haciendo tareas**, que cuentan para la victoria de la tripulación.
+- **Pantalla de resultados**: el **MVP** de la partida, quién era impostor, asesinatos y sabotajes de cada impostor, tareas hechas por cada jugador, votos al impostor y cuerpos reportados.
+
 ## Novedades 4.2 · tareas por pasos
 Como en el original, algunas tareas tienen varios pasos en salas distintas y hay que hacerlos en orden. La lista muestra solo el paso que toca y cuántos llevas (por ejemplo *Subir datos · Administración (1/2)*); el "!" y el anillo del suelo solo aparecen en la consola del paso actual, y el servidor no acepta un paso antes que el anterior.
 

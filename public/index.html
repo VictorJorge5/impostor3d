@@ -475,6 +475,25 @@ body.ready #splash{opacity:0;visibility:hidden}
 #endOv #btnAgain{margin-bottom:auto}
 .rtag{font-weight:800!important;letter-spacing:.6px;text-transform:uppercase}.rtag.imp{color:var(--red)!important}.rtag.crew{color:var(--mint)!important}
 #endRoles .pl.isImp{border-color:#ff3d5e66;background:linear-gradient(180deg,#ff3d5e1c,#ff3d5e06)}
+#endRoles{display:flex;flex-direction:column;gap:10px;width:min(560px,94vw)}
+.endList{display:grid;gap:6px}
+#endRoles .pl.gone .portrait,#endRoles .pl.gone canvas{opacity:.55;filter:grayscale(.7)}
+.ests{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;flex:none;max-width:52%}
+.est{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:99px;background:#ffffff0d;border:1px solid var(--line);font-size:12px;color:#dfe6ff;font-variant-numeric:tabular-nums}
+.est .i{width:13px;height:13px;stroke-width:2.2;color:var(--steel)}
+.est.k{color:#ffb3c0;border-color:#ff3d5e55}.est.k .i{color:var(--red)}
+.est.ok{color:var(--mint);border-color:#4ef0b855}.est.ok .i{color:var(--mint)}
+.est.fake{opacity:.6}
+.mvpCard{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:18px;text-align:left;background:linear-gradient(135deg,#ffc35c26,#ff9f2e0a);border:1px solid #ffc35c66;box-shadow:0 0 40px -10px #ffb54766;animation:plIn .5s var(--ease) both .15s}
+.mvpCard.isImp{background:linear-gradient(135deg,#ff3d5e2a,#ff3d5e08);border-color:#ff3d5e77;box-shadow:0 0 40px -10px #ff3d5e77}
+.mvpTxt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mvpTxt small{display:inline-flex;align-items:center;gap:5px;font-family:var(--fd);font-weight:700;font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;color:#ffc35c}
+.mvpTxt small .i{width:14px;height:14px}
+.mvpTxt b{font-family:var(--fd);font-size:22px;line-height:1.1}
+.mvpTxt span{font-size:13px;color:var(--steel)}
+.endLeg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;opacity:.75}
+.endLeg .est{background:none;border-color:transparent;font-size:11px}
+@media (max-width:420px){.ests{max-width:46%}.est{padding:3px 6px;font-size:11px}}
 
 /* ---- reuniones ---- */
 #mtgHead h2,#roleOv b,#bannerOv b,#deathOv b{font-family:var(--fd)}
@@ -662,7 +681,7 @@ body.ready #splash{opacity:0;visibility:hidden}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v4.2</span></footer>
+    <footer class="foot"><span>Impostor 3D · v4.3</span></footer>
   </div>
 </div>
 
@@ -1947,6 +1966,7 @@ function buildMap() {
 const AV_K = 1.22, HEAD_K = 1.35;   // en la partida los personajes van un poco más grandes: con la cámara desde arriba se os ven bien las caras
 const blobGeo = new THREE.CircleGeometry(.72, 22), blobMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: .38, depthWrite: false });
 function clearWorld() {
+  clearTaskFx();
   G.players.forEach(p => { scene.remove(p.mesh); if (p.blob) scene.remove(p.blob); if (p.pet) scene.remove(p.pet); }); G.players.clear();
   G.bodies.forEach(b => scene.remove(b.mesh)); G.bodies.clear();
 }
@@ -2014,7 +2034,8 @@ function animRig(mesh, moving, dt, now, ghost) {
   return Math.abs(Math.cos(r.ph)) * .055 * r.sw;
 }
 function ghostify(o) {
-  o.mesh.traverse(n => { if (n.isMesh) { n.material = n.material.clone(); n.material.transparent = true; n.material.opacity = .42; } });
+  const ghostMat = m => { m = m.clone(); m.transparent = true; m.opacity = .42; return m; };   // algunas piezas (el dorsal) llevan varios materiales
+  o.mesh.traverse(n => { if (n.isMesh) n.material = Array.isArray(n.material) ? n.material.map(ghostMat) : ghostMat(n.material); });
 }
 function addBody(b) {
   const av = createAvatar(b.look); av.scale.multiplyScalar(AV_K); av.rotation.x = -Math.PI / 2; av.position.set(0, 0, 0);
@@ -2126,12 +2147,13 @@ function taskDoneLocal(id) {
 }
 socket.on('progress', ({ done, total }) => { G.doneN = done; G.total = total; updateBar(); });
 socket.on('left', ({ id }) => {
-  const p = G.players.get(id); if (p) { scene.remove(p.mesh); if (p.blob) scene.remove(p.blob); if (p.pet) scene.remove(p.pet); G.players.delete(id); }
+  const p = G.players.get(id); if (p) { scene.remove(p.mesh); if (p.blob) scene.remove(p.blob); if (p.pet) scene.remove(p.pet); G.players.delete(id); } dropTaskFx(id);
   if (G.state === 'meeting') renderMeeting();
 });
 
 /* reuniones */
 function onMeeting(d) {
+  clearTaskFx();
   G.state = 'meeting'; releaseLock(); closeMG(); closeSabMenu(); closeTestMenu(); clearBodies(); G.vent = null; renderVentUI(); stopEject(); sfx.stopAll(); showBanner(d); snd('report');
   G.voted = new Set(); G.myVote = null; G.sel = null; G.result = null; G.unread = 0; G.resultShown = false; G.mtgEnds = performance.now() + d.ends;
   buzz([120, 60, 120]); G.phase = d.discuss > 0 ? 'discuss' : 'vote'; G.phaseEnds = performance.now() + (d.discuss || 0); G.barTotal = { discuss: d.discuss || 0, vote: d.vote != null ? d.vote : Math.max(1, d.ends - (d.discuss || 0)) };
@@ -2171,7 +2193,7 @@ function renderMeeting() {
   }
   if (res && res.votes) res.votes.forEach(v => { if (v.to === 'skip') skipFrom.push(v.from); else (votesTo[v.to] = votesTo[v.to] || []).push(v.from); });
   for (const p of G.players.values()) {
-    const mate = G.role === 'impostor' && G.mates.includes(p.id) && p.id !== myId, selectable = can && p.alive && p.id !== myId;
+    const mate = G.role === 'impostor' && G.mates.includes(p.id) && p.id !== myId, selectable = can && p.alive;   // también puedes votarte a ti mismo
     const card = el('div', 'pcard' + (p.alive ? '' : ' dead') + (p.id === myId ? ' me' : '') + (selectable ? ' can' : '') + (G.sel === p.id && selectable ? ' sel' : '') + (mate ? ' imp' : '') + (res && res.ejected && res.ejected.id === p.id ? ' out' : ''));
     card.dataset.id = p.id; card.append(portrait(p.look, colHex(p.color), 46));
     const info = el('div', 'pname'); info.append(document.createTextNode(p.name + (p.id === myId ? ' (tú)' : '')));
@@ -2240,14 +2262,32 @@ function showEnd(d) {
   $('endSub').textContent = d.reason === 'test' ? 'El anfitrión ha dado la prueba por terminada.' : why + (iWin ? '¡Tu equipo ha ganado!' : 'Esta vez no ha podido ser.');
   if (d.reason === 'test') { $('endTitle').textContent = 'Prueba terminada'; $('endTitle').style.color = '#ffb347'; }
   if (d.reason !== 'test') snd(iWin ? 'win' : 'lose');
+  // Resultados: primero el MVP, luego los impostores y después la tripulación, con lo que hizo cada uno
+  clearTaskFx();
   const box = $('endRoles'); box.innerHTML = '';
-  d.roles.forEach(p => {
-    const row = el('div', 'pl');
-    const nm = el('div', 'pn', p.name); nm.append(el('small', 'rtag ' + (p.role === 'impostor' ? 'imp' : 'crew'), p.role === 'impostor' ? 'Impostor' : 'Tripulante'));
-    row.className = 'pl' + (p.role === 'impostor' ? ' isImp' : ''); row.style.animationDelay = (box.children.length * 60 + 300) + 'ms';
-    row.append(portrait(p.look, colHex(p.color), 40), nm);
-    box.append(row);
+  const imp = p => p.role === 'impostor', stat = (icon, txt, cls) => { const c = el('span', 'est' + (cls ? ' ' + cls : '')); c.append(ico(icon), el('b', '', txt)); return c; };
+  const doneTxt = p => imp(p) ? [p.kills === 1 ? '1 asesinato' : `${p.kills || 0} asesinatos`, p.sabs ? `${p.sabs} sabotaje${p.sabs > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ')
+    : [`${p.tasks || 0}/${p.total || 0} tareas`, p.votesOk ? `${p.votesOk} voto${p.votesOk > 1 ? 's' : ''} al impostor` : '', p.reports ? `${p.reports} cuerpo${p.reports > 1 ? 's' : ''} reportado${p.reports > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ');
+  const mvp = d.mvp && d.roles.find(p => p.id === d.mvp);
+  if (mvp) {
+    const c = el('div', 'mvpCard' + (imp(mvp) ? ' isImp' : '')); c.append(portrait(mvp.look, colHex(mvp.color), 64));
+    const t = el('div', 'mvpTxt'); const tag = el('small', ''); tag.append(ico('crown'), document.createTextNode('MVP de la partida')); t.append(tag, el('b', '', mvp.name + (mvp.id === myId ? ' (tú)' : '')), el("span", "", doneTxt(mvp)));
+    c.append(t); box.append(c);
+  }
+  const list = el('div', 'endList');
+  d.roles.slice().sort((a, b) => imp(b) - imp(a) || (b.kills || 0) - (a.kills || 0) || (b.tasks || 0) - (a.tasks || 0)).forEach((p, i) => {
+    const row = el('div', 'pl' + (imp(p) ? ' isImp' : '') + (p.alive === false ? ' gone' : '')); row.style.animationDelay = (i * 60 + 300) + 'ms';
+    const nm = el('div', 'pn', p.name + (p.id === myId ? ' (tú)' : ''));
+    nm.append(el('small', 'rtag ' + (imp(p) ? 'imp' : 'crew'), (imp(p) ? 'Impostor' : 'Tripulante') + (p.alive === false ? ' · eliminado' : '')));
+    const sts = el('div', 'ests');
+    if (imp(p)) { sts.append(stat('knife', String(p.kills || 0), 'k')); if (p.sabs) sts.append(stat('zap', String(p.sabs))); if (p.total) sts.append(stat('list', `${p.tasks || 0}/${p.total}`, 'fake')); }
+    else { sts.append(stat('list', `${p.tasks || 0}/${p.total || 0}`, p.total && p.tasks >= p.total ? 'ok' : '')); if (p.votesOk) sts.append(stat('check', String(p.votesOk))); if (p.reports) sts.append(stat('report', String(p.reports))); }
+    row.append(portrait(p.look, colHex(p.color), 40), nm, sts);
+    if (mvp && p.id === mvp.id) { const cr = el('span', 'crown'); cr.append(ico('crown'), document.createTextNode('MVP')); row.append(cr); }
+    list.append(row);
   });
+  box.append(list);
+  const leg = el('div', 'endLeg'); leg.append(stat('knife', 'asesinatos'), stat('list', 'tareas'), stat('check', 'votos al impostor'), stat('report', 'cuerpos reportados'), stat('zap', 'sabotajes')); box.append(leg);
   const isHost = d.hostId === myId;
   $('btnAgain').style.display = isHost ? 'flex' : 'none'; $('endWait').style.display = isHost ? 'none' : 'block';
   ov('endOv', true);
@@ -2269,6 +2309,7 @@ function openTask(st) {
   mgTok++; $('mgTitle').textContent = st.name; $('mgTitle').append(el('span', 'mgRoom', roomName(st.room))); $('mgBody').innerHTML = ''; ov('mg', true);
   let fin = false;
   const nx = tNext(st.id), opts = { room: roomName(st.room), target: nx != null ? roomName(S.STATIONS[nx].room) : null };
+  if (S.VISUAL_TASKS.includes(st.type) && G.role === 'crew' && G.alive && G.cfg.visual !== false) { G.fxTask = st.id; socket.emit('taskfx', { id: st.id, on: true }); }
   MG[st.type]($('mgBody'), () => {
     if (fin) return; fin = true; $('mgTitle').textContent = '✔ Tarea completada';
     setTimeout(() => { if (!mgOpen) return; closeMG(); completeTask(st.id); }, 500);
@@ -2276,6 +2317,7 @@ function openTask(st) {
 }
 function closeMG() {
   mgOpen = false; mgTok++; ov('mg', false); closeInfo();
+  if (G.fxTask != null) { socket.emit('taskfx', { id: G.fxTask, on: false }); G.fxTask = null; }
   if (G.holding) { socket.emit('hold', { panel: G.holding, on: false }); G.holding = null; }
   G.mgPanel = null;
 }
@@ -2300,10 +2342,7 @@ function holdPanelUI(pn, body) {
   }, 150);
 }
 $('mgClose').onclick = closeMG;
-function completeTask(id) {
-  if (G.role === 'crew') socket.emit('task', id);
-  else taskDoneLocal(id);
-}
+function completeTask(id) { socket.emit('task', id); }   // el servidor valida y avisa con 'taskDone' (tripulación, impostor y fantasmas)
 
 
 
@@ -2637,7 +2676,7 @@ function updateActions(now) {
   const act = { use: null, report: false, kill: null, vent: null };
   if (G.state === 'play' && !mgOpen && now > G.frozenUntil && G.vent == null) {
     let bd = 3.8;
-    if (G.sab && G.sab.panels && G.alive && G.role === 'crew') for (const pid of G.sab.panels) {
+    if (G.sab && G.sab.panels && G.alive) for (const pid of G.sab.panels) {   // el impostor también puede arreglar (para disimular)
       if ((G.sab.done || []).includes(pid)) continue;
       const pn = S.PANELS.find(q => q.id === pid), pp = S.cellPos(pn), d = Math.hypot(G.x - pp.x, G.z - pp.z);
       if (d < bd) { bd = d; act.use = { type: 'panel', panel: pn }; }
@@ -2681,6 +2720,47 @@ function setAct(b, show, on, icon, label, cd, isCd) {
   const u = b.querySelector('use'); if (u && u.getAttribute('href') !== '#i-' + icon) u.setAttribute('href', '#i-' + icon);
   b.querySelector('.al').textContent = label; b.querySelector('.acd').textContent = cd || '';
   if (on && !b._wasOn && show) buzz(8); b._wasOn = !!on;
+}
+
+/* ---------- tareas visuales: los demás ven el escáner médico, los asteroides, la basura y los escudos ---------- */
+const taskFx = new Map();   // id del jugador -> { st, type, grp, t0, parts }
+function dropTaskFx(pid) { const f = taskFx.get(pid); if (f) { scene.remove(f.grp); taskFx.delete(pid); } }
+function clearTaskFx() { [...taskFx.keys()].forEach(dropTaskFx); }
+function makeTaskFx(type, st) {
+  const grp = new THREE.Group(), add = (geo, mat) => { const m = new THREE.Mesh(geo, mat); grp.add(m); return m; }, parts = [];
+  const glow = (c, o) => new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: o, depthWrite: false, side: THREE.DoubleSide });
+  const sp = S.stationPos(st); grp.position.set(sp.x, 0, sp.z);
+  if (type === 'scan') {   // columna verde que te recorre de pies a cabeza
+    add(new THREE.CylinderGeometry(.95, .95, 2.9, 32, 1, true), glow(0x4ef0b8, .22)).position.y = 1.45;
+    for (let k = 0; k < 2; k++) { const r = add(new THREE.TorusGeometry(.95, .045, 8, 40), glow(0x9dffd8, .9)); r.rotation.x = Math.PI / 2; parts.push(r); }
+    add(new THREE.CircleGeometry(1.0, 32), glow(0x4ef0b8, .35)).rotation.x = -Math.PI / 2;
+  } else if (type === 'asteroids') {   // el cañón dispara rayos hacia el espacio
+    for (let k = 0; k < 6; k++) { const b = add(new THREE.BoxGeometry(.09, .09, 1.6), glow(0x7dffcf, .95)); b.visible = false; parts.push({ m: b, t: -k * .14 }); }
+  } else if (type === 'trash') {   // la basura cae por el conducto
+    const mats = [0x8a6a44, 0x6b7f5a, 0x9aa3bb].map(c => new THREE.MeshLambertMaterial({ color: c }));
+    for (let k = 0; k < 9; k++) { const b = add(new THREE.BoxGeometry(.26, .2, .22), mats[k % 3]); parts.push({ m: b, t: k / 9 }); }
+    const lamp = add(new THREE.SphereGeometry(.16, 12, 8), glow(0xffb547, .95)); lamp.position.set(0, 2.15, 0); parts.lamp = lamp;
+  } else if (type === 'shields') {   // la cúpula del escudo se enciende sección a sección
+    const dome = add(new THREE.IcosahedronGeometry(2.4, 1), new THREE.MeshBasicMaterial({ color: 0x5aa9ff, wireframe: true, transparent: true, opacity: .55, depthWrite: false })); dome.position.y = 1.2; parts.push(dome);
+    add(new THREE.SphereGeometry(2.3, 24, 16), glow(0x5aa9ff, .12)).position.y = 1.2;
+  }
+  scene.add(grp); grp.traverse(o => { if (o.isMesh) fowMat(o.material); });
+  return { grp, parts };
+}
+socket.on('taskfx', ({ pid, st, on }) => {
+  dropTaskFx(pid); const s = S.STATIONS[st]; if (!on || !s || !sceneOK) return;
+  const f = makeTaskFx(s.type, s); taskFx.set(pid, Object.assign(f, { st, type: s.type, t0: performance.now() }));
+});
+function updateTaskFx(dt, now) {
+  taskFx.forEach((f, pid) => {
+    const t = (now - f.t0) / 1000, p = G.players.get(pid);
+    if (f.type === 'scan' && p) f.grp.position.set(p.mesh.position.x, 0, p.mesh.position.z);   // el haz va contigo
+    f.grp.visible = canSee(f.grp.position.x, f.grp.position.z, f.grp.visible);
+    if (f.type === 'scan') f.parts.forEach((r, k) => { r.position.y = .1 + (Math.sin(t * 2.2 + k * Math.PI) * .5 + .5) * 2.6; });
+    else if (f.type === 'asteroids') f.parts.forEach(b => { b.t += dt; const k = (b.t % .84) / .5; b.m.visible = b.t > 0 && k < 1; if (b.m.visible) { const a = (b.t * 7) % 1 - .5; b.m.position.set(a * 1.4, 1.6 + k * 4.5, -k * 9); b.m.rotation.x = .45; } });
+    else if (f.type === 'trash') { f.parts.forEach(b => { if (!b.m) return; const k = (t * .9 + b.t) % 1; b.m.position.set(Math.sin(b.t * 40) * .35, 2.2 - k * 2.3, Math.cos(b.t * 30) * .3); b.m.rotation.set(t * 3 + b.t * 9, t * 2, 0); b.m.visible = k < .95; }); f.parts.lamp.visible = Math.sin(t * 9) > 0; }
+    else if (f.type === 'shields') { f.parts[0].rotation.y = t * .6; f.parts[0].material.opacity = .35 + Math.sin(t * 5) * .2; }
+  });
 }
 
 /* ---------- visión real: niebla de guerra con línea de visión ----------
@@ -2860,7 +2940,7 @@ function update(dt, now) {
   camera.position.set(G.camX, 1 + Math.sin(EL) * G.camD, G.camZ + .35 + Math.cos(EL) * G.camD); camera.lookAt(G.camX, 1, G.camZ + .35);
   if (now < G.shakeUntil) { const a = G.shakeAmp * ((G.shakeUntil - now) / 380); camera.position.x += (Math.random() - .5) * a; camera.position.y += (Math.random() - .5) * a; camera.position.z += (Math.random() - .5) * a; }
   myLight.position.set(hx, 2.8, hz);
-  updateFow(dt, now);
+  updateFow(dt, now); updateTaskFx(dt, now);
 
   // reunión: cuenta atrás
   if (G.state === 'meeting' && !G.resultShown) { const t = $('mtgTimer'); if (t) t.textContent = G.phase === 'discuss' ? `discusión ${Math.max(0, Math.ceil((G.phaseEnds - now) / 1000))} s` : `votación ${Math.max(0, Math.ceil((G.mtgEnds - now) / 1000))} s`; }
