@@ -4,6 +4,11 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 4.4 · fallos arreglados y reglas como el original
+- **Tu foto, lo primero**: el editor abre en la pestaña **Tu foto** (al crear un personaje con "Con mis fotos", con "+ Nuevo" o si aún no tiene foto). Antes se abría en *Fútbol* y los botones de cámara/galería quedaban escondidos.
+- **Reglas del original**: no se puede pulsar el botón de emergencia durante un sabotaje (salvo puertas); las luces y las comunicaciones siguen saboteadas después de una reunión (el reactor, el oxígeno y las puertas se reinician); el impostor fantasma puede seguir saboteando; los fantasmas tienen su propio chat que solo leen otros fantasmas; el primer asesinato de la partida tarda como mucho 10 s.
+- **Fallos arreglados**: la reconexión ya no caduca en partidas de más de 15 minutos; el anfitrión que se reconecta en la pantalla final conserva "Volver a la sala"; si el anfitrión se desconecta en la sala o al final, otro jugador pasa a serlo; no se puede empezar una partida contando a jugadores desconectados; si el último impostor se va durante una reunión, la tripulación gana al momento; los menús de sabotaje y de pruebas ya no se quedan abiertos entre partidas; una tarea terminada cuenta aunque cierres el minijuego enseguida; al morir durante un apagón o con las comunicaciones caídas dejas de sufrir sus efectos; el impostor que se mete en una rejilla deja de sujetar el panel del reactor; al reconectar no se pierden reuniones de emergencia.
+
 ## Novedades 4.3 · más juego para todos
 - **El impostor puede arreglar sabotajes** (luces, comunicaciones, oxígeno y reactor) y **hacer sus tareas** con los mismos minijuegos, para disimular. Sus tareas no suman a la barra de la tripulación.
 - **Puedes votarte a ti mismo** en las reuniones.

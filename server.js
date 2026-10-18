@@ -18,7 +18,7 @@ const SABS = {
   o2:      { name: 'Oxígeno',        panels: ['o2a', 'o2b'],           mode: 'both',  crisis: true }
 };
 const KILL_RANGES = { corta: 3.5, media: 5.5, larga: 8 };
-const killCdMs = r => ms(r.set.killCd), sabCdMs = r => ms(r.set.sabCd), sabFirstMs = r => ms(Math.min(r.set.sabCd, 20));
+const killCdMs = r => ms(r.set.killCd), firstKillMs = r => ms(Math.min(r.set.killCd, 10)), sabCdMs = r => ms(r.set.sabCd), sabFirstMs = r => ms(Math.min(r.set.sabCd, 20));
 const sabMs = (r, t) => t === 'puertas' ? ms(r.set.doorTime) : t === 'reactor' ? ms(r.set.reactorTime) : t === 'o2' ? ms(r.set.o2Time) : 0;
 const sabEnabled = (r, t) => ({ luces: r.set.sabLuces, coms: r.set.sabComs, puertas: r.set.sabPuertas, reactor: r.set.sabReactor, o2: r.set.sabO2 })[t];
 // Lo que necesita saber el cliente de los ajustes
@@ -151,7 +151,7 @@ function startGame(r) {
   ps.forEach((p, i) => {
     p.role = i < nImp ? 'impostor' : 'crew';
     p.alive = true; p.done = []; p.vote = null; p.emergencies = set.emergencies; p.vent = null; p.st = {}; p.fx = null;
-    p.killReadyAt = now + killCdMs(r);
+    p.killReadyAt = now + firstKillMs(r);
     p.tasks = common.concat(shuffle(units.slice(nCommon)).slice(0, set.tasksPer - nCommon).flatMap(k => S.pickUnit(S.TASK_UNITS[k])));
   });
   r.totalTasks = ps.filter(p => p.role === 'crew').reduce((n, p) => n + p.tasks.length, 0);
@@ -160,7 +160,7 @@ function startGame(r) {
   for (const p of ps) {
     io.to(p.id).emit('start', {
       role: p.role, tasks: p.tasks, mates: p.role === 'impostor' ? imps : [],
-      players: pub(r), total: set.taskbar === 'nunca' ? 0 : r.totalTasks, killCd: killCdMs(r), sabCd: p.role === 'impostor' ? sabFirstMs(r) : 0,
+      players: pub(r), total: set.taskbar === 'nunca' ? 0 : r.totalTasks, killCd: firstKillMs(r), sabCd: p.role === 'impostor' ? sabFirstMs(r) : 0,
       emCd: ms(set.emergencyCd), emerg: set.emergencies, cfg: clientCfg(r), common, impCount: imps.length
     });
   }
@@ -169,7 +169,7 @@ function startGame(r) {
 function startMeeting(r, caller, kind, body) {
   r.state = 'meeting'; r.bodies = []; clearCams(r);
   caller.st = caller.st || {}; if (kind === 'body') caller.st.reports = (caller.st.reports || 0) + 1; else caller.st.calls = (caller.st.calls || 0) + 1;
-  if (r.sab) endSab(r, false);
+  if (r.sab && (SABS[r.sab.type].crisis || r.sab.type === 'puertas')) endSab(r, false);   // como en el original: luces y comunicaciones siguen tras la reunión
   list(r).forEach(p => { p.vent = null; p.vote = null; p.fx = null; });
   const victim = body ? r.players.get(body.pid) : null, dMs = ms(r.set.discuss), vMs = ms(r.set.voteTime), now = Date.now();
   r.meetingPhase = dMs > 0 ? 'discuss' : 'vote'; r.discussEnds = now + dMs; r.meetingEnds = now + dMs + vMs;
@@ -196,7 +196,7 @@ function resolveMeeting(r) {
   alive.forEach(p => {   // votar a un impostor cuenta para el MVP de la tripulación
     const vt = p.vote && p.vote !== 'skip' ? r.players.get(p.vote) : null;
     if (vt && vt.role === 'impostor' && p.role === 'crew') { p.st = p.st || {}; p.st.votesOk = (p.st.votesOk || 0) + 1; }
-    if (p.vote === null || p.vote === 'skip') skips++;
+    if (p.vote === null || p.vote === 'skip') skips++;   // como en el original: quien no vota cuenta como "saltar"
     else tally[p.vote] = (tally[p.vote] || 0) + 1;
   });
   let top = null, max = 0, tie = false;
@@ -223,8 +223,8 @@ function resolveMeeting(r) {
     placeSpawns(r); settleRooms(r);
     const now = Date.now();
     list(r).forEach(p => { p.killReadyAt = now + killCdMs(r); p.vent = null; p.path = []; });
-    r.sabReadyAt = now + sabFirstMs(r); r.emReadyAt = now + ms(r.set.emergencyCd);
-    io.to(r.code).emit('resume', { players: pub(r), killCd: killCdMs(r), sabCd: sabFirstMs(r), emCd: ms(r.set.emergencyCd) });
+    if (!r.sab) r.sabReadyAt = now + sabFirstMs(r); r.emReadyAt = now + ms(r.set.emergencyCd);
+    io.to(r.code).emit('resume', { players: pub(r), killCd: killCdMs(r), sabCd: r.sab ? -1 : sabFirstMs(r), emCd: ms(r.set.emergencyCd), sab: sabInfo(r) });
   }, RESULT_MS);
 }
 
@@ -302,6 +302,7 @@ function dropPlayer(r, p) {
     if (r.set.taskbar === 'siempre') emitProgress(r);
   }
   if (r.state === 'play') checkWin(r);
+  else if ((r.state === 'meeting' || r.state === 'result') && winner(r)) endGame(r, winner(r));
   else if (r.state === 'meeting' && r.meetingPhase === 'vote' && allVoted(r)) resolveMeeting(r);
 }
 // Estado completo para quien vuelve a entrar en mitad de la partida
@@ -318,7 +319,7 @@ function snapshot(r, p) {
     voted: list(r).filter(q => q.alive && q.vote !== null).map(q => q.id)
   };
   if (r.state === 'result') s.result = r.lastResult;
-  if (r.state === 'end') s.end = r.endInfo;
+  if (r.state === 'end') s.end = Object.assign({}, r.endInfo, { hostId: r.hostId });
   return s;
 }
 
@@ -370,6 +371,8 @@ io.on('connection', sock => {
   sock.on('start', () => {
     if (!room || room.hostId !== sock.id || room.state !== 'lobby') return;
     const minP = room.set.testMode ? 1 : MIN_PLAYERS;
+    humans(room).filter(p => p.offline).forEach(p => dropPlayer(room, p));   // los desconectados no cuentan
+    if (!rooms.has(room.code)) return;
     if (room.players.size < minP) return sock.emit('toast', `Hacen falta al menos ${minP} jugadores`);
     startGame(room);
   });
@@ -421,7 +424,7 @@ io.on('connection', sock => {
 
   sock.on('emergency', () => {
     if (!room || room.state !== 'play' || !me.alive || me.vent != null || me.emergencies < 1) return;
-    if (room.sab && SABS[room.sab.type].crisis) return sock.emit('toast', 'No se puede convocar una reunión durante una crisis');
+    if (room.sab && room.sab.type !== 'puertas') return sock.emit('toast', 'No se puede convocar una reunión durante un sabotaje');
     if (dist(me, S.BUTTON) > BUTTON_RANGE) return;
     if (Date.now() < room.emReadyAt) return sock.emit('toast', `El botón se está recargando (${Math.ceil((room.emReadyAt - Date.now()) / 1000 / TS)} s)`);
     me.emergencies--;
@@ -431,7 +434,8 @@ io.on('connection', sock => {
 
   // El impostor provoca un sabotaje
   sock.on('sabotage', d => {
-    if (!room || room.state !== 'play' || !me.alive || me.role !== 'impostor' || me.vent != null || !d) return;
+    // el impostor fantasma también puede sabotear (como en el original), pero no matar ni usar rejillas
+    if (!room || room.state !== 'play' || me.role !== 'impostor' || me.vent != null || !d) return;
     const cfg = SABS[d.type]; if (!cfg) return;
     if (!sabEnabled(room, d.type)) return sock.emit('toast', 'Ese sabotaje está desactivado en esta partida');
     if (room.sab) return sock.emit('toast', 'Ya hay un sabotaje en marcha');
@@ -487,7 +491,7 @@ io.on('connection', sock => {
     if (d.action === 'enter') {
       const v = S.VENTS[+d.id]; if (!v || me.vent != null) return;
       const vp = S.cellPos(v); if (dist(me, vp) > 4.8) return;
-      me.vent = v.id; me.x = vp.x; me.z = vp.z; me.mv = 0;
+      me.vent = v.id; me.x = vp.x; me.z = vp.z; me.mv = 0; clearHolds(room, me.id);
       io.to(room.code).emit('ventfx', { id: me.id, x: vp.x, z: vp.z, out: false });
     } else if (d.action === 'move') {
       const cur = me.vent == null ? null : S.VENTS[me.vent], nx = S.VENTS[+d.id];
@@ -517,11 +521,13 @@ io.on('connection', sock => {
   });
 
   sock.on('chat', text => {
-    if (!room || room.state !== 'meeting' || !me.alive) return;
+    // Los vivos hablan en las reuniones; los fantasmas hablan entre ellos en cualquier momento y solo les leen otros fantasmas
+    if (!room || !me || !me.role || (me.alive && room.state !== 'meeting') || !['play', 'meeting', 'result'].includes(room.state)) return;
     text = String(text || '').trim().slice(0, 140);
-    if (!text || Date.now() - me.lastChat < 500) return;
+    if (!text || Date.now() - (me.lastChat || 0) < 500) return;
     me.lastChat = Date.now();
-    io.to(room.code).emit('chat', { id: me.id, name: me.name, color: me.color, text });
+    const m = { id: me.id, name: me.name, color: me.color, text, ghost: !me.alive };
+    if (me.alive) io.to(room.code).emit('chat', m); else list(room).filter(q => !q.alive && !q.isBot).forEach(q => io.to(q.id).emit('chat', m));
   });
 
   sock.on('vote', target => {
@@ -547,6 +553,9 @@ io.on('connection', sock => {
     const r = room, p = me;
     p.offline = true; p.mv = 0; clearHolds(r, p.id); if (r.camViewers) { r.camViewers.delete(p.id); emitCam(r); }
     io.to(r.code).emit('presence', { id: p.id, offline: true, name: p.name });
+    if ((r.state === 'lobby' || r.state === 'end') && r.hostId === p.id) {   // el anfitrión se ha ido: otro puede empezar o volver a jugar
+      const next = humans(r).find(q => !q.offline); if (next) { r.hostId = next.id; if (r.state === 'end') io.to(r.code).emit('left', { id: null, hostId: r.hostId }); }
+    }
     if (r.state === 'lobby') emitLobby(r);
     p.dropTimer = setTimeout(() => dropPlayer(r, p), GRACE_MS);
   });
@@ -567,6 +576,7 @@ io.on('connection', sock => {
     const old = p.id;
     if (old !== sock.id) {
       const oldSock = io.sockets.sockets.get(old);
+      clearHolds(r, old); if (r.camViewers && r.camViewers.delete(old)) emitCam(r); p.fx = null;   // lo que dejaba colgado el socket viejo
       r.players.delete(old); p.id = sock.id; r.players.set(p.id, p);
       if (r.hostId === old) r.hostId = p.id;
       r.bodies.forEach(b => { if (b.pid === old) b.pid = p.id; });

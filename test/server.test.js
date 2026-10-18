@@ -80,3 +80,32 @@ test('crear sala, unirse con el código y empezar la partida', async () => {
   const rb = await new Promise(res => b.emit('rejoin', { code: ra.code, token: 'malo' }, res));
   assert.ok(rb.error);
 });
+
+test('reglas del original: sin botón durante un sabotaje, las luces siguen tras la reunión y los fantasmas hablan entre ellos', async () => {
+  const S = require('../public/shared.js');
+  const socks = await Promise.all([1, 2, 3, 4].map(() => connect()));
+  const [h] = socks;
+  const r0 = await ack(h, 'join', { name: 'H', look: {}, code: '' });
+  for (const [i, s] of socks.slice(1).entries()) assert.ok((await ack(s, 'join', { name: 'P' + i, look: {}, code: r0.code })).ok);
+  const starts = socks.map(s => once(s, 'start')); h.emit('start'); const st = await Promise.all(starts);
+  const imp = socks[st.findIndex(s => s.role === 'impostor')], crew = socks.filter(s => s !== imp);
+  const at = (s, p) => s.emit('move', { x: p.x, z: p.z, ry: 0, mv: 0 });
+  // el impostor apaga las luces cuando se le pasa la recarga del sabotaje
+  await new Promise(r => setTimeout(r, 1200));
+  const sab = once(crew[0], 'sabotage'); imp.emit('sabotage', { type: 'luces' }); await sab;
+  // con las luces apagadas no se puede pulsar el botón de emergencia
+  at(crew[0], S.BUTTON); await new Promise(r => setTimeout(r, 100));
+  const t = once(crew[0], 'toast'); crew[0].emit('emergency'); assert.match(await t, /sabotaje/);
+  // el impostor mata a un tripulante y otro reporta: tras la reunión las luces siguen apagadas
+  const victim = crew[2], vPos = { x: S.BUTTON.x + 6, z: S.BUTTON.z + 2 };
+  at(victim, vPos); at(imp, { x: vPos.x + 1, z: vPos.z }); await new Promise(r => setTimeout(r, 200));
+  const killed = once(crew[0], 'killed'); imp.emit('kill', victim.id); await killed;
+  // chat de fantasmas: lo recibe el fantasma, no los vivos
+  at(crew[0], { x: vPos.x, z: vPos.z + 1 }); await new Promise(r => setTimeout(r, 100));
+  const mtg = once(crew[0], 'meeting'); crew[0].emit('report'); await mtg;
+  let leaked = false; crew[0].on('chat', m => { if (m.ghost) leaked = true; });
+  const gch = once(victim, 'chat'); victim.emit('chat', 'soy un fantasma'); const gm = await gch; assert.equal(gm.ghost, true);
+  await new Promise(r => setTimeout(r, 200)); assert.equal(leaked, false);
+  const resumed = once(crew[0], 'resume'); socks.forEach(s => s.emit('vote', 'skip'));
+  const rs = await resumed; assert.ok(rs.sab && rs.sab.type === 'luces', 'las luces siguen apagadas tras la reunión');
+});
