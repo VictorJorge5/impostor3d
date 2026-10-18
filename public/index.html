@@ -1383,10 +1383,10 @@ const KIT_SW = i => { const k = S.KITS[i]; if (!k) return 'repeating-linear-grad
 const ROWS = [
   { tab: 'Cuerpo', range: [140, 210] },
   { tab: 'Cuerpo', k: 's', ck: 'cs', label: 'Piel', colors: S.SKINS }, { tab: 'Cuerpo', k: 'bd', label: 'Complexión', names: S.OPT.build },
-  { tab: 'Cara', k: 'h', label: 'Peinado', names: S.OPT.hair }, { tab: 'Cara', k: 'hc', ck: 'ch', label: 'Color de pelo', colors: S.HAIR_COLORS },
-  { tab: 'Cara', k: 'hv', label: 'Volumen del pelo', names: ['Ninguno', 'Poco', 'Medio', 'Mucho'], show: () => !!cur.look.f },
-  { tab: 'Cara', k: 'hr', label: 'Pelo rizado', names: ['No', 'Sí'], show: () => !!cur.look.f && cur.look.hv > 0 },
-  { tab: 'Cara', k: 'b', label: 'Barba', names: S.OPT.beard }, { tab: 'Cara', k: 'g', label: 'Gafas', names: S.OPT.glasses }, { tab: 'Cara', k: 'ej', label: 'Cejas', names: S.OPT.brows },
+  { tab: 'Rasgos', k: 'h', label: 'Peinado', names: S.OPT.hair }, { tab: 'Rasgos', k: 'hc', ck: 'ch', label: 'Color de pelo', colors: S.HAIR_COLORS },
+  { tab: 'Rasgos', k: 'hv', label: 'Volumen del pelo', names: ['Ninguno', 'Poco', 'Medio', 'Mucho'], show: () => !!cur.look.f },
+  { tab: 'Rasgos', k: 'hr', label: 'Pelo rizado', names: ['No', 'Sí'], show: () => !!cur.look.f && cur.look.hv > 0 },
+  { tab: 'Rasgos', k: 'b', label: 'Barba', names: S.OPT.beard }, { tab: 'Rasgos', k: 'g', label: 'Gafas', names: S.OPT.glasses }, { tab: 'Rasgos', k: 'ej', label: 'Cejas', names: S.OPT.brows },
   { tab: 'Ropa', note: () => cur.look.kit ? 'Llevas una equipación de fútbol: quítala en la pestaña Fútbol para usar esta ropa.' : '' },
   { tab: 'Ropa', k: 'tp', label: 'Prenda', names: S.OPT.top }, { tab: 'Ropa', k: 'sh', ck: 'csh', label: 'Color de la prenda', colors: S.CLOTHES },
   { tab: 'Ropa', k: 'pa', ck: 'cp', label: 'Pantalón', colors: S.CLOTHES },
@@ -1401,7 +1401,7 @@ const ROWS = [
   { tab: 'Extras', k: 'pet', label: 'Mascota (te sigue por la nave)', names: S.OPT.pet },
   { tab: 'Extras', k: 'tc', ck: 'ct', label: 'Color del gorro, bufanda o capa', colors: S.CLOTHES, show: () => cur.look.t > 0 || cur.look.ac === 2 || cur.look.ac === 4 }
 ];
-const TABS = ['Cuerpo', 'Cara', 'Ropa', 'Fútbol', 'Extras']; let edTab = 'Fútbol';
+const TABS = ['Tu foto', 'Cuerpo', 'Rasgos', 'Ropa', 'Fútbol', 'Extras']; let edTab = 'Tu foto';   // la foto va primero: es la gracia del juego
 const pv = { ready: false, rot: .5, drag: false };
 function initPreview() {
   if (pv.ready) return;
@@ -1476,7 +1476,7 @@ function renderEditor() {
     }
     wrap.append(ch); box.append(wrap);
   });
-  if (edTab !== 'Cara') { renderEdList(); return; }
+  if (edTab !== 'Tu foto') { renderEdList(); return; }
   const fw = el('div', 'edrow photoSec'); fw.append(el('div', 'edlab', 'Tu cara con fotos'));
   fw.append(el('div', 'hint2', 'Foto de frente (obligatoria) y, si quieres, dos giros de 45° que mejoran los lados de la cabeza. Con luz uniforme, la cabeza entera y sin gafas de sol ni gorra. Las fotos no salen de tu móvil: solo se comparte la textura de la cabeza con los jugadores de tu sala.'));
   SLOTS.forEach(sl => {
@@ -1496,11 +1496,11 @@ function renderEdList() {
     const b = el('button', 'citem' + (c.id === cur.id ? ' sel' : '')); b.append(portrait(c.look, null, 38), el('span', '', c.name + (c.id === activeId ? ' ✓' : '')));
     b.onclick = () => { cur = c; $('edName').value = c.name; renderEditor(); rebuildPreview(); }; list.append(b);
   });
-  const add = el('button', 'citem add', '+ Nuevo'); add.onclick = () => { cur = newChar(); persist(); $('edName').value = cur.name; renderEditor(); rebuildPreview(); };
+  const add = el('button', 'citem add', '+ Nuevo'); add.onclick = () => { cur = newChar(); edTab = 'Tu foto'; persist(); $('edName').value = cur.name; renderEditor(); rebuildPreview(); };
   list.append(add);
 }
-function openEditor() {
-  cur = activeChar(); editing = true; screen('chars');
+function openEditor(tab) {
+  cur = activeChar(); editing = true; screen('chars'); edTab = tab || (cur.look.f ? edTab : 'Tu foto');
   try { initPreview(); } catch (e) { toast('No se pudo iniciar la vista 3D'); }
   $('edName').value = cur.name; renderEditor(); rebuildPreview();
 }
@@ -1650,7 +1650,7 @@ async function applyScan() {
 function newGuest() {
   const look = S.cleanLook({ s: 2, h: 1, hc: 1, b: 0, g: 0, t: 0, tc: 0, sh: 1, pa: 10, bd: 1, ej: 0, ht: 175 });
   const c = { id: uid(), name: 'Invitado', look, src: {} }; chars.push(c); cur = c; activeId = c.id; persist();
-  openEditor(); toast('1) Pon tu nombre y tu altura. 2) Haz las fotos. 3) Pulsa "Jugar con este personaje".', 7000);
+  openEditor('Tu foto'); toast('Haz tu foto de frente (cámara o galería), pon tu nombre y pulsa "Jugar con este personaje"', 7000);
 }
 $('btnGuest').onclick = newGuest;
 
