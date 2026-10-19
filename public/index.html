@@ -580,7 +580,7 @@ body.ready #splash{opacity:0;visibility:hidden}
 
 /* derecha: minimapa + herramientas */
 #topRight{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));gap:8px}
-#minimap{width:min(160px,25vw);height:auto;aspect-ratio:44/30;border-radius:14px;border:1px solid #9fb6ff33;background:#05070dcc;box-shadow:0 10px 30px -12px #000c}
+#minimap{width:min(160px,25vw);height:auto;aspect-ratio:188/122;border-radius:14px;border:1px solid #9fb6ff33;background:#05070dcc;box-shadow:0 10px 30px -12px #000c}
 .tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:min(290px,46vw);pointer-events:auto}
 .tools .ibtn{width:40px;height:40px;border-radius:13px;background:#0a1124b8;border-color:#9fb6ff26}
 .tools .ibtn .i{width:19px;height:19px}
@@ -659,6 +659,50 @@ body.ready #splash{opacity:0;visibility:hidden}
 .act .i,.act2 .i{filter:drop-shadow(0 2px 0 #000)}
 #btnUse{border-radius:26px}#btnKill{border-radius:26px}
 .act.on,.act2.on{opacity:1}
+
+/* ---------- pantallas como en Among Us (v5.1) ---------- */
+#roleOv{background:#000;animation:none;justify-content:flex-start;pointer-events:none;transition:opacity .45s}
+#roleOv.out{opacity:0}
+#roleOv canvas,#deathOv canvas.killCv{position:absolute;inset:0;width:100%;height:100%;animation:none}
+#roleTxt{position:relative;display:flex;flex-direction:column;align-items:center;margin-top:max(5vh,env(safe-area-inset-top));opacity:0;transform:translateY(-14px);transition:opacity .45s,transform .45s}
+#roleOv.rev #roleTxt{opacity:1;transform:none}
+#roleOv b{font-family:"Arial Black","Inter",system-ui,sans-serif;font-style:normal;font-weight:900;font-size:clamp(44px,11vw,96px);letter-spacing:0;text-shadow:0 4px 0 #000,0 0 30px currentColor;animation:none}
+#roleOv.crew b{color:#8cf3ff}#roleOv.imp b{color:#ff1f2f}
+#roleOv span{margin-top:4px;color:#fff;font-size:clamp(15px,3.6vw,22px);font-weight:700;text-shadow:0 2px 0 #000}
+#roleOv span em{font-style:normal;color:#ff2a2a}
+#deathOv{background:#000;animation:deathFade 2.6s forwards}
+#deathOv span{position:absolute;bottom:max(7vh,env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#fff;font-weight:800;font-size:18px;text-shadow:0 2px 0 #000}
+#bannerOv{background:radial-gradient(circle at 50% 46%,#0000 0 18%,#2a0008e6 78%),repeating-conic-gradient(from 0deg at 50% 46%,#b3001e 0 9deg,#e2342a 9deg 18deg)}
+#bannerOv.body{background:radial-gradient(circle at 50% 46%,#0000 0 18%,#0a0f22ee 78%),repeating-conic-gradient(from 0deg at 50% 46%,#25305a 0 9deg,#3a4a86 9deg 18deg)}
+#bannerOv b{font-family:"Arial Black","Inter",system-ui,sans-serif;font-style:italic;letter-spacing:0;text-shadow:-3px 0px 0 #000,3px 0px 0 #000,0px -3px 0 #000,0px 3px 0 #000,-2px -2px 0 #000,2px 2px 0 #000,-2px 2px 0 #000,2px -2px 0 #000,0 7px 0 #000}
+#bannerOv span{color:#fff;font-weight:800;text-shadow:0 2px 0 #000}
+#meeting{background:radial-gradient(120% 90% at 50% 40%,#1a2340,#05070d)}
+#mtgMain{background:linear-gradient(180deg,#c3d1e3,#a4b6cd);border:6px solid #2c374d;border-radius:26px;box-shadow:inset 0 0 0 4px #e6eef7,0 26px 60px -12px #000;color:#141b2b}
+#mtgHead h2{color:#fff;font-family:"Arial Black","Inter",system-ui,sans-serif;font-style:normal;text-shadow:-2px 0px 0 #141b2b,2px 0px 0 #141b2b,0px -2px 0 #141b2b,0px 2px 0 #141b2b,-1.5px -1.5px 0 #141b2b,1.5px 1.5px 0 #141b2b,-1.5px 1.5px 0 #141b2b,1.5px -1.5px 0 #141b2b,0 4px 0 #141b2b;letter-spacing:.3px}
+#mtgSub{color:#26324c;font-weight:600}#mtgTimer{color:#b5001c}
+#mtgBar{background:#2c374d}
+.pcard{background:#f2f6fb;border:3px solid #141b2b;border-radius:10px;box-shadow:0 3px 0 #2c374d66}
+.pcard.me{border-color:#141b2b;box-shadow:0 0 0 3px #2f7dff,0 3px 0 #2c374d66}
+.pcard.sel{border-color:#141b2b;box-shadow:0 0 0 4px #ffd44a}
+#btnSkip{background:#f2f6fb;border:3px solid #141b2b;border-radius:10px;font-family:"Arial Black","Inter",system-ui,sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.5px;box-shadow:0 3px 0 #2c374d66}
+#mtgInfo{color:#26324c;font-weight:600}
+#btnChat{background:#f2f6fb;border:3px solid #141b2b}
+#endOv{background:#000;justify-content:flex-start}
+#endOv h1{font-family:"Arial Black","Inter",system-ui,sans-serif;font-style:normal;font-size:clamp(48px,13vw,104px);margin:max(10px,2vh) 0 0;text-shadow:0 5px 0 #000,0 0 40px currentColor}
+#endOv #endSub{color:#fff;font-weight:700}
+#mtgMain .rpCard{background:#fff5da;border:3px solid #141b2b;color:#141b2b;box-shadow:0 3px 0 #2c374d66}
+#mtgMain .rpCard.body{background:#ffe3e8}
+#mtgMain .rpTxt small{color:#b05a00}#mtgMain .rpCard.body .rpTxt small{color:#c4162f}
+#mtgMain .rpCard .pt{border-color:#141b2b}
+#barWrap{position:relative;height:22px;margin:0 10px 9px;border-radius:4px;background:#3b4258;border:3px solid #141b2b;box-shadow:inset 0 2px 0 #0004}
+#bar{background:#44d62c;box-shadow:inset 0 3px 0 #ffffff40;border-radius:1px}
+#barWrap span{position:absolute;inset:0;display:flex;align-items:center;padding-left:8px;font:800 10.5px/1 "Arial Black","Inter",sans-serif;color:#fff;letter-spacing:.3px;text-shadow:-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000;white-space:nowrap;overflow:hidden}
+#minimap{cursor:pointer;pointer-events:auto}
+#mapOv{align-items:center;justify-content:center;background:#000b;z-index:42}
+#mapBox{position:relative;width:min(94vw,calc(86vh * 188 / 122));aspect-ratio:188/122;border-radius:18px;border:5px solid #d9ecff;background:#0a1a3a;box-shadow:0 0 0 4px #0a1a3a,0 20px 60px #000}
+#mapBox canvas{width:100%;height:100%;display:block;border-radius:13px}
+#mapBox .x{position:absolute;top:-16px;right:-16px;width:40px;height:40px;border-radius:50%;background:#c4162f;color:#fff;border:3px solid #fff;font-size:18px;font-weight:900;cursor:pointer}
+#endCv{width:min(760px,100%);height:clamp(200px,46vh,340px);flex:none;margin-top:4px}
 </style>
 <link rel="preload" href="fonts/chakra-petch-latin-700-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -693,7 +737,7 @@ body.ready #splash{opacity:0;visibility:hidden}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.0</span></footer>
+    <footer class="foot"><span>Impostor 3D · v5.2</span></footer>
   </div>
 </div>
 
@@ -740,7 +784,7 @@ body.ready #splash{opacity:0;visibility:hidden}
 <div id="game" class="screen">
   <canvas id="cv"></canvas>
   <div id="vignette"></div>
-  <div id="topLeft" class="hud"><div id="taskBox" class="hglass"><div id="taskHead" role="button" aria-label="Mostrar u ocultar tareas"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tareas</span><b id="taskCount"></b><i class="chev"></i></div><div id="barWrap"><div id="bar"></div></div><div id="taskList"></div></div><div id="testTag" style="display:none">MODO PRUEBAS</div></div>
+  <div id="topLeft" class="hud"><div id="taskBox" class="hglass"><div id="taskHead" role="button" aria-label="Mostrar u ocultar tareas"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tareas</span><b id="taskCount"></b><i class="chev"></i></div><div id="barWrap"><div id="bar"></div><span>TAREAS COMPLETADAS</span></div><div id="taskList"></div></div><div id="testTag" style="display:none">MODO PRUEBAS</div></div>
   <div id="topRight" class="hud"><canvas id="minimap" width="300" height="205"></canvas><div class="tools"><button id="btnView" class="ibtn" aria-label="Alejar la cámara"><svg class="i" aria-hidden="true"><use href="#i-zout"/></svg></button><button id="btnSound" class="ibtn sndBtn" aria-label="Sonido"></button><button id="btnFull" class="ibtn" aria-label="Pantalla completa"><svg class="i" aria-hidden="true"><use href="#i-max"/></svg></button><button id="btnTest" class="ibtn" style="display:none" aria-label="Herramientas de prueba"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg></button><button id="btnEndTest" class="ibtn" style="display:none" aria-label="Terminar prueba"><svg class="i" aria-hidden="true"><use href="#i-flag"/></svg></button><button id="btnQuit" class="ibtn" aria-label="Salir de la partida"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button></div></div>
   <div id="ghost" class="hud">Eres un fantasma: sigue con las tareas y observa</div>
   <div id="keys" class="hud">WASD / flechas mover · E usar · R reportar · Q matar · G sabotaje · F ventilación · Z zoom</div>
@@ -756,9 +800,10 @@ body.ready #splash{opacity:0;visibility:hidden}
   </div>
 </div>
 
-<div id="roleOv" class="ov"><div class="tag" id="roleTag"></div><b id="roleTitle"></b><span id="roleSub"></span><div id="introTeam"></div></div>
+<div id="roleOv" class="ov"><canvas id="roleCv"></canvas><div id="roleTxt"><b id="roleTitle"></b><span id="roleSub"></span></div></div>
 <div id="deathOv" class="ov"></div><div id="hitFlash"></div>
 <div id="bannerOv" class="ov"><div id="bannerWho"></div><b id="bannerTxt"></b><span id="bannerSub"></span></div>
+<div id="mapOv" class="ov" role="dialog" aria-label="Mapa de la nave"><div id="mapBox"><canvas id="mapCv"></canvas><button class="x" id="mapClose" aria-label="Cerrar mapa">✕</button></div></div>
 <div id="ejectOv" class="ov"><canvas id="ejectCv"></canvas><div id="ejectTxt"></div><div id="ejectSub"></div></div>
 <div id="infoOv" class="ov"><div id="infoBar"><b id="infoTitle"></b><span id="infoRec"></span><button class="x" id="infoClose">✕</button></div><div id="infoBody"></div></div>
 
@@ -785,6 +830,7 @@ body.ready #splash{opacity:0;visibility:hidden}
 <div id="endOv" class="ov">
   <h1 id="endTitle"></h1>
   <div id="endSub" class="hint"></div>
+  <canvas id="endCv"></canvas>
   <div id="endRoles"></div>
   <button id="btnAgain" class="btn amber" style="width:min(340px,90vw)">Volver a la sala</button>
   <p id="endWait" class="hint" style="display:none">Esperando al anfitrión…</p>
@@ -930,7 +976,7 @@ function join(code) {
     myId = res.id; saveSess(res); buzz(25);
   });
 }
-function closeOverlays() { closeSabMenu(); closeTestMenu(); if (mgOpen) closeMG(); ['deathOv', 'bannerOv', 'roleOv'].forEach(i => ov(i, false)); }   // nada de menús colgados entre partidas
+function closeOverlays() { closeMap(); closeSabMenu(); closeTestMenu(); if (mgOpen) closeMG(); ['deathOv', 'bannerOv', 'roleOv'].forEach(i => ov(i, false)); }   // nada de menús colgados entre partidas
 function backToMenu(msg) {
   closeOverlays(); G.state = 'menu'; screen('menu'); ['meeting', 'endOv', 'mg', 'roleOv', 'crop'].forEach(i => ov(i, false)); releaseLock(); renderMenuChar(); if (msg) toast(msg);
 }
@@ -1401,28 +1447,54 @@ $('taskHead').addEventListener('click', () => { const b = $('taskBox'); b.classL
 function updateBar() { $('bar').style.width = (G.total ? Math.min(100, G.doneN / G.total * 100) : 0) + '%'; }
 function updateGhost() { $('ghost').style.display = !G.alive && G.state !== 'menu' ? 'block' : 'none'; }
 $('btnView').onclick = toggleView;
+// mapa grande al tocar el minimapa, como el botón de mapa del original: salas, tus tareas, los sabotajes y dónde estás
+let bigMap = null;
+function openMap() { if (G.state !== 'play') return; G.mapOpen = true; ov('mapOv', true); snd('click'); drawBigMap(performance.now()); }
+function closeMap() { G.mapOpen = false; ov('mapOv', false); }
+function drawBigMap(now) {
+  if (!bigMap) bigMap = W2.miniMap(5);
+  const { g, w, h } = fitCanvas($('mapCv')), sx = w / S.MAPW, sz = h / S.MAPH, t = now / 1000;
+  g.clearRect(0, 0, w, h); g.drawImage(bigMap, 0, 0, w, h);
+  G.tasks.forEach(id => { if (!canDo(id)) return; const p = S.stationPos(S.STATIONS[id]), x = p.x * sx, y = p.z * sz, b = Math.sin(t * 5) * 2;
+    g.fillStyle = '#ffd23f'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y - 16 + b); g.lineTo(x + 9, y + b); g.lineTo(x - 9, y + b); g.closePath(); g.fill(); g.stroke(); g.fillStyle = '#000'; g.font = '900 11px Inter,sans-serif'; g.textAlign = 'center'; g.fillText('!', x, y - 3 + b); });
+  if (G.sab && G.sab.panels) G.sab.panels.forEach(id => { if ((G.sab.done || []).includes(id)) return; const p = S.cellPos(S.PANELS.find(q => q.id === id)); g.fillStyle = Math.sin(t * 8) > 0 ? '#ff2e4d' : '#7a1020'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.arc(p.x * sx, p.z * sz, 9, 0, TAU); g.fill(); g.stroke(); });
+  const me = G.players.get(myId); if (me) W2.crew(g, G.x * sx, G.z * sz + 10, 30, { color: colHex(me.color), look: me.look, dir: me.dir || 1, t });
+}
+$('minimap').onclick = openMap; $('mapClose').onclick = closeMap; $('mapOv').onclick = e => { if (e.target.id === 'mapOv') closeMap(); };
 function toggleView() {   // dos alturas de cámara: cerca (por defecto) y lejos
   G.zoom = G.zoom ? 0 : 1; const b = $('btnView'); b.classList.toggle('fp', !!G.zoom); b.setAttribute('aria-label', G.zoom ? 'Acercar la cámara' : 'Alejar la cámara');
   b.querySelector('use').setAttribute('href', G.zoom ? '#i-zin' : '#i-zout'); lsSet('i3d_zoom', G.zoom);
 }
 if (lsGet('i3d_zoom', 0)) toggleView();
 
+// presentación como en el original: primero "¡Shhhhh!" y luego tu papel con tu equipo en fila
+function fitCanvas(cv) { const pr = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight; if (cv.width !== Math.round(w * pr)) { cv.width = Math.round(w * pr); cv.height = Math.round(h * pr); } const g = cv.getContext('2d'); g.setTransform(pr, 0, 0, pr, 0, 0); return { g, w, h }; }
+const lineupOf = list => list.map(p => ({ color: colHex(p.color), look: p.look, name: p.id === myId ? (p.name || 'Tú') : p.name, ghost: p.alive === false, nameColor: p.role === 'impostor' || (G.role === 'impostor' && G.mates.includes(p.id)) ? '#ff3b3b' : '#fff' }));
 function showRole() {
-  const imp = G.role === 'impostor', o = $('roleOv');
-  $('roleTag').textContent = imp ? 'SHHHH…' : 'EQUIPO';
-  $('roleTitle').textContent = imp ? 'IMPOSTOR' : 'TRIPULANTE';
-  $('roleTitle').style.color = imp ? '#ff3b5c' : '#5ef2c0';
-  $('roleSub').textContent = imp
-    ? (G.mates.length > 1 ? 'Tu compañero: ' + G.mates.filter(i => i !== myId).map(nameOf).join(', ') + '. ' : '') + 'Elimina sin que te vean. Sabotea (botón o G) y muévete por las rejillas del suelo (botón Ventilación o F).'
-    : `Hay ${G.impCount} impostor${G.impCount > 1 ? 'es' : ''} entre nosotros. Completa tus tareas y descubre quién es. Si hay un sabotaje, arregla los paneles en rojo.`;
-  const team = $('introTeam'); team.innerHTML = '';
-  [...G.players.values()].filter(p => !imp || G.mates.includes(p.id)).forEach((p, i) => {   // el impostor solo ve a su equipo; la tripulación, a todos
-    const d = el('div', 'ti'); d.style.setProperty('--i', i); d.append(portrait(p.look, imp ? '#ff3b5c' : colHex(p.color), imp ? 64 : 52, colHex(p.color)), el('span', '', p.id === myId ? 'Tú' : p.name)); team.append(d);
-  });
-  o.className = 'ov ' + (imp ? 'imp' : 'crew'); void o.offsetWidth; o.classList.add('on');
-  G.frozenUntil = performance.now() + 3200; buzz(imp ? [60, 40, 160] : 80);
-  setTimeout(() => ov('roleOv', false), 3400);
-  snd(imp ? 'introImp' : 'introCrew');
+  const imp = G.role === 'impostor', o = $('roleOv'), cv = $('roleCv'), t0 = performance.now(), SHH = 1700, END = 5400;
+  $('roleTitle').textContent = imp ? 'Impostor' : 'Tripulante';
+  o.classList.toggle('imp', imp); o.classList.toggle('crew', !imp);
+  const sub = $('roleSub'); sub.innerHTML = '';
+  if (imp) sub.append(document.createTextNode(G.mates.length > 1 ? 'Tu equipo: ' + G.mates.filter(i => i !== myId).map(nameOf).join(', ') : 'Elimina a la tripulación sin que te pillen'));
+  else { sub.append(document.createTextNode('Hay ')); sub.append(el('em', '', `${G.impCount} impostor${G.impCount > 1 ? 'es' : ''}`)); sub.append(document.createTextNode(' entre nosotros')); }
+  const me = G.players.get(myId), team = [me].concat([...G.players.values()].filter(p => p.id !== myId && (!imp || G.mates.includes(p.id)))).filter(Boolean);
+  const list = lineupOf(team), mine = { color: colHex(me ? me.color : 0), look: me ? me.look : {} };
+  o.classList.remove('rev', 'out'); o.classList.add('on');
+  G.frozenUntil = t0 + END - 300; buzz(60);
+  const tick = now => {
+    if (!o.classList.contains('on')) return;
+    const k = now - t0, { g, w, h } = fitCanvas(cv);
+    if (k < SHH) W2.shh(g, w, h, mine, k / 1000);
+    else {
+      if (!o.classList.contains('rev')) { o.classList.add('rev'); snd(imp ? 'introImp' : 'introCrew'); buzz(imp ? [60, 40, 160] : 80); }
+      g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
+      W2.lineup(g, w, h, list, { k: Math.min(1, (k - SHH) / 900), t: k / 1000, glow: imp ? 'rgba(255,40,60,.6)' : 'rgba(90,190,255,.55)', base: h > w ? .7 : .93 });
+    }
+    if (k > END - 450) o.classList.add('out');
+    if (k > END) { ov('roleOv', false); o.classList.remove('rev', 'out'); return; }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
 }
 socket.on('start', d => {
   closeOverlays(); touchSess();
@@ -1575,12 +1647,18 @@ function showEnd(d) {
   const crewWin = d.winner === 'crew';
   buzz((G.role === 'crew') === crewWin ? [40, 40, 40, 40, 120] : 250);
   const iWin = (G.role === 'crew') === crewWin;
-  $('endTitle').textContent = crewWin ? 'Gana la tripulación' : 'Ganan los impostores';
-  $('endTitle').style.color = crewWin ? '#5ef2c0' : '#ff3b5c';
+  $('endTitle').textContent = iWin ? 'Victoria' : 'Derrota';
+  $('endTitle').style.color = iWin ? '#2fb8ff' : '#ff2a2a';
   const why = d.reason === 'sabotage:reactor' ? 'El reactor ha colapsado. ' : d.reason === 'sabotage:o2' ? 'La tripulación se ha quedado sin oxígeno. ' : '';
-  $('endSub').textContent = d.reason === 'test' ? 'El anfitrión ha dado la prueba por terminada.' : why + (iWin ? '¡Tu equipo ha ganado!' : 'Esta vez no ha podido ser.');
+  $('endSub').textContent = d.reason === 'test' ? 'El anfitrión ha dado la prueba por terminada.' : why + (crewWin ? 'Gana la tripulación' : 'Ganan los impostores');
   if (d.reason === 'test') { $('endTitle').textContent = 'Prueba terminada'; $('endTitle').style.color = '#ffb347'; }
   if (d.reason !== 'test') snd(iWin ? 'win' : 'lose');
+  { // los ganadores en fila, como en la pantalla final del original (tú delante si has ganado)
+    const win = d.roles.filter(p => (p.role === 'impostor') !== crewWin).map(p => Object.assign({}, p, { look: S.cleanLook(p.look) }));
+    win.sort((a, b) => (b.id === myId) - (a.id === myId)); const cv = $('endCv'), t0 = performance.now(), list = lineupOf(win), glow = crewWin ? 'rgba(60,170,255,.55)' : 'rgba(255,40,60,.6)';
+    const tick = now => { if (G.state !== 'end' || !$('endOv').classList.contains('on')) return; const { g, w, h } = fitCanvas(cv); g.clearRect(0, 0, w, h); W2.lineup(g, w, h, list, { k: Math.min(1, (now - t0) / 900), t: now / 1000, glow, base: .9, hmax: .62 }); requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }
   // Resultados: primero el MVP, luego los impostores y después la tripulación, con lo que hizo cada uno
   clearTaskFx();
   const box = $('endRoles'); box.innerHTML = '';
@@ -1676,9 +1754,9 @@ $('btnEndTest').onclick = () => { if (confirm('¿Dar la prueba por terminada?'))
 // Modo pruebas: el anfitrión puede provocar sabotajes y teletransportarse
 function closeTestMenu() { ov('testMenu', false); }
 function teleportTo(roomId) {
-  const rm = S.ROOMS.find(r => r.id === roomId), cx = rm.r[0] + rm.r[2] / 2, cz = rm.r[1] + rm.r[3] / 2; let best = null;
-  for (let j = rm.r[1]; j < rm.r[1] + rm.r[3]; j++) for (let i = rm.r[0]; i < rm.r[0] + rm.r[2]; i++) {
-    const x = (i + .5) * S.CELL, z = (j + .5) * S.CELL; if (S.blocked(x, z)) continue; const d = Math.hypot(i + .5 - cx, j + .5 - cz); if (!best || d < best.d) best = { x, z, d };
+  const rm = S.ROOMS.find(r => r.id === roomId), [cx, cz] = rm.c; let best = null;
+  for (let z = cz - 14; z <= cz + 14; z += 1) for (let x = cx - 14; x <= cx + 14; x += 1) {
+    if (S.blocked(x, z) || !S.inPoly(x, z, rm.poly)) continue; const d = Math.hypot(x - cx, z - cz); if (!best || d < best.d) best = { x, z, d };
   }
   if (best) { G.x = best.x; G.z = best.z; } closeTestMenu(); toast('Teletransportado: ' + rm.name);
 }
@@ -1725,9 +1803,11 @@ function updateSabBanner(now) {
 }
 function pushOutOfDoors() {
   const room = G.sab && G.sab.type === 'puertas' ? G.sab.room : null; if (!room) return;
-  const ci = Math.floor(G.x / S.CELL), cj = Math.floor(G.z / S.CELL);
-  if (!S.DOORS[room].some(c => c[0] === ci && c[1] === cj)) return;
-  for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const rm = S.roomAt(ci + a, cj + b); if (rm && rm.id === room) { G.x = (ci + a + .5) * S.CELL; G.z = (cj + b + .5) * S.CELL; return; } }
+  // si la puerta se cierra encima de ti, te quedas dentro de la sala
+  const d = S.DOORS[room].find(s => S.segDist(G.x, G.z, s) < 1); if (!d) return;
+  const dx = d[2] - d[0], dz = d[3] - d[1], L = Math.hypot(dx, dz); let nx = dz / L, nz = -dx / L;
+  const mx = (d[0] + d[2]) / 2, mz = (d[1] + d[3]) / 2, rm = S.roomAtPos(mx + nx, mz + nz); if (!rm || rm.id !== room) { nx = -nx; nz = -nz; }
+  const k = ((G.x - mx) * nx + (G.z - mz) * nz); G.x += nx * (1.1 - k); G.z += nz * (1.1 - k);
 }
 function setSab(s) { G.sab = s ? Object.assign({}, s, { local: performance.now() + (s.ends || 0) }) : null; if (G.sab) { G.sabReadyAt = Infinity; pushOutOfDoors(); } updateSabVisuals(); }
 socket.on('sabotage', s => {
@@ -1824,14 +1904,14 @@ function renderCamFeeds(now) {
 }
 function drawAdmin() {
   // como en Among Us: se ve cuánta gente hay en cada sala (puntos de su color), no la posición exacta
-  const cv = $('admCv'); if (!cv) return; const g = cv.getContext('2d'), W = cv.width, Hh = cv.height, sx = W / (S.W * S.CELL), sz = Hh / (S.H * S.CELL);
+  const cv = $('admCv'); if (!cv) return; const g = cv.getContext('2d'), W = cv.width, Hh = cv.height, sx = W / S.MAPW, sz = Hh / S.MAPH;
   g.clearRect(0, 0, W, Hh); g.drawImage(floorCanvas, 0, 0, W, Hh);
   const counts = {}, slot = {};
   for (const p of G.players.values()) {
     if (!p.alive || p.vent) continue;
-    const rm = S.roomAt(Math.floor(p.x / S.CELL), Math.floor(p.z / S.CELL)), rid = rm ? rm.id : 'pasillo'; counts[rid] = (counts[rid] || 0) + 1;
+    const rm = S.roomAtPos(p.x, p.z), rid = rm ? rm.id : 'pasillo'; counts[rid] = (counts[rid] || 0) + 1;
     let px = p.x * sx, pz = p.z * sz;
-    if (rm) { const n = slot[rid] = slot[rid] == null ? 0 : slot[rid] + 1; px = (rm.r[0] + rm.r[2] / 2) * S.CELL * sx + ((n % 4) - 1.5) * 26; pz = (rm.r[1] + rm.r[3] / 2) * S.CELL * sz + 28 + Math.floor(n / 4) * 26; }
+    if (rm) { const n = slot[rid] = slot[rid] == null ? 0 : slot[rid] + 1; px = rm.c[0] * sx + ((n % 4) - 1.5) * 26; pz = rm.c[1] * sz + 18 + Math.floor(n / 4) * 26; }
     g.fillStyle = colHex(p.color); g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.arc(px, pz, 10, 0, TAU); g.fill(); g.stroke();
   }
   const list = $('admRooms'); if (!list) return; list.innerHTML = '';
@@ -1882,16 +1962,18 @@ function spawnBlood(x, z) {
   for (let i = 0; i < 24; i++) { const a = Math.random() * TAU, sp = 1.5 + Math.random() * 4; G.fx.push({ kind: 'drop', x, z, y: .9, vx: Math.cos(a) * sp, vz: Math.sin(a) * sp * .6, vy: 2 + Math.random() * 3, t0: now, life: 800, color: i % 3 ? '#b3001b' : '#7a0012' }); }
 }
 function killCam(byId) {
-  const kp = G.players.get(byId), o = $('deathOv'); o.innerHTML = '';
-  if (kp) o.append(portrait(kp.look, '#ff3b5c', 150, colHex(kp.color)));
-  o.append(el('b', '', 'ELIMINADO'), el('span', '', kp ? `${kp.name} era el impostor` : 'Te han eliminado'));
-  o.className = 'ov'; void o.offsetWidth; o.classList.add('on'); setTimeout(() => ov('deathOv', false), 2600);
+  const kp = G.players.get(byId), me = G.players.get(myId), o = $('deathOv'); o.innerHTML = '';
+  const cv = document.createElement('canvas'); cv.className = 'killCv'; o.append(cv, el('span', '', kp ? `${kp.name} era el impostor` : 'Te han eliminado'));
+  o.className = 'ov'; void o.offsetWidth; o.classList.add('on');
+  const t0 = performance.now(), A = kp ? { color: colHex(kp.color), look: kp.look } : null, B = me ? { color: colHex(me.color), look: me.look } : null;
+  const tick = now => { if (!o.classList.contains('on')) return; const { g, w, h } = fitCanvas(cv); W2.killScene(g, w, h, A, B, Math.min(1.2, (now - t0) / 1600)); requestAnimationFrame(tick); };
+  requestAnimationFrame(tick); setTimeout(() => ov('deathOv', false), 2600);
 }
 function showBanner(d) {
-  $('bannerTxt').textContent = d.kind === 'body' ? '¡CUERPO REPORTADO!' : 'REUNIÓN DE EMERGENCIA';
+  $('bannerTxt').textContent = d.kind === 'body' ? '¡Cadáver encontrado!' : '¡Reunión de emergencia!';
   { const w = $('bannerWho'), cp = G.players.get(d.caller); w.innerHTML = ''; if (cp) w.append(portrait(cp.look, colHex(cp.color), 110, colHex(cp.color))); }
   $('bannerSub').textContent = (d.kind === 'body' ? 'Lo ha encontrado ' : 'Convocada por ') + nameOf(d.caller);
-  const o = $('bannerOv'); o.className = 'ov'; void o.offsetWidth; o.classList.add('on'); setTimeout(() => ov('bannerOv', false), 1800);
+  const o = $('bannerOv'); o.className = 'ov' + (d.kind === 'body' ? ' body' : ''); void o.offsetWidth; o.classList.add('on'); setTimeout(() => ov('bannerOv', false), 1800);
 }
 function drawEject(g, W, H, k, st) {
   g.fillStyle = '#02040a'; g.fillRect(0, 0, W, H);
@@ -1922,7 +2004,7 @@ function playEject(d) {
   frame();
 }
 function stopEject() { if (G.eject && G.eject.raf) cancelAnimationFrame(G.eject.raf); G.eject = null; clearTimeout(G.ejectTimer); ov('ejectOv', false); }
-if (location.search.includes('debug=1')) window.__i3d_anim = { drawEject, makeEject, ejectText, playEject, spawnBlood, killCam, showBanner };
+if (location.search.includes('debug=1')) window.__i3d_anim = { drawEject, makeEject, ejectText, playEject, spawnBlood, killCam, showBanner, showEnd };
 if (location.search.includes('debug=1')) window.__i3d_tasks = { open: i => openTask(S.STATIONS[i]), panel: id => openPanel(S.PANELS.find(p => p.id === id)), isOpen: () => mgOpen, tp: (x, z, h) => { G.x = x; G.z = z; G.ry = h || 0; G.camX = null; }, state: () => ({ role: G.role, tasks: G.tasks, done: [...G.done], list: $('taskList').innerText }), vis: k => { G.cfg.visCrew = G.cfg.visImp = k; }, fow: () => ({ role: G.role, on: FOW.on, R: FOW.R, seen: [...G.players.values()].filter(p => p.id !== myId && p.base && p.seen).map(p => p.name) }), floor: () => floorCanvas && floorCanvas.toDataURL('image/png') };
 
 /* ---------- entrada ---------- */
@@ -1962,6 +2044,7 @@ window.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
   keys[e.code] = true;
   if (G.state !== 'play') return;
+  if (e.code === 'KeyM' || (e.code === 'Escape' && G.mapOpen)) { G.mapOpen ? closeMap() : openMap(); return; }
   if (e.code === 'KeyE') doUse(); else if (e.code === 'KeyR') doReport(); else if (e.code === 'KeyQ') doKill(); else if (e.code === 'KeyZ' || e.code === 'KeyV') toggleView(); else if (e.code === 'KeyG') openSabMenu(); else if (e.code === 'KeyF') doVent();
   if (e.code === 'Escape' && mgOpen) closeMG();
   if (e.code === 'Escape' && G.sabMenuOpen) closeSabMenu();
@@ -2102,7 +2185,7 @@ function update(dt, now) {
     if (moving) {
       const sp = 6.5 * G.cfg.speed * dt, nx = G.x + vx * sp, nz = G.z + vz * sp;
       // los fantasmas atraviesan las paredes, como en Among Us; solo se quedan dentro del mapa
-      const free = (x, z) => G.alive ? !S.blocked(x, z) : (x > 3 && z > 3 && x < S.W * S.CELL - 3 && z < S.H * S.CELL - 3);
+      const free = (x, z) => G.alive ? !S.blocked(x, z) : (x > 3 && z > 3 && x < S.MAPW - 3 && z < S.MAPH - 3);
       if (free(nx, G.z)) G.x = nx;
       if (free(G.x, nz)) G.z = nz;
       G.ry = Math.atan2(vx, vz);
@@ -2150,9 +2233,10 @@ function drawWorld(g, v, now, cam) {
   const sabPanels = new Set(G.sab && G.sab.panels ? G.sab.panels.filter(id => !(G.sab.done || []).includes(id) && !(G.sab.holds && G.sab.holds[id])) : []);
   const u = G.act && G.act.use, use = !u ? null : u.type === 'task' ? u.st.id : u.type === 'info' ? 'info:' + u.tool.id : null;
   const ventOpen = {}; for (const id in G.ventOpen) { const k = (now - G.ventOpen[id]) / 650; if (k < 1) ventOpen[id] = Math.sin(k * Math.PI) * .6; else delete G.ventOpen[id]; }
-  W2.drawMap(g, v, { doorsRoom: G.sab && G.sab.type === 'puertas' ? G.sab.room : null });
-  W2.drawProps(g, v, { t, hl: cam ? null : new Set((G.tasks || []).filter(canDo)), use: cam ? null : use, sabPanels, ventOpen, camOn: G.camN > 0 });
-  const ents = [];
+  W2.drawMap(g, v, { t, doorsRoom: G.sab && G.sab.type === 'puertas' ? G.sab.room : null });
+  W2.drawProps(g, v, { t, noDecor: true, hl: cam ? null : new Set((G.tasks || []).filter(canDo)), use: cam ? null : use, sabPanels, ventOpen, camOn: G.camN > 0 });
+  const ents = [], vw = v.w / v.sc / 2 + 8, vh = v.h / v.sc / 2 + 8;
+  S.DECOR.forEach(d => { if (Math.abs(d.x - v.cx) < vw + (d.len || 0) && Math.abs(d.z - v.cy) < vh) ents.push({ z: W2.decorBase(d), d: () => W2.drawDecor(g, v, d, t) }); });
   G.bodies.forEach(b => { if (b.revealAt || (!cam && !b.seen)) return; ents.push({ z: b.z - .3, d: () => W2.body(g, X(b.x), Y(b.z), ch * crewScale(b.look), b.color, b.dir) }); });
   for (const p of G.players.values()) {
     const vis = cam ? (p.base && (p.alive || !G.alive)) : p.base && (p.id === myId || p.seen); if (!vis) continue;
@@ -2186,7 +2270,7 @@ function render2D(now) {
 }
 function drawMini() {
   const m = $('minimap'), c = m.getContext('2d'), w = m.width / 2, h = m.height / 2; c.setTransform(2, 0, 0, 2, 0, 0);
-  const sx = w / (S.W * S.CELL), sz = h / (S.H * S.CELL);
+  const sx = w / S.MAPW, sz = h / S.MAPH;
   c.clearRect(0, 0, w, h); c.globalAlpha = .9; c.drawImage(floorCanvas, 0, 0, w, h); c.globalAlpha = 1;
   G.tasks.forEach(id => {
     if (!canDo(id)) return; const p = S.stationPos(S.STATIONS[id]);
@@ -2221,7 +2305,7 @@ function loop(now) {
   if (editing) { renderPreview(dt); return; }
   if (!sceneOK || (G.state !== 'play' && G.state !== 'meeting' && G.state !== 'end')) return;
   update(dt, now); adaptQuality(now, dt);
-  if ((frame++ & 3) === 0) { updateActions(now); updateSabBanner(now); if (G.state === 'play') drawMini(); }
+  if ((frame++ & 3) === 0) { updateActions(now); updateSabBanner(now); if (G.state === 'play') drawMini(); if (G.mapOpen) { if (G.state !== 'play') closeMap(); else drawBigMap(now); } }
   if (G.info === 'cams' && !infoNoSignal()) renderCamFeeds(now);
   else if (!mgOpen || (frame & 15) === 0) render2D(now);   // con un minijuego abierto el fondo apenas se repinta: más fluidez
 }

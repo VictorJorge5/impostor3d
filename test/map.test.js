@@ -35,10 +35,18 @@ test('todas las tareas, paneles y terminales se pueden usar', () => {
 test('se puede entrar en todas las salas', () => {
   const ok = reachable();
   S.ROOMS.forEach(rm => {
-    const pts = []; for (let j = rm.r[1]; j < rm.r[1] + rm.r[3]; j++) for (let i = rm.r[0]; i < rm.r[0] + rm.r[2]; i++) pts.push([(i + .5) * S.CELL, (j + .5) * S.CELL]);
+    const xs = rm.poly.map(q => q[0]), zs = rm.poly.map(q => q[1]), pts = [];
+    for (let z = Math.min(...zs) + 1; z < Math.max(...zs); z += 2) for (let x = Math.min(...xs) + 1; x < Math.max(...xs); x += 2) if (S.inPoly(x, z, rm.poly)) pts.push([x, z]);
     const n = pts.filter(p => ok([p])).length;
-    assert.ok(n >= pts.length * 0.75, `${rm.name}: solo ${n}/${pts.length} celdas accesibles`);
+    assert.ok(n >= pts.length * 0.75, `${rm.name}: solo ${n}/${pts.length} puntos accesibles`);
   });
+});
+
+test('el mapa es el de The Skeld: cada sala tiene sus puertas y cada objeto está en su sala', () => {
+  const doors = { cafeteria: 3, motores: 2, motorinf: 2, almacen: 3, escudos: 2, navegacion: 2, armeria: 2, reactor: 1, seguridad: 1, enfermeria: 1, electrica: 1, administracion: 1, comunicaciones: 1, oxigeno: 1 };
+  for (const id in doors) assert.equal(S.DOORS[id].length, doors[id], 'puertas de ' + id);
+  S.STATIONS.concat(S.PANELS, S.INFO, S.VENTS).forEach(o => { const rm = S.roomAtPos(o.x, o.z); assert.equal(rm && rm.id, o.room || undefined, (o.name || 'rejilla ' + o.id)); });
+  S.VENTS.forEach(v => v.links.forEach(l => assert.ok(S.VENTS[l].links.includes(v.id), 'rejillas conectadas en los dos sentidos')));
 });
 
 test('la decoración está dentro de su sala y lejos de los objetos interactivos', () => {
@@ -46,7 +54,12 @@ test('la decoración está dentro de su sala y lejos de los objetos interactivos
   S.DECOR.forEach(d => {
     const rm = S.roomAt(Math.floor(d.x / S.CELL), Math.floor(d.z / S.CELL));
     assert.ok(rm && rm.id === d.room, `${d.kind} en ${d.room}`);
-    objs.forEach(o => assert.ok(Math.hypot(o.x - d.x, o.z - d.z) > d.r + (d.len ? d.len / 2 : 0) + 1.2 || (d.len && Math.abs(o.z - d.z) > d.r + 2), `${d.kind} (${d.x},${d.z}) demasiado cerca de (${o.x},${o.z})`));
+    // distancia del objeto al borde de la decoración: hay sitio para ponerse delante y usarlo
+    const hw = d.w ? d.w / 2 : d.len ? d.len / 2 : 0, hh = d.w ? d.h / 2 : d.len ? d.r : 0;
+    const gap = o => (hw ? Math.hypot(Math.max(0, Math.abs(o.x - d.x) - hw), Math.max(0, Math.abs(o.z - d.z) - hh)) : Math.hypot(o.x - d.x, o.z - d.z) - d.r);
+    objs.forEach(o => assert.ok(gap(o) > 1.5, `${d.kind} (${d.x},${d.z}) demasiado cerca de (${o.x},${o.z})`));
+    // tampoco tapa el anillo de salida alrededor de la mesa
+    for (let k = 0; k < 10; k++) { const sp = S.spawnPos(k, 10); assert.ok(!S.blocked(sp.x, sp.z), 'salida ' + k); }
   });
 });
 
@@ -66,8 +79,8 @@ test('como en The Skeld: las salas solo se comunican por pasillos', () => {
 });
 
 test('cada tarea, panel y terminal está en la sala que indica', () => {
-  S.STATIONS.concat(S.PANELS, S.INFO, S.VENTS).forEach(o => { const rm = S.roomAt(o.i, o.j); assert.ok(rm && rm.id === o.room && !S.grid[o.j][o.i], `${o.name || 'ventilación ' + o.id} en ${o.room}`); });
-  const btn = S.roomAt(Math.floor(S.BUTTON.x / S.CELL), Math.floor(S.BUTTON.z / S.CELL)); assert.equal(btn.id, 'cafeteria');
+  S.STATIONS.concat(S.PANELS, S.INFO).forEach(o => { const rm = S.roomAtPos(o.x, o.z); assert.ok(rm && rm.id === o.room && !S.isSolid(o.x, o.z), `${o.name} en ${o.room}`); });
+  assert.equal(S.roomAtPos(S.BUTTON.x, S.BUTTON.z).id, 'cafeteria');
 });
 
 test('tareas por pasos: cada cadena tiene todos sus pasos y se encadenan en orden', () => {
