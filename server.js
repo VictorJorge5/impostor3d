@@ -261,7 +261,7 @@ function clearHolds(r, pid) {
 
 
 // ---------- herramientas de información: registro de puertas y cámaras ----------
-const roomIdAt = p => { const rm = S.roomAt(Math.floor(p.x / S.CELL), Math.floor(p.z / S.CELL)); return rm ? rm.id : null; };
+const roomIdAt = p => { const rm = S.roomAtPos(p.x, p.z); return rm ? rm.id : null; };
 function logDoor(r, p, kind, room) { r.doorLog.push({ t: Date.now(), pid: p.id, name: p.name, color: p.color, kind, room }); if (r.doorLog.length > 80) r.doorLog.shift(); }
 function trackRooms(r, now) {   // anota cuando alguien entra o sale de una sala (con un pequeño margen para no anotar rebotes en el umbral)
   if (!r.doorLog) r.doorLog = [];

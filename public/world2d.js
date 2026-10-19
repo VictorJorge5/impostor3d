@@ -233,78 +233,94 @@
   const FACE_H = 2.4, CAP = .7;   // alto del frente de las paredes y grosor del borde, en metros
   let M = null;   // datos del mapa calculados una vez
   W2.init = shared => {
-    S = shared; const { W, H, CELL: C } = S, solid = (i, j) => i < 0 || j < 0 || i >= W || j >= H || S.grid[j][i];
-    const doorDir = {};   // puertas: orientación del cierre
-    S.ROOMS.forEach(rm => (S.DOORS[rm.id] || []).forEach(([i, j]) => { doorDir[i + ',' + j] = { room: rm.id, horiz: solid(i - 1, j) && solid(i + 1, j) }; }));
-    const stars = Array.from({ length: 900 }, () => ({ x: Math.random() * W * C, y: Math.random() * H * C, r: Math.random() * 1.6 + .3, a: Math.random() * .6 + .2 }));
-    M = { W, H, C, solid, doorDir, stars };
+    S = shared; const MW = S.MAPW, MH = S.MAPH;
+    const stars = []; for (let k = 0; k < 1400; k++) { const x = Math.random() * (MW + 40) - 20, z = Math.random() * (MH + 40) - 20; if (!S.isSolid(x, z)) continue; stars.push({ x, y: z, r: Math.random() * .25 + .06, a: Math.random() * .6 + .2 }); }
+    // caminos fijos en metros (se dibujan con la cámara aplicada como transformación)
+    const path = pts => { const p = new Path2D(); pts.forEach(([x, z], i) => i ? p.lineTo(x, z) : p.moveTo(x, z)); p.closePath(); return p; };
+    const polys = S.POLYS.map(p => ({ room: p.room, box: p.box, path: path(p.pts), theme: (p.room && THEME[p.room]) || CORR }));
+    const floorAll = new Path2D(); S.POLYS.forEach(p => floorAll.addPath(path(p.pts)));
+    const solidClip = new Path2D(); solidClip.rect(-200, -200, MW + 400, MH + 400); solidClip.addPath(floorAll);
+    // detalles del suelo (rejillas y manchas) en sitios fijos
+    const marks = []; for (let z = 2; z < MH; z += 4) for (let x = 2; x < MW; x += 4) { const h = ((Math.round(x) * 2654435761) ^ (Math.round(z) * 40503)) >>> 0; if (h % 7 > 1) continue; const px = x + (h >> 4) % 20 / 10 - 1, pz = z + (h >> 9) % 20 / 10 - 1; if (!S.isSolid(px - 1, pz - 1) && !S.isSolid(px + 1, pz + 1)) marks.push({ x: px, z: pz, k: h % 7, a: (h % 10) / 3 }); }
+    M = { MW, MH, stars, polys, floorAll, solidClip, marks, pats: null };
     W2._mini = null; try { W2._mini = W2.miniMap(1); } catch (e) {}
   };
+  // baldosas de cada tipo de suelo: una imagen de 4 x 4 m (8 x 8 el ajedrezado) que se repite
+  function floorPattern(g, th) {
+    const k = th.join('|'); M.pats = M.pats || {}; if (M.pats[k]) return M.pats[k];
+    const P = 16, n = th[2] === 'checker' ? 2 : 1, c = document.createElement('canvas'); c.width = c.height = 4 * P * n; const q = c.getContext('2d'), cs = 4 * P;
+    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+      const x = i * cs, y = j * cs; q.fillStyle = th[2] === 'checker' && (i + j) % 2 ? th[1] : th[0]; q.fillRect(x, y, cs, cs);
+      q.strokeStyle = 'rgba(40,46,64,.28)'; q.lineWidth = 1.2;
+      switch (th[2]) {
+        case 'tiles': q.beginPath(); for (let k2 = 0; k2 <= 4; k2++) { q.moveTo(x + k2 * cs / 4, y); q.lineTo(x + k2 * cs / 4, y + cs); q.moveTo(x, y + k2 * cs / 4); q.lineTo(x + cs, y + k2 * cs / 4); } q.stroke(); break;
+        case 'plates': for (const [a, b2] of [[0, 0], [.5, 0], [0, .5], [.5, .5]]) q.strokeRect(x + a * cs + 2, y + b2 * cs + 2, cs / 2 - 4, cs / 2 - 4); break;
+        case 'grate': q.beginPath(); for (let k2 = 0; k2 <= 8; k2++) { q.moveTo(x, y + k2 * cs / 8); q.lineTo(x + cs, y + k2 * cs / 8); } q.stroke(); break;
+        case 'wood': q.beginPath(); for (let k2 = 0; k2 <= 6; k2++) { q.moveTo(x, y + k2 * cs / 6); q.lineTo(x + cs, y + k2 * cs / 6); } q.moveTo(x + cs * .3, y); q.lineTo(x + cs * .3, y + cs / 6); q.moveTo(x + cs * .7, y + cs / 6); q.lineTo(x + cs * .7, y + cs / 3); q.stroke(); break;
+        case 'hazard': q.strokeRect(x, y, cs, cs); q.fillStyle = 'rgba(0,0,0,.06)'; q.fillRect(x + cs * .1, y + cs * .1, cs * .8, cs * .8); break;
+        case 'checker': q.strokeRect(x, y, cs, cs); break;
+        default: q.beginPath(); q.moveTo(x + cs / 2, y); q.lineTo(x + cs / 2, y + cs); q.moveTo(x, y + cs / 2); q.lineTo(x + cs, y + cs / 2); q.stroke(); q.strokeRect(x, y, cs, cs);
+      }
+    }
+    const pat = g.createPattern(c, 'repeat'); if (pat.setTransform && typeof DOMMatrix !== 'undefined') pat.setTransform(new DOMMatrix().scale(1 / P)); return (M.pats[k] = pat);
+  }
 
   // dibuja el mapa visible. v = { cx, cy (centro en metros), sc (px por metro), w, h (px) }; o = estado (puertas, tareas, sabotaje...)
   W2.drawMap = (g, v, o) => {
-    const { W, H, C, solid } = M, sc = v.sc, X = x => (x - v.cx) * sc + v.w / 2, Y = y => (y - v.cy) * sc + v.h / 2;
-    const i0 = Math.max(0, Math.floor((v.cx - v.w / 2 / sc) / C) - 1), i1 = Math.min(W - 1, Math.ceil((v.cx + v.w / 2 / sc) / C) + 1);
-    const j0 = Math.max(0, Math.floor((v.cy - v.h / 2 / sc) / C) - 1), j1 = Math.min(H - 1, Math.ceil((v.cy + v.h / 2 / sc) / C) + 2);
+    const sc = v.sc, x0 = v.cx - v.w / 2 / sc, x1 = v.cx + v.w / 2 / sc, z0 = v.cy - v.h / 2 / sc, z1 = v.cy + v.h / 2 / sc, t = o.t || 0;
+    const seen = (bx0, bz0, bx1, bz1, m) => bx1 > x0 - m && bx0 < x1 + m && bz1 > z0 - m && bz0 < z1 + m + FACE_H;
     g.fillStyle = WALL.void; g.fillRect(0, 0, v.w, v.h);
+    g.save(); g.translate(v.w / 2 - v.cx * sc, v.h / 2 - v.cy * sc); g.scale(sc, sc);
+    const lw = Math.max(1.5, sc * .09) / sc;
     // estrellas fuera de la nave
-    g.fillStyle = '#fff'; for (const s of M.stars) { const x = X(s.x), y = Y(s.y); if (x < -2 || y < -2 || x > v.w + 2 || y > v.h + 2) continue; const ci = Math.floor(s.x / C), cj = Math.floor(s.y / C); if (!solid(ci, cj)) continue; g.globalAlpha = s.a; g.fillRect(x, y, s.r, s.r); } g.globalAlpha = 1;
-    const cs = C * sc;
+    g.fillStyle = '#fff'; for (const st of M.stars) { if (st.x < x0 || st.x > x1 || st.y < z0 || st.y > z1) continue; g.globalAlpha = st.a; g.fillRect(st.x, st.y, st.r, st.r); } g.globalAlpha = 1;
     // suelos
-    for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
-      if (solid(i, j)) continue;
-      const rm = S.roomAt(i, j), th = rm ? THEME[rm.id] || CORR : CORR, x = X(i * C), y = Y(j * C);
-      g.fillStyle = th[2] === 'checker' && (i + j) % 2 ? th[1] : th[0]; g.fillRect(x, y, cs + .5, cs + .5);
-      g.strokeStyle = 'rgba(40,46,64,.28)'; g.lineWidth = Math.max(1, sc * .06);
-      switch (th[2]) {
-        case 'tiles': g.beginPath(); for (let k = 1; k < 4; k++) { g.moveTo(x + k * cs / 4, y); g.lineTo(x + k * cs / 4, y + cs); g.moveTo(x, y + k * cs / 4); g.lineTo(x + cs, y + k * cs / 4); } g.stroke(); break;
-        case 'plates': g.strokeRect(x + sc * .1, y + sc * .1, cs / 2 - sc * .2, cs / 2 - sc * .2); g.strokeRect(x + cs / 2 + sc * .1, y + cs / 2 + sc * .1, cs / 2 - sc * .2, cs / 2 - sc * .2); g.strokeRect(x + cs / 2 + sc * .1, y + sc * .1, cs / 2 - sc * .2, cs / 2 - sc * .2); g.strokeRect(x + sc * .1, y + cs / 2 + sc * .1, cs / 2 - sc * .2, cs / 2 - sc * .2); break;
-        case 'grate': g.beginPath(); for (let k = 1; k < 8; k++) { g.moveTo(x, y + k * cs / 8); g.lineTo(x + cs, y + k * cs / 8); } g.stroke(); break;
-        case 'wood': g.beginPath(); for (let k = 1; k < 6; k++) { g.moveTo(x, y + k * cs / 6); g.lineTo(x + cs, y + k * cs / 6); } g.stroke(); break;
-        case 'hazard': g.strokeRect(x, y, cs, cs); break;
-        case 'checker': g.strokeRect(x, y, cs, cs); break;
-        default: g.beginPath(); g.moveTo(x + cs / 2, y); g.lineTo(x + cs / 2, y + cs); g.moveTo(x, y + cs / 2); g.lineTo(x + cs, y + cs / 2); g.stroke(); g.strokeRect(x, y, cs, cs);
-      }
-      floorDetail(g, i, j, x, y, cs, sc, Math.max(1.5, sc * .09));
-      // sombra junto a las paredes: da profundidad al suelo
-      { const e = sc * .5; g.fillStyle = 'rgba(10,14,30,.16)'; if (solid(i - 1, j)) g.fillRect(x, y, e, cs); if (solid(i + 1, j)) g.fillRect(x + cs - e, y, e, cs); if (solid(i, j + 1)) g.fillRect(x, y + cs - e * .6, cs, e * .6); if (solid(i, j - 1)) { g.fillStyle = 'rgba(10,14,30,.22)'; g.fillRect(x, y, cs, e * 1.4); } }
+    for (const p of M.polys) { if (!seen(p.box[0], p.box[1], p.box[2], p.box[3], 2)) continue; g.fillStyle = floorPattern(g, p.theme); g.fill(p.path); }
+    // marcas del suelo y sombra junto a las paredes
+    g.save(); g.clip(M.floorAll);
+    for (const m of M.marks) { if (m.x < x0 - 2 || m.x > x1 + 2 || m.z < z0 - 2 || m.z > z1 + 2) continue;
+      if (m.k === 0) { g.fillStyle = 'rgba(40,46,64,.35)'; g.strokeStyle = 'rgba(30,36,56,.55)'; g.lineWidth = lw * .6; rrect(g, m.x, m.z, 1.1, .7, .1); g.fill(); g.stroke(); g.beginPath(); for (let k = 1; k < 4; k++) { g.moveTo(m.x + k * .27, m.z + .12); g.lineTo(m.x + k * .27, m.z + .58); } g.stroke(); }
+      else { g.fillStyle = 'rgba(40,46,64,.12)'; g.beginPath(); g.ellipse(m.x, m.z, .8, .45, m.a, 0, TAU); g.fill(); } }
+    g.lineCap = 'square';
+    for (const w of S.WALLS) { if (!seen(Math.min(w.a[0], w.b[0]), Math.min(w.a[1], w.b[1]), Math.max(w.a[0], w.b[0]), Math.max(w.a[1], w.b[1]), 3)) continue;
+      g.strokeStyle = w.n[1] < -.3 ? 'rgba(10,14,30,.26)' : 'rgba(10,14,30,.16)'; g.lineWidth = w.n[1] < -.3 ? 1.6 : 1; g.beginPath(); g.moveTo(w.a[0], w.a[1]); g.lineTo(w.b[0], w.b[1]); g.stroke(); }
+    g.restore();
+    // paredes: borde oscuro por fuera y, en las del norte, el frente de la pared con sus detalles
+    g.save(); g.clip(M.solidClip, 'evenodd');
+    const vis = []; for (const w of S.WALLS) if (seen(Math.min(w.a[0], w.b[0]), Math.min(w.a[1], w.b[1]), Math.max(w.a[0], w.b[0]), Math.max(w.a[1], w.b[1]), 3)) vis.push(w);
+    g.lineCap = 'square'; g.strokeStyle = WALL.cap; g.lineWidth = CAP * 2;
+    g.beginPath(); for (const w of vis) { g.moveTo(w.a[0], w.a[1]); g.lineTo(w.b[0], w.b[1]); } g.stroke();
+    g.lineCap = 'butt'; g.strokeStyle = OUT; g.lineWidth = lw;
+    g.beginPath(); for (const w of vis) { g.moveTo(w.a[0] + w.n[0] * CAP, w.a[1] + w.n[1] * CAP); g.lineTo(w.b[0] + w.n[0] * CAP, w.b[1] + w.n[1] * CAP); } g.stroke();
+    for (const w of vis) {
+      if (w.n[1] >= -.3) continue;
+      const flat = Math.abs(w.n[1]) > .9, ext = flat ? CAP : 0, dx = Math.sign(w.b[0] - w.a[0]) || 1, ax = w.a[0] - dx * ext, bx = w.b[0] + dx * ext, ay = w.a[1], by = w.b[1];
+      // borde de arriba
+      g.fillStyle = WALL.cap; g.beginPath(); g.moveTo(ax, ay - FACE_H); g.lineTo(bx, by - FACE_H); g.lineTo(bx, by - FACE_H - CAP); g.lineTo(ax, ay - FACE_H - CAP); g.closePath(); g.fill();
+      g.fillStyle = WALL.capHi; g.beginPath(); g.moveTo(ax, ay - FACE_H - CAP); g.lineTo(bx, by - FACE_H - CAP); g.lineTo(bx, by - FACE_H - CAP * .65); g.lineTo(ax, ay - FACE_H - CAP * .65); g.closePath(); g.fill();
+      // frente
+      const gr = g.createLinearGradient(0, Math.min(ay, by) - FACE_H, 0, Math.min(ay, by)); gr.addColorStop(0, WALL.face); gr.addColorStop(.8, WALL.face2); gr.addColorStop(.8, WALL.base); gr.addColorStop(1, WALL.base);
+      g.fillStyle = gr; g.beginPath(); g.moveTo(ax, ay); g.lineTo(bx, by); g.lineTo(bx, by - FACE_H); g.lineTo(ax, ay - FACE_H); g.closePath(); g.fill();
+      g.fillStyle = WALL.stripe; g.beginPath(); g.moveTo(ax, ay - FACE_H * .82); g.lineTo(bx, by - FACE_H * .82); g.lineTo(bx, by - FACE_H * .77); g.lineTo(ax, ay - FACE_H * .77); g.closePath(); g.fill();
+      if (flat) { const L = Math.abs(bx - ax), n = Math.max(1, Math.round(L / 4)), sw = (bx - ax) / n;
+        for (let k = 0; k < n; k++) { const fx = Math.min(ax + k * sw, ax + (k + 1) * sw), h = ((Math.round(fx * 4) * 73856093) ^ (Math.round(ay * 4) * 19349663)) >>> 0;
+          g.fillStyle = 'rgba(30,36,56,.25)'; g.fillRect(fx, ay - FACE_H * .75, lw * .5, FACE_H * .55);
+          wallDetail(g, w.room, h, fx, ay - FACE_H, Math.abs(sw), FACE_H, 1, lw, t); } }
+      g.strokeStyle = OUT; g.lineWidth = lw; g.beginPath(); g.moveTo(ax, ay); g.lineTo(bx, by); g.moveTo(ax, ay - FACE_H); g.lineTo(bx, by - FACE_H); g.moveTo(ax, ay - FACE_H - CAP); g.lineTo(bx, by - FACE_H - CAP); g.stroke();
     }
-    // paredes: el frente se ve en las que quedan al norte del suelo; el resto es un borde oscuro
-    const fh = FACE_H * sc, cap = CAP * sc, lw = Math.max(1.5, sc * .09);
-    g.lineWidth = lw; g.strokeStyle = OUT;
-    for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
-      if (!solid(i, j)) continue;
-      const x = X(i * C), y = Y(j * C), dn = !solid(i, j + 1), up = !solid(i, j - 1), lf = !solid(i - 1, j), rt = !solid(i + 1, j);
-      if (dn) {   // frente de pared con paneles
-        const fy = y + cs - fh, ex0 = lf ? cap : 0, ex1 = rt ? cap : 0;
-        const gr = g.createLinearGradient(0, fy, 0, y + cs); gr.addColorStop(0, WALL.face); gr.addColorStop(.8, WALL.face2); gr.addColorStop(.8, WALL.base); gr.addColorStop(1, WALL.base);
-        g.fillStyle = gr; g.fillRect(x + ex0, fy, cs - ex0 - ex1, fh);
-        g.fillStyle = WALL.stripe; g.fillRect(x + ex0, fy + fh * .18, cs - ex0 - ex1, Math.max(1, fh * .05));
-        g.fillStyle = 'rgba(30,36,56,.25)'; for (let k = 1; k < 4; k++) g.fillRect(x + k * cs / 4 - lw / 4, fy + fh * .25, Math.max(1, lw / 2), fh * .55);
-        wallDetail(g, i, j, x + ex0, fy, cs - ex0 - ex1, fh, sc, lw, o.t || 0);
-        g.fillStyle = WALL.cap; g.fillRect(x, y, cs, cs - fh);
-        g.beginPath(); g.moveTo(x + ex0, fy); g.lineTo(x + cs - ex1, fy); g.moveTo(x + ex0, y + cs); g.lineTo(x + cs - ex1, y + cs); g.stroke();
-      } else g.fillStyle = WALL.void;
-      if (up) { g.fillStyle = WALL.cap; g.fillRect(x, y, cs, cap); g.fillStyle = WALL.capHi; g.fillRect(x, y, cs, cap * .35); g.beginPath(); g.moveTo(x, y); g.lineTo(x + cs, y); g.moveTo(x, y + cap); g.lineTo(x + cs, y + cap); g.stroke(); }
-      if (lf) { g.fillStyle = WALL.cap; g.fillRect(x, dn ? y : y, cap, cs); g.beginPath(); g.moveTo(x, y); g.lineTo(x, y + cs); g.moveTo(x + cap, dn ? y : y + (up ? cap : 0)); g.lineTo(x + cap, y + cs); g.stroke(); }
-      if (rt) { g.fillStyle = WALL.cap; g.fillRect(x + cs - cap, y, cap, cs); g.beginPath(); g.moveTo(x + cs, y); g.lineTo(x + cs, y + cs); g.moveTo(x + cs - cap, y + (up ? cap : 0)); g.lineTo(x + cs - cap, y + cs); g.stroke(); }
-      // esquinas en diagonal
-      if (!dn && !rt && !solid(i + 1, j + 1)) { g.fillStyle = WALL.cap; g.fillRect(x + cs - cap, y + cs - cap, cap, cap); g.strokeRect(x + cs - cap, y + cs - cap, cap, cap); }
-      if (!dn && !lf && !solid(i - 1, j + 1)) { g.fillStyle = WALL.cap; g.fillRect(x, y + cs - cap, cap, cap); g.strokeRect(x, y + cs - cap, cap, cap); }
-      if (!up && !rt && !solid(i + 1, j - 1)) { g.fillStyle = WALL.cap; g.fillRect(x + cs - cap, y, cap, cap); g.strokeRect(x + cs - cap, y, cap, cap); }
-      if (!up && !lf && !solid(i - 1, j - 1)) { g.fillStyle = WALL.cap; g.fillRect(x, y, cap, cap); g.strokeRect(x, y, cap, cap); }
-    }
-    // la ventana de Navegación da al espacio
-    const nav = S.ROOMS.find(r => r.id === 'navegacion');
-    if (nav) { const wx = X((nav.r[0] + nav.r[2]) * C), wy0 = Y((nav.r[1] + .6) * C), wy1 = Y((nav.r[1] + nav.r[3] - .6) * C); if (wx > -50 && wx < v.w + 50) { g.fillStyle = '#05081a'; g.fillRect(wx, wy0, cap * 1.6, wy1 - wy0); g.fillStyle = 'rgba(140,200,255,.5)'; for (let k = 0; k < 14; k++) g.fillRect(wx + cap * .3 + (k * 37 % 7) * cap * .15, wy0 + (k * 53 % 97) / 97 * (wy1 - wy0), 2, 2); g.strokeRect(wx, wy0, cap * 1.6, wy1 - wy0); } }
+    // la cabina de Navegación tiene ventanas al espacio
+    for (const w of vis) { if (w.room !== 'navegacion' || w.n[0] < .3) continue; const k = CAP * 1.6;
+      g.fillStyle = '#05081a'; g.beginPath(); g.moveTo(w.a[0], w.a[1]); g.lineTo(w.b[0], w.b[1]); g.lineTo(w.b[0] + w.n[0] * k, w.b[1] + w.n[1] * k); g.lineTo(w.a[0] + w.n[0] * k, w.a[1] + w.n[1] * k); g.closePath(); g.fill(); g.strokeStyle = OUT; g.lineWidth = lw; g.stroke();
+      g.fillStyle = 'rgba(140,200,255,.6)'; for (let q = 1; q < 8; q++) { const u = q / 8; g.fillRect(w.a[0] + (w.b[0] - w.a[0]) * u + w.n[0] * k * ((q * 37) % 7) / 8, w.a[1] + (w.b[1] - w.a[1]) * u + w.n[1] * k * ((q * 53) % 7) / 8, .12, .12); } }
+    g.restore();
+    // borde del suelo
+    g.strokeStyle = OUT; g.lineWidth = lw; g.lineCap = 'round'; g.beginPath(); for (const w of S.WALLS) { if (w.n[1] < -.3) continue; g.moveTo(w.a[0], w.a[1]); g.lineTo(w.b[0], w.b[1]); } g.stroke();
     // puertas cerradas (sabotaje)
-    if (o.doorsRoom) (S.DOORS[o.doorsRoom] || []).forEach(([i, j]) => {
-      const d = M.doorDir[i + ',' + j], x = X(i * C), y = Y(j * C);
-      g.save(); g.fillStyle = '#6f7a91';
-      if (d && d.horiz) { g.fillRect(x, y + cs * .38, cs, cs * .24); g.beginPath(); g.rect(x, y + cs * .38, cs, cs * .24); } else { g.fillRect(x + cs * .38, y, cs * .24, cs); g.beginPath(); g.rect(x + cs * .38, y, cs * .24, cs); }
-      g.stroke(); g.clip(); g.fillStyle = '#f2b800'; for (let k = -cs; k < cs * 2; k += cs / 4) { g.beginPath(); g.moveTo(x + k, y); g.lineTo(x + k + cs / 8, y); g.lineTo(x + k + cs / 8 - cs, y + cs); g.lineTo(x + k - cs, y + cs); g.fill(); }
-      g.restore();
+    if (o.doorsRoom) (S.DOORS[o.doorsRoom] || []).forEach(d => {
+      g.lineCap = 'butt'; g.strokeStyle = OUT; g.lineWidth = .9; g.beginPath(); g.moveTo(d[0], d[1]); g.lineTo(d[2], d[3]); g.stroke();
+      g.strokeStyle = '#6f7a91'; g.lineWidth = .75; g.stroke(); g.strokeStyle = '#f2b800'; g.lineWidth = .3; g.setLineDash([.45, .45]); g.stroke(); g.setLineDash([]);
     });
+    g.restore();
   };
 
   // detalles en el frente de las paredes, según la sala: tuberías, pantallas, cuadros eléctricos, estanterías...
@@ -315,15 +331,15 @@
     comunicaciones: ['screen', 'ebox', 'screen', 'wires'], escudos: ['hex', 'hex', 'lamp', 'hex'], navegacion: ['screen', 'gauge', 'lamp', 'screen'],
     oxigeno: ['tanks', 'tanks', 'pipes', 'lamp'], armeria: ['window', 'warn', 'screen', 'window']
   };
-  function wallDetail(g, i, j, fx, fy, fw, fh, sc, lw, t) {
-    const rm = S.roomAt(i, j + 1), h = ((i * 73856093) ^ (j * 19349663)) >>> 0, set = rm ? WALLSET[rm.id] : null;
+  function wallDetail(g, roomId, h, fx, fy, fw, fh, sc, lw, t) {
+    const rm = roomId, set = rm ? WALLSET[rm] : null;
     const kind = set ? set[h % set.length] : 'pipes', cx = fx + fw / 2, top = fy + fh * .26, hh = fh * .5;
     const P = () => { g.fill(); g.stroke(); }, R = (x0, y0, w, h2, c, r) => { g.fillStyle = c; rrect(g, x0, y0, w, h2, r == null ? sc * .08 : r); P(); };
     g.save(); g.strokeStyle = OUT; g.lineWidth = lw * .8;
     switch (kind) {
       case 'pipes': [.36, .56].forEach((k, n) => { g.fillStyle = n ? '#7d879c' : '#9aa4b8'; g.fillRect(fx, fy + fh * k, fw, fh * .09); g.beginPath(); g.moveTo(fx, fy + fh * k); g.lineTo(fx + fw, fy + fh * k); g.moveTo(fx, fy + fh * (k + .09)); g.lineTo(fx + fw, fy + fh * (k + .09)); g.stroke(); });
         R(fx + fw * .3, fy + fh * .32, sc * .25, fh * .36, '#5c667f', sc * .05); if (!rm && h % 3 === 0) { R(cx + fw * .1, top - fh * .05, fw * .22, fh * .1, '#fff6c8', sc * .05); } break;
-      case 'window': R(fx + fw * .12, top - fh * .04, fw * .76, hh * 1.05, '#0a1430', sc * .2); g.fillStyle = 'rgba(200,225,255,.85)'; for (let k = 0; k < 6; k++) { const sx = fx + fw * (.18 + ((h >> k) % 64) / 64 * .64), sy = top + hh * (((h >> (k + 3)) % 32) / 32) * .9; g.fillRect(sx, sy, Math.max(1, sc * .08), Math.max(1, sc * .08)); }
+      case 'window': R(fx + fw * .12, top - fh * .04, fw * .76, hh * 1.05, '#0a1430', sc * .2); g.fillStyle = 'rgba(200,225,255,.85)'; for (let k = 0; k < 6; k++) { const sx = fx + fw * (.18 + ((h >> k) % 64) / 64 * .64), sy = top + hh * (((h >> (k + 3)) % 32) / 32) * .9; g.fillRect(sx, sy, sc * .1, sc * .1); }
         g.fillStyle = 'rgba(255,255,255,.12)'; g.beginPath(); g.moveTo(fx + fw * .2, top); g.lineTo(fx + fw * .4, top); g.lineTo(fx + fw * .25, top + hh); g.lineTo(fx + fw * .15, top + hh); g.fill(); break;
       case 'screen': { R(cx - fw * .22, top, fw * .44, hh * .8, '#1d2436', sc * .12); const c = ['#3ad0ff', '#4ef0b8', '#ffd23f'][h % 3]; g.strokeStyle = c; g.lineWidth = lw * .7; g.beginPath(); for (let k = 0; k <= 8; k++) { const xx = cx - fw * .17 + k * fw * .34 / 8, yy = top + hh * .4 + Math.sin(k * 1.3 + t * 2 + h) * hh * .18; k ? g.lineTo(xx, yy) : g.moveTo(xx, yy); } g.stroke(); break; }
       case 'lamp': { const gr = g.createRadialGradient(cx, top + hh * .2, 0, cx, top + hh * .2, fw * .45); gr.addColorStop(0, 'rgba(255,248,200,.55)'); gr.addColorStop(1, 'rgba(255,248,200,0)'); g.fillStyle = gr; g.fillRect(fx, fy, fw, fh * .8); R(cx - fw * .14, top, fw * .28, hh * .3, '#fff6c8', sc * .1); break; }
@@ -342,16 +358,6 @@
     }
     g.restore();
   }
-  // suelo: rejillas y marcas sueltas para que no quede liso
-  function floorDetail(g, i, j, x, y, cs, sc, lw) {
-    const h = ((i * 2654435761) ^ (j * 40503)) >>> 0; if (h % 7 > 1) return;
-    g.save(); g.strokeStyle = 'rgba(30,36,56,.55)'; g.lineWidth = Math.max(1, lw * .6);
-    const px = x + cs * (.2 + (h >> 4) % 50 / 100), py = y + cs * (.2 + (h >> 9) % 50 / 100);
-    if (h % 7 === 0) { g.fillStyle = 'rgba(40,46,64,.35)'; rrect(g, px, py, sc * 1.1, sc * .7, sc * .1); g.fill(); g.stroke(); for (let k = 1; k < 4; k++) { g.beginPath(); g.moveTo(px + k * sc * .27, py + sc * .12); g.lineTo(px + k * sc * .27, py + sc * .58); g.stroke(); } }
-    else { g.fillStyle = 'rgba(40,46,64,.12)'; g.beginPath(); g.ellipse(px, py, sc * .8, sc * .45, (h % 10) / 3, 0, TAU); g.fill(); }
-    g.restore();
-  }
-
   // objetos del suelo: consolas, rejillas, mesas... v igual que en drawMap; o.hl = ids de consola resaltadas, o.use = la que está a tu alcance
   W2.drawProps = (g, v, o) => {
     const sc = v.sc, X = x => (x - v.cx) * sc + v.w / 2, Y = y => (y - v.cy) * sc + v.h / 2, t = o.t || 0, lw = Math.max(1.2, sc * .08);
@@ -450,10 +456,10 @@
         // tapa delantera
         E(nx + L, top + hgt / 2, Rr * .4, hgt * .5, '#8a94aa'); E(nx + L, top + hgt / 2, Rr * .2, hgt * .26, '#5c667e');
         // tuberías que suben a la pared
-        { const rm = S.ROOMS.find(q => q.id === d.room), wy = rm ? Y(rm.r[1] * S.CELL) : top - sc * 3; g.lineWidth = lw; for (const k of [-.25, .2]) { R(x + L * k - sc * .3, wy - sc * .2, sc * .6, top - wy + sc * .4, '#8c96ab', sc * .2); g.fillStyle = '#5c667f'; g.fillRect(x + L * k - sc * .4, wy + (top - wy) * .5, sc * .8, sc * .25); } }
+        { const rm = S.ROOMS.find(q => q.id === d.room), wy = rm ? Y(Math.min(...rm.poly.map(q => q[1]))) : top - sc * 3; g.lineWidth = lw; for (const k of [-.25, .2]) { R(x + L * k - sc * .3, wy - sc * .2, sc * .6, top - wy + sc * .4, '#8c96ab', sc * .2); g.fillStyle = '#5c667f'; g.fillRect(x + L * k - sc * .4, wy + (top - wy) * .5, sc * .8, sc * .25); } }
         break; }
       case 'core': {   // reactor: núcleo azul que gira, con tuberías hasta la pared
-        const wx = X(4.2);
+        const wx = X(d.x - 6.5);
         g.lineWidth = lw; [-.6, 0, .6].forEach((k, i) => { R(wx, y + k * r - sc * (.35 + i * .05), x - wx, sc * .7, i === 1 ? '#7d879c' : '#6b7590', sc * .3); });
         shadow(x, y + sc * .3, r * 1.35, r * .95);
         E(x, y, r * 1.3, r * .95, '#3d4560'); g.fillStyle = '#ffd23f'; for (let k = 0; k < 8; k++) { const a = k / 8 * TAU; g.beginPath(); g.arc(x + Math.cos(a) * r * 1.12, y + Math.sin(a) * r * .82, sc * .12, 0, TAU); g.fill(); }
@@ -607,17 +613,13 @@
 
   // mapa pequeño (minimapa, panel de administración): salas en azul como el mapa del original
   W2.miniMap = ppm => {
-    const { W, H, C, solid } = M, c = document.createElement('canvas'); c.width = Math.round(W * C * ppm); c.height = Math.round(H * C * ppm);
-    const g = c.getContext('2d'), cs = C * ppm; g.fillStyle = '#0a1a3a'; g.fillRect(0, 0, c.width, c.height);
-    for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (!solid(i, j)) { g.fillStyle = S.roomAt(i, j) ? '#5b8fd9' : '#3f6fb8'; g.fillRect(i * cs, j * cs, cs + .5, cs + .5); }
-    g.strokeStyle = '#d9ecff'; g.lineWidth = Math.max(1, ppm * 1.2);
-    g.beginPath();
-    for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { if (solid(i, j)) continue; const x = i * cs, y = j * cs;
-      if (solid(i, j - 1)) { g.moveTo(x, y); g.lineTo(x + cs, y); } if (solid(i, j + 1)) { g.moveTo(x, y + cs); g.lineTo(x + cs, y + cs); }
-      if (solid(i - 1, j)) { g.moveTo(x, y); g.lineTo(x, y + cs); } if (solid(i + 1, j)) { g.moveTo(x + cs, y); g.lineTo(x + cs, y + cs); } }
-    g.stroke();
-    g.font = `800 ${Math.max(7, ppm * 3.2)}px "Inter",system-ui,sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.strokeStyle = '#0a1a3a'; g.lineWidth = Math.max(2, ppm);
-    S.ROOMS.forEach(r => { const x = (r.r[0] + r.r[2] / 2) * cs, y = (r.r[1] + r.r[3] / 2) * cs; g.strokeText(r.name, x, y); g.fillText(r.name, x, y); });
+    const c = document.createElement('canvas'); c.width = Math.round(S.MAPW * ppm); c.height = Math.round(S.MAPH * ppm);
+    const g = c.getContext('2d'); g.fillStyle = '#0a1a3a'; g.fillRect(0, 0, c.width, c.height); g.scale(ppm, ppm);
+    S.POLYS.forEach(p => { g.fillStyle = p.room ? '#5b8fd9' : '#3f6fb8'; g.beginPath(); p.pts.forEach(([x, z], i) => i ? g.lineTo(x, z) : g.moveTo(x, z)); g.closePath(); g.fill(); });
+    g.strokeStyle = '#d9ecff'; g.lineWidth = 1.2; g.lineCap = 'round'; g.beginPath(); S.WALLS.forEach(w => { g.moveTo(w.a[0], w.a[1]); g.lineTo(w.b[0], w.b[1]); }); g.stroke();
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.font = `800 ${Math.max(7, ppm * 3.2)}px "Inter",system-ui,sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.strokeStyle = '#0a1a3a'; g.lineWidth = Math.max(2, ppm); g.lineJoin = 'round';
+    S.ROOMS.forEach(r => { const x = r.c[0] * ppm, y = r.c[1] * ppm; g.strokeText(r.name, x, y); g.fillText(r.name, x, y); });
     return c;
   };
 

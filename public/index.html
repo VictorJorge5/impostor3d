@@ -580,7 +580,7 @@ body.ready #splash{opacity:0;visibility:hidden}
 
 /* derecha: minimapa + herramientas */
 #topRight{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));gap:8px}
-#minimap{width:min(160px,25vw);height:auto;aspect-ratio:44/30;border-radius:14px;border:1px solid #9fb6ff33;background:#05070dcc;box-shadow:0 10px 30px -12px #000c}
+#minimap{width:min(160px,25vw);height:auto;aspect-ratio:188/122;border-radius:14px;border:1px solid #9fb6ff33;background:#05070dcc;box-shadow:0 10px 30px -12px #000c}
 .tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:min(290px,46vw);pointer-events:auto}
 .tools .ibtn{width:40px;height:40px;border-radius:13px;background:#0a1124b8;border-color:#9fb6ff26}
 .tools .ibtn .i{width:19px;height:19px}
@@ -699,7 +699,7 @@ body.ready #splash{opacity:0;visibility:hidden}
 #barWrap span{position:absolute;inset:0;display:flex;align-items:center;padding-left:8px;font:800 10.5px/1 "Arial Black","Inter",sans-serif;color:#fff;letter-spacing:.3px;text-shadow:-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000;white-space:nowrap;overflow:hidden}
 #minimap{cursor:pointer;pointer-events:auto}
 #mapOv{align-items:center;justify-content:center;background:#000b;z-index:42}
-#mapBox{position:relative;width:min(94vw,calc(86vh * 44 / 30));aspect-ratio:44/30;border-radius:18px;border:5px solid #d9ecff;background:#0a1a3a;box-shadow:0 0 0 4px #0a1a3a,0 20px 60px #000}
+#mapBox{position:relative;width:min(94vw,calc(86vh * 188 / 122));aspect-ratio:188/122;border-radius:18px;border:5px solid #d9ecff;background:#0a1a3a;box-shadow:0 0 0 4px #0a1a3a,0 20px 60px #000}
 #mapBox canvas{width:100%;height:100%;display:block;border-radius:13px}
 #mapBox .x{position:absolute;top:-16px;right:-16px;width:40px;height:40px;border-radius:50%;background:#c4162f;color:#fff;border:3px solid #fff;font-size:18px;font-weight:900;cursor:pointer}
 #endCv{width:min(760px,100%);height:clamp(200px,46vh,340px);flex:none;margin-top:4px}
@@ -737,7 +737,7 @@ body.ready #splash{opacity:0;visibility:hidden}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.1</span></footer>
+    <footer class="foot"><span>Impostor 3D · v5.2</span></footer>
   </div>
 </div>
 
@@ -1453,7 +1453,7 @@ function openMap() { if (G.state !== 'play') return; G.mapOpen = true; ov('mapOv
 function closeMap() { G.mapOpen = false; ov('mapOv', false); }
 function drawBigMap(now) {
   if (!bigMap) bigMap = W2.miniMap(5);
-  const { g, w, h } = fitCanvas($('mapCv')), sx = w / (S.W * S.CELL), sz = h / (S.H * S.CELL), t = now / 1000;
+  const { g, w, h } = fitCanvas($('mapCv')), sx = w / S.MAPW, sz = h / S.MAPH, t = now / 1000;
   g.clearRect(0, 0, w, h); g.drawImage(bigMap, 0, 0, w, h);
   G.tasks.forEach(id => { if (!canDo(id)) return; const p = S.stationPos(S.STATIONS[id]), x = p.x * sx, y = p.z * sz, b = Math.sin(t * 5) * 2;
     g.fillStyle = '#ffd23f'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y - 16 + b); g.lineTo(x + 9, y + b); g.lineTo(x - 9, y + b); g.closePath(); g.fill(); g.stroke(); g.fillStyle = '#000'; g.font = '900 11px Inter,sans-serif'; g.textAlign = 'center'; g.fillText('!', x, y - 3 + b); });
@@ -1754,9 +1754,9 @@ $('btnEndTest').onclick = () => { if (confirm('¿Dar la prueba por terminada?'))
 // Modo pruebas: el anfitrión puede provocar sabotajes y teletransportarse
 function closeTestMenu() { ov('testMenu', false); }
 function teleportTo(roomId) {
-  const rm = S.ROOMS.find(r => r.id === roomId), cx = rm.r[0] + rm.r[2] / 2, cz = rm.r[1] + rm.r[3] / 2; let best = null;
-  for (let j = rm.r[1]; j < rm.r[1] + rm.r[3]; j++) for (let i = rm.r[0]; i < rm.r[0] + rm.r[2]; i++) {
-    const x = (i + .5) * S.CELL, z = (j + .5) * S.CELL; if (S.blocked(x, z)) continue; const d = Math.hypot(i + .5 - cx, j + .5 - cz); if (!best || d < best.d) best = { x, z, d };
+  const rm = S.ROOMS.find(r => r.id === roomId), [cx, cz] = rm.c; let best = null;
+  for (let z = cz - 14; z <= cz + 14; z += 1) for (let x = cx - 14; x <= cx + 14; x += 1) {
+    if (S.blocked(x, z) || !S.inPoly(x, z, rm.poly)) continue; const d = Math.hypot(x - cx, z - cz); if (!best || d < best.d) best = { x, z, d };
   }
   if (best) { G.x = best.x; G.z = best.z; } closeTestMenu(); toast('Teletransportado: ' + rm.name);
 }
@@ -1803,9 +1803,11 @@ function updateSabBanner(now) {
 }
 function pushOutOfDoors() {
   const room = G.sab && G.sab.type === 'puertas' ? G.sab.room : null; if (!room) return;
-  const ci = Math.floor(G.x / S.CELL), cj = Math.floor(G.z / S.CELL);
-  if (!S.DOORS[room].some(c => c[0] === ci && c[1] === cj)) return;
-  for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const rm = S.roomAt(ci + a, cj + b); if (rm && rm.id === room) { G.x = (ci + a + .5) * S.CELL; G.z = (cj + b + .5) * S.CELL; return; } }
+  // si la puerta se cierra encima de ti, te quedas dentro de la sala
+  const d = S.DOORS[room].find(s => S.segDist(G.x, G.z, s) < 1); if (!d) return;
+  const dx = d[2] - d[0], dz = d[3] - d[1], L = Math.hypot(dx, dz); let nx = dz / L, nz = -dx / L;
+  const mx = (d[0] + d[2]) / 2, mz = (d[1] + d[3]) / 2, rm = S.roomAtPos(mx + nx, mz + nz); if (!rm || rm.id !== room) { nx = -nx; nz = -nz; }
+  const k = ((G.x - mx) * nx + (G.z - mz) * nz); G.x += nx * (1.1 - k); G.z += nz * (1.1 - k);
 }
 function setSab(s) { G.sab = s ? Object.assign({}, s, { local: performance.now() + (s.ends || 0) }) : null; if (G.sab) { G.sabReadyAt = Infinity; pushOutOfDoors(); } updateSabVisuals(); }
 socket.on('sabotage', s => {
@@ -1902,14 +1904,14 @@ function renderCamFeeds(now) {
 }
 function drawAdmin() {
   // como en Among Us: se ve cuánta gente hay en cada sala (puntos de su color), no la posición exacta
-  const cv = $('admCv'); if (!cv) return; const g = cv.getContext('2d'), W = cv.width, Hh = cv.height, sx = W / (S.W * S.CELL), sz = Hh / (S.H * S.CELL);
+  const cv = $('admCv'); if (!cv) return; const g = cv.getContext('2d'), W = cv.width, Hh = cv.height, sx = W / S.MAPW, sz = Hh / S.MAPH;
   g.clearRect(0, 0, W, Hh); g.drawImage(floorCanvas, 0, 0, W, Hh);
   const counts = {}, slot = {};
   for (const p of G.players.values()) {
     if (!p.alive || p.vent) continue;
-    const rm = S.roomAt(Math.floor(p.x / S.CELL), Math.floor(p.z / S.CELL)), rid = rm ? rm.id : 'pasillo'; counts[rid] = (counts[rid] || 0) + 1;
+    const rm = S.roomAtPos(p.x, p.z), rid = rm ? rm.id : 'pasillo'; counts[rid] = (counts[rid] || 0) + 1;
     let px = p.x * sx, pz = p.z * sz;
-    if (rm) { const n = slot[rid] = slot[rid] == null ? 0 : slot[rid] + 1; px = (rm.r[0] + rm.r[2] / 2) * S.CELL * sx + ((n % 4) - 1.5) * 26; pz = (rm.r[1] + rm.r[3] / 2) * S.CELL * sz + 28 + Math.floor(n / 4) * 26; }
+    if (rm) { const n = slot[rid] = slot[rid] == null ? 0 : slot[rid] + 1; px = rm.c[0] * sx + ((n % 4) - 1.5) * 26; pz = rm.c[1] * sz + 18 + Math.floor(n / 4) * 26; }
     g.fillStyle = colHex(p.color); g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.arc(px, pz, 10, 0, TAU); g.fill(); g.stroke();
   }
   const list = $('admRooms'); if (!list) return; list.innerHTML = '';
@@ -2183,7 +2185,7 @@ function update(dt, now) {
     if (moving) {
       const sp = 6.5 * G.cfg.speed * dt, nx = G.x + vx * sp, nz = G.z + vz * sp;
       // los fantasmas atraviesan las paredes, como en Among Us; solo se quedan dentro del mapa
-      const free = (x, z) => G.alive ? !S.blocked(x, z) : (x > 3 && z > 3 && x < S.W * S.CELL - 3 && z < S.H * S.CELL - 3);
+      const free = (x, z) => G.alive ? !S.blocked(x, z) : (x > 3 && z > 3 && x < S.MAPW - 3 && z < S.MAPH - 3);
       if (free(nx, G.z)) G.x = nx;
       if (free(G.x, nz)) G.z = nz;
       G.ry = Math.atan2(vx, vz);
@@ -2268,7 +2270,7 @@ function render2D(now) {
 }
 function drawMini() {
   const m = $('minimap'), c = m.getContext('2d'), w = m.width / 2, h = m.height / 2; c.setTransform(2, 0, 0, 2, 0, 0);
-  const sx = w / (S.W * S.CELL), sz = h / (S.H * S.CELL);
+  const sx = w / S.MAPW, sz = h / S.MAPH;
   c.clearRect(0, 0, w, h); c.globalAlpha = .9; c.drawImage(floorCanvas, 0, 0, w, h); c.globalAlpha = 1;
   G.tasks.forEach(id => {
     if (!canDo(id)) return; const p = S.stationPos(S.STATIONS[id]);

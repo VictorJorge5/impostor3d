@@ -4,6 +4,13 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.2 · el mapa de The Skeld
+- **El mapa tiene la forma de The Skeld**: cafetería octogonal arriba en el centro, motor superior e inferior a la izquierda con el reactor entre ellos, seguridad y enfermería junto al pasillo oeste, eléctrica y almacén abajo, administración a la derecha del pasillo de la cafetería, oxígeno y armería arriba a la derecha, la cabina de Navegación en punta con ventanas, escudos abajo a la derecha y comunicaciones debajo del pasillo de escudos.
+- **Paredes en diagonal** como en el original (el mapa ya no es una cuadrícula: son polígonos). Las puertas salen solas donde un pasillo toca una sala, y las cierra el sabotaje de puertas.
+- Tareas, paneles, rejillas (con las mismas conexiones que en The Skeld), cámaras y muebles colocados en su sala como en el juego. "Desviar energía" está en Eléctrica.
+- El mapa pequeño, el mapa grande y el panel de administración muestran la nueva forma.
+- **Importante**: el servidor de juego usa el mismo `shared.js` (choques, puertas y bots), así que hay que redesplegarlo.
+
 ## Novedades 5.1 · el mapa lleno y las pantallas del original
 - **Salas llenas como en The Skeld**: mesas redondas con taburetes en la cafetería, motores gigantes con llama, reactor azul que gira con sus tuberías, camas en la enfermería, generador y armarios en Eléctrica, montañas de cajas y barriles en el almacén, mesa del mapa con holograma y sofá en Administración, sillas y mandos de pilotaje en Navegación, árbol y botellas en Oxígeno, cañón en Armería, generador de escudos, torre de antena en Comunicaciones...
 - **Paredes con detalles** según la sala (ventanas al espacio, pantallas, cuadros eléctricos, estanterías, tuberías, botiquines, botellas de oxígeno) y suelo con rejillas, marcas y sombra junto a las paredes. Los muebles tapan a quien pasa por detrás.
