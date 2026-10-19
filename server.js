@@ -45,7 +45,7 @@ app.get('/health', (req, res) => {   // también sirve para "despertar" el servi
 app.get('/vendor/socket.io.min.js', (req, res) => res.sendFile(SIO_CLIENT));
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, file) => {   // la página y la plantilla de amigos siempre frescas; el resto (caras, imágenes) en caché
-    if (/\.(html|js|webmanifest)$/.test(file) && !/three/.test(file)) res.setHeader('Cache-Control', 'no-cache');
+    if (/\.(html|js|webmanifest)$/.test(file)) res.setHeader('Cache-Control', 'no-cache');
     else res.setHeader('Cache-Control', 'public, max-age=86400');
   }
 }));
@@ -343,9 +343,9 @@ io.on('connection', sock => {
       r = { code: genCode(), hostId: sock.id, players: new Map(), state: 'lobby', set: S.normalizeSettings({}), bodies: [], bodySeq: 0, timer: null, totalTasks: 0, doneTasks: 0, camViewers: new Set(), camN: 0, doorLog: [] };
       rooms.set(r.code, r);
     }
-    const used = new Set(list(r).map(p => p.color));
-    let color = 0; while (used.has(color)) color++;
-    me = { id: sock.id, name, color, look: S.cleanLook(data && data.look), x: S.BUTTON.x, z: S.BUTTON.z + 5, ry: 0, alive: true, role: null, tasks: [], done: [], vote: null, emergencies: 1, killReadyAt: 0, vent: null, token: crypto.randomBytes(12).toString('hex'), offline: false, lastChat: 0 };
+    const used = new Set(list(r).map(p => p.color)), look = S.cleanLook(data && data.look);
+    let color = used.has(look.col) ? 0 : look.col; while (used.has(color)) color++;   // el color que eligió, si está libre (como en Among Us)
+    me = { id: sock.id, name, color, look, x: S.BUTTON.x, z: S.BUTTON.z + 5, ry: 0, alive: true, role: null, tasks: [], done: [], vote: null, emergencies: 1, killReadyAt: 0, vent: null, token: crypto.randomBytes(12).toString('hex'), offline: false, lastChat: 0 };
     r.players.set(sock.id, me);
     room = r;
     sock.join(r.code);

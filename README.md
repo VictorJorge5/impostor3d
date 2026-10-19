@@ -4,6 +4,16 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.0 · ahora sí, como Among Us
+- **Todo en 2D plano, como el original**: se ha quitado el motor 3D. El mapa se ve desde arriba con suelos de cada sala, paredes con frente, ventana de Navegación, rejillas, mesa de emergencia y consolas dibujadas como en The Skeld.
+- **Crewmates de verdad** (alubia con mochila, piernas que andan, contorno negro) con **tu cara dentro del visor**. Sin foto se ve el visor azul clásico. Los fantasmas flotan con cola, los cuerpos salen partidos con el hueso.
+- **Los 12 colores de Among Us** (rojo, azul, verde, rosa, naranja, amarillo, negro, blanco, morado, marrón, cian y lima). Eliges tu color en el editor y el servidor te lo da si está libre en la sala.
+- **Editor por pestañas**: Tu foto (color y altura), Sombrero (sombrero, bufanda/capa/pajarita), Traje (equipaciones de fútbol con dorsal) y Mascota.
+- **Visión como el original**: círculo de luz con línea de visión y el resto en sombra; con las luces saboteadas casi no ves (el impostor sí).
+- Mapa pequeño azul, cámaras, expulsión al espacio, aviso de reunión con quien la convoca y botones de acción cuadrados como en el juego.
+- Se mantiene todo lo anterior: caras de tus amigos, tareas por pasos, tareas visuales (con opción para quitarlas), el impostor arregla sabotajes y hace tareas falsas, votarte a ti mismo, tareas de fantasma, chat de fantasmas y pantalla final con MVP.
+- **Importante**: el servidor de juego (Render) debe actualizarse con este código (elección de color y reglas).
+
 ## Novedades 4.4 · fallos arreglados y reglas como el original
 - **Tu foto, lo primero**: el editor abre en la pestaña **Tu foto** (al crear un personaje con "Con mis fotos", con "+ Nuevo" o si aún no tiene foto). Antes se abría en *Fútbol* y los botones de cámara/galería quedaban escondidos.
 - **Reglas del original**: no se puede pulsar el botón de emergencia durante un sabotaje (salvo puertas); las luces y las comunicaciones siguen saboteadas después de una reunión (el reactor, el oxígeno y las puertas se reinician); el impostor fantasma puede seguir saboteando; los fantasmas tienen su propio chat que solo leen otros fantasmas; el primer asesinato de la partida tarda como mucho 10 s.
@@ -114,7 +124,7 @@ Los paneles de sabotaje también cambian: palancas para las luces y teclado con 
 - También vale solo Render: su propia URL sirve la página y el juego.
 
 ## Personajes
-- Los amigos de plantilla (Benjamín, Cristian, Pablo, Jaime, Santi, Víctor, José) llevan su **cara real**: la foto se recorta sin fondo, se alinea (ojos, barbilla, ancho de mejillas) a una cabeza común y se proyecta sobre una cabeza 3D. El **relieve** (nariz, cejas, labios, mentón) sale de los puntos faciales 3D de su propia foto. Lleva orejas, y los laterales y la nuca continúan con su piel y pelo (con degradado si lo llevan). El cuerpo lleva su ropa, complexión y altura.
+- Los amigos de plantilla (Benjamín, Cristian, Pablo, Jaime, Santi, Víctor, José) llevan su **cara real**: la foto se recorta sin fondo, se alinea (ojos, barbilla, ancho de mejillas) a una cabeza común y y se ve dentro del visor de su crewmate. Cada uno tiene su color de Among Us.
 - Están en `public/friends.js`; las texturas en `public/faces/<nombre>.jpg` y los relieves en `public/faces/<nombre>_h.png`.
 - Altura editable: en "Cambiar personaje" hay un deslizador y una casilla en cm. Lo que edites a mano se respeta.
 - Extras de ropa: manga o pantalón cortos, sandalias (`ss`), mochila (`mo`), bandolera (`ac`), logo en el pecho (`cl`), pelo con volumen (`hv`) y rizado (`hr`).
@@ -127,7 +137,7 @@ Cualquiera que no esté en la plantilla puede crearse el suyo desde su móvil:
 2. Pone su nombre y su altura (deslizador o casilla en cm), elige complexión y colores de ropa.
 3. Hace 3 fotos, cada una con la cámara o desde la galería: de frente (obligatoria), giro de 45° a su derecha y giro de 45° a su izquierda (las dos últimas son opcionales, mejoran los lados de la cabeza).
    Para cada foto se ajusta con un óvalo guía (arrastrar, pellizcar para el zoom, control de inclinación). De frente, los ojos van sobre los dos puntos naranjas.
-4. El móvil calcula la cabeza (textura esférica), la previsualiza en 3D y la guarda. Pulsa "Jugar con este personaje".
+4. El móvil calcula la cabeza (textura esférica), la previsualiza en su crewmate y la guarda. Pulsa "Jugar con este personaje".
 Las fotos no salen del móvil: a la sala solo se envía la textura de la cabeza. Con luz uniforme, sin gafas de sol ni gorra y con la cabeza entera en la foto sale mejor.
 Se guarda en el navegador y se comparte con "Copiar código" / "Importar código".
 
@@ -221,7 +231,7 @@ Dentro de una ventilación nadie te ve: no puedes matar, sabotear ni moverte por
 ### Terminales de información (cualquier jugador vivo; botón "Usar" junto al terminal)
 | Terminal | Dónde | Qué da |
 |---|---|---|
-| **Cámaras de seguridad** | Seguridad | 4 vistas en directo del mapa 3D (pasillo de motores, pasillo sur, pasillo de Administración y pasillo de Navegación), a pantalla completa y sin el HUD encima (en el móvil en vertical se apilan en una columna). Mientras alguien mira, **la luz roja de las cámaras parpadea para todos** |
+| **Cámaras de seguridad** | Seguridad | 4 vistas en directo del mapa (pasillo de motores, pasillo sur, pasillo de Administración y pasillo de Navegación), a pantalla completa y sin el HUD encima (en el móvil en vertical se apilan en una columna). Mientras alguien mira, **la luz roja de las cámaras parpadea para todos** |
 | **Panel de administración** | Administración | Cuánta gente hay en cada sala, con puntos de su color (no la posición exacta). Un impostor dentro de una ventilación no aparece |
 | **Signos vitales** | Enfermería | Todos los jugadores con su electrocardiograma: VIVO o MUERTO en directo |
 | **Registro de puertas** | Eléctrica | Quién ha entrado o salido de cada sala y hace cuántos segundos (se ignoran los rebotes en el umbral; las ventilaciones no dejan rastro) |
