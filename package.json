@@ -1,6 +1,6 @@
 {
   "name": "impostor3d",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "private": true,
   "description": "Juego tipo Among Us en 3D (1ª/3ª persona) para jugar con amigos",
   "main": "server.js",

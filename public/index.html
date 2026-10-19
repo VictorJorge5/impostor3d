@@ -737,7 +737,7 @@ body.ready #splash{opacity:0;visibility:hidden}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.2</span></footer>
+    <footer class="foot"><span>Impostor 3D · v5.3</span></footer>
   </div>
 </div>
 
@@ -894,7 +894,7 @@ const G = {
   state: 'menu', role: null, alive: true, tasks: [], done: new Set(), mates: [], emerg: 1,
   total: 0, doneN: 0, players: new Map(), bodies: new Map(),
   sc: .92, x: 0, z: 0, ry: 0, heading: 0, zoom: 0, still: 0,
-  cfg: { speed: 1, visCrew: 1, visImp: 1.25, killRange: 5.5, taskbar: 'siempre', test: false, vents: true, sabs: { luces: true, coms: true, puertas: true, reactor: true, o2: true }, times: { reactor: 45, o2: 50, doors: 12 } },
+  cfg: { speed: 1, visCrew: 1, visImp: 1.25, killRange: 3.8, taskbar: 'siempre', test: false, vents: true, sabs: { luces: true, coms: true, puertas: true, reactor: true, o2: true }, times: { reactor: 45, o2: 50, doors: 12 } },
   info: null, camN: 0, shakeUntil: 0, shakeAmp: 0, fx: [], eject: null, impCount: 1, hostId: null, emReadyAt: 0, phase: 'vote', phaseEnds: 0, sab: null, vent: null, sabReadyAt: 0, holding: null, mgPanel: null, sabMenuOpen: false, killReadyAt: 0, frozenUntil: 0, act: null, voted: new Set(), myVote: null, resultShown: false, mtgEnds: 0
 };
 
@@ -1452,7 +1452,7 @@ let bigMap = null;
 function openMap() { if (G.state !== 'play') return; G.mapOpen = true; ov('mapOv', true); snd('click'); drawBigMap(performance.now()); }
 function closeMap() { G.mapOpen = false; ov('mapOv', false); }
 function drawBigMap(now) {
-  if (!bigMap) bigMap = W2.miniMap(5);
+  if (!bigMap) bigMap = W2.miniMap(10);
   const { g, w, h } = fitCanvas($('mapCv')), sx = w / S.MAPW, sz = h / S.MAPH, t = now / 1000;
   g.clearRect(0, 0, w, h); g.drawImage(bigMap, 0, 0, w, h);
   G.tasks.forEach(id => { if (!canDo(id)) return; const p = S.stationPos(S.STATIONS[id]), x = p.x * sx, y = p.z * sz, b = Math.sin(t * 5) * 2;
@@ -1795,7 +1795,7 @@ function updateSabBanner(now) {
   const sec = s.local ? Math.max(0, Math.ceil((s.local - now) / 1000)) : 0, imp = G.role === 'impostor';
   let t = '', crisis = !!s.crisis;
   if (s.type === 'luces') t = imp ? 'Has apagado las luces' : 'Luces apagadas: arregla el panel de la Eléctrica';
-  else if (s.type === 'coms') t = imp ? 'Has cortado las comunicaciones' : 'Comunicaciones caídas: arregla el panel de Navegación';
+  else if (s.type === 'coms') t = imp ? 'Has cortado las comunicaciones' : 'Comunicaciones caídas: arregla el panel de Comunicaciones';
   else if (s.type === 'puertas') t = `Puertas cerradas (${roomName(s.room)}) · ${sec}s`;
   else if (s.type === 'reactor') t = `⚠ REACTOR INESTABLE · ${sec}s\nDos jugadores deben mantener a la vez los dos paneles del Reactor`;
   else if (s.type === 'o2') t = `⚠ SIN OXÍGENO · ${sec}s\nIntroduce el código en los dos depuradores: Navegación y Almacén (${(s.done || []).length}/2)`;
@@ -2056,13 +2056,14 @@ window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; }
 function updateActions(now) {
   const act = { use: null, report: false, kill: null, vent: null };
   if (G.state === 'play' && !mgOpen && now > G.frozenUntil && G.vent == null) {
-    let bd = 3.8;
+    let bd = 3.2;
     if (G.sab && G.sab.panels && G.alive) for (const pid of G.sab.panels) {   // el impostor también puede arreglar (para disimular)
       if ((G.sab.done || []).includes(pid)) continue;
       const pn = S.PANELS.find(q => q.id === pid), pp = S.cellPos(pn), d = Math.hypot(G.x - pp.x, G.z - pp.z);
       if (d < bd) { bd = d; act.use = { type: 'panel', panel: pn }; }
     }
-    if (G.alive && G.cfg.info !== false) for (const t of S.INFO) { const ip = S.cellPos(t), d = Math.hypot(G.x - ip.x, G.z - ip.z); if (d < bd) { bd = d; act.use = { type: 'info', tool: t }; } }
+    // un sabotaje por arreglar va antes que los terminales
+    if (G.alive && G.cfg.info !== false && !(act.use && act.use.type === 'panel')) for (const t of S.INFO) { const ip = S.cellPos(t), d = Math.hypot(G.x - ip.x, G.z - ip.z); if (d < bd) { bd = d; act.use = { type: 'info', tool: t }; } }
     if (!(act.use && (act.use.type === 'panel' || act.use.type === 'info'))) for (const id of G.tasks) {
       if (!canDo(id)) continue;
       const p = S.stationPos(S.STATIONS[id]), d = Math.hypot(G.x - p.x, G.z - p.z);
@@ -2078,7 +2079,7 @@ function updateActions(now) {
       }
       const cd = Math.max(0, G.killReadyAt - now);
       act.kill = { target: best, cd, ready: !!best && cd === 0 };
-      let bv = G.cfg.vents ? 4.2 : 0; for (const v of S.VENTS) { const vp = S.cellPos(v), d = Math.hypot(G.x - vp.x, G.z - vp.z); if (d < bv) { bv = d; act.vent = v; } }
+      let bv = G.cfg.vents ? 3.2 : 0; for (const v of S.VENTS) { const vp = S.cellPos(v), d = Math.hypot(G.x - vp.x, G.z - vp.z); if (d < bv) { bv = d; act.vent = v; } }
     }
   }
   G.act = act;
@@ -2216,7 +2217,7 @@ function update(dt, now) {
     if (f.kind === 'drop') { f.vy -= 14 * dt; f.x += f.vx * dt; f.z += f.vz * dt; f.y = Math.max(0, f.y + f.vy * dt); }
   }
   // cámara: te sigue con suavidad; el zoom cambia cuánto se ve
-  const scT = Math.min(VIEW.h / 17, VIEW.w / 11) * (G.zoom ? .68 : 1) / Math.max(1, Math.min(1.35, FOW.Rn / 9.5));
+  const scT = Math.min(VIEW.h / 14, VIEW.w / 9) * (G.zoom ? .68 : 1) / Math.max(1, Math.min(1.35, FOW.Rn / 9.5));
   VIEW.sc = VIEW.sc ? VIEW.sc + (scT - VIEW.sc) * Math.min(1, dt * 4) : scT;
   if (G.camX == null || Math.hypot(G.camX - G.x, G.camZ - G.z) > 14) { G.camX = G.x; G.camZ = G.z; VIEW.sc = scT; }
   G.camX += (G.x - G.camX) * Math.min(1, dt * 9); G.camZ += (G.z - G.camZ) * Math.min(1, dt * 9);

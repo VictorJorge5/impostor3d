@@ -459,7 +459,7 @@
         { const rm = S.ROOMS.find(q => q.id === d.room), wy = rm ? Y(Math.min(...rm.poly.map(q => q[1]))) : top - sc * 3; g.lineWidth = lw; for (const k of [-.25, .2]) { R(x + L * k - sc * .3, wy - sc * .2, sc * .6, top - wy + sc * .4, '#8c96ab', sc * .2); g.fillStyle = '#5c667f'; g.fillRect(x + L * k - sc * .4, wy + (top - wy) * .5, sc * .8, sc * .25); } }
         break; }
       case 'core': {   // reactor: núcleo azul que gira, con tuberías hasta la pared
-        const wx = X(d.x - 6.5);
+        const wx = X(d.x - 3.4);
         g.lineWidth = lw; [-.6, 0, .6].forEach((k, i) => { R(wx, y + k * r - sc * (.35 + i * .05), x - wx, sc * .7, i === 1 ? '#7d879c' : '#6b7590', sc * .3); });
         shadow(x, y + sc * .3, r * 1.35, r * .95);
         E(x, y, r * 1.3, r * .95, '#3d4560'); g.fillStyle = '#ffd23f'; for (let k = 0; k < 8; k++) { const a = k / 8 * TAU; g.beginPath(); g.arc(x + Math.cos(a) * r * 1.12, y + Math.sin(a) * r * .82, sc * .12, 0, TAU); g.fill(); }
@@ -618,7 +618,7 @@
     S.POLYS.forEach(p => { g.fillStyle = p.room ? '#5b8fd9' : '#3f6fb8'; g.beginPath(); p.pts.forEach(([x, z], i) => i ? g.lineTo(x, z) : g.moveTo(x, z)); g.closePath(); g.fill(); });
     g.strokeStyle = '#d9ecff'; g.lineWidth = 1.2; g.lineCap = 'round'; g.beginPath(); S.WALLS.forEach(w => { g.moveTo(w.a[0], w.a[1]); g.lineTo(w.b[0], w.b[1]); }); g.stroke();
     g.setTransform(1, 0, 0, 1, 0, 0);
-    g.font = `800 ${Math.max(7, ppm * 3.2)}px "Inter",system-ui,sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.strokeStyle = '#0a1a3a'; g.lineWidth = Math.max(2, ppm); g.lineJoin = 'round';
+    g.font = `800 ${Math.max(6, ppm * 2.3)}px "Inter",system-ui,sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.strokeStyle = '#0a1a3a'; g.lineWidth = Math.max(2, ppm); g.lineJoin = 'round';
     S.ROOMS.forEach(r => { const x = r.c[0] * ppm, y = r.c[1] * ppm; g.strokeText(r.name, x, y); g.fillText(r.name, x, y); });
     return c;
   };

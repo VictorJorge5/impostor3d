@@ -4,6 +4,12 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.3 · The Skeld a su tamaño
+- **Mapa a la escala del original**: antes medía el doble y las salas se veían enormes. Ahora todo se escribe en las coordenadas de The Skeld (las rejillas están en sus posiciones reales) y se pasa a metros con 1 unidad = 2,2 m, así que salas, pasillos y distancias guardan la proporción del juego.
+- Distribución revisada: cafetería octogonal con sus 3 salidas, pasillo de arriba hasta el motor superior con la enfermería debajo, pasillo oeste con el reactor a un lado y seguridad al otro, eléctrica y almacén abajo, pasillo de administración, pasillo derecho de armería a escudos con oxígeno y las dos puertas de Navegación, y comunicaciones bajo el pasillo de escudos.
+- Cámara más cerca (como en el juego), distancias de matar a la escala nueva (corta, media y larga) y radio de uso más corto.
+- Arreglado: el aviso del sabotaje de comunicaciones decía que se arreglaba en Navegación (es en Comunicaciones), y el botón Usar elegía el registro de puertas en lugar del panel de luces cuando los dos estaban cerca.
+
 ## Novedades 5.2 · el mapa de The Skeld
 - **El mapa tiene la forma de The Skeld**: cafetería octogonal arriba en el centro, motor superior e inferior a la izquierda con el reactor entre ellos, seguridad y enfermería junto al pasillo oeste, eléctrica y almacén abajo, administración a la derecha del pasillo de la cafetería, oxígeno y armería arriba a la derecha, la cabina de Navegación en punta con ventanas, escudos abajo a la derecha y comunicaciones debajo del pasillo de escudos.
 - **Paredes en diagonal** como en el original (el mapa ya no es una cuadrícula: son polígonos). Las puertas salen solas donde un pasillo toca una sala, y las cierra el sabotaje de puertas.
