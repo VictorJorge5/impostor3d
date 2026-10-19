@@ -46,7 +46,12 @@ test('la decoración está dentro de su sala y lejos de los objetos interactivos
   S.DECOR.forEach(d => {
     const rm = S.roomAt(Math.floor(d.x / S.CELL), Math.floor(d.z / S.CELL));
     assert.ok(rm && rm.id === d.room, `${d.kind} en ${d.room}`);
-    objs.forEach(o => assert.ok(Math.hypot(o.x - d.x, o.z - d.z) > d.r + (d.len ? d.len / 2 : 0) + 1.2 || (d.len && Math.abs(o.z - d.z) > d.r + 2), `${d.kind} (${d.x},${d.z}) demasiado cerca de (${o.x},${o.z})`));
+    // distancia del objeto al borde de la decoración: hay sitio para ponerse delante y usarlo
+    const hw = d.w ? d.w / 2 : d.len ? d.len / 2 : 0, hh = d.w ? d.h / 2 : d.len ? d.r : 0;
+    const gap = o => (hw ? Math.hypot(Math.max(0, Math.abs(o.x - d.x) - hw), Math.max(0, Math.abs(o.z - d.z) - hh)) : Math.hypot(o.x - d.x, o.z - d.z) - d.r);
+    objs.forEach(o => assert.ok(gap(o) > 1.5, `${d.kind} (${d.x},${d.z}) demasiado cerca de (${o.x},${o.z})`));
+    // tampoco tapa el anillo de salida alrededor de la mesa
+    for (let k = 0; k < 10; k++) { const sp = S.spawnPos(k, 10); assert.ok(!S.blocked(sp.x, sp.z), 'salida ' + k); }
   });
 });
 

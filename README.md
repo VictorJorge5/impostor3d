@@ -4,6 +4,13 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.1 · el mapa lleno y las pantallas del original
+- **Salas llenas como en The Skeld**: mesas redondas con taburetes en la cafetería, motores gigantes con llama, reactor azul que gira con sus tuberías, camas en la enfermería, generador y armarios en Eléctrica, montañas de cajas y barriles en el almacén, mesa del mapa con holograma y sofá en Administración, sillas y mandos de pilotaje en Navegación, árbol y botellas en Oxígeno, cañón en Armería, generador de escudos, torre de antena en Comunicaciones...
+- **Paredes con detalles** según la sala (ventanas al espacio, pantallas, cuadros eléctricos, estanterías, tuberías, botiquines, botellas de oxígeno) y suelo con rejillas, marcas y sombra junto a las paredes. Los muebles tapan a quien pasa por detrás.
+- **Pantallas como el original**: "¡Shhhhh!" al empezar, "Tripulante"/"Impostor" con tu equipo en fila y las caras en el visor, escena de muerte sobre fondo rojo, aviso de reunión con rayos, votación en una tablet, y "Victoria"/"Derrota" con los ganadores en fila antes de las estadísticas y el MVP.
+- **Mapa grande** al tocar el minimapa (o tecla M): salas, tus tareas pendientes con "!", los sabotajes y tu crewmate.
+- Barra verde de **tareas completadas** como en el juego.
+
 ## Novedades 5.0 · ahora sí, como Among Us
 - **Todo en 2D plano, como el original**: se ha quitado el motor 3D. El mapa se ve desde arriba con suelos de cada sala, paredes con frente, ventana de Navegación, rejillas, mesa de emergencia y consolas dibujadas como en The Skeld.
 - **Crewmates de verdad** (alubia con mochila, piernas que andan, contorno negro) con **tu cara dentro del visor**. Sin foto se ve el visor azul clásico. Los fantasmas flotan con cola, los cuerpos salen partidos con el hueso.

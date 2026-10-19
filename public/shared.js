@@ -149,16 +149,50 @@
 
   const stationPos = st => ({ x: (st.i + 0.5) * CELL, z: (st.j + 0.5) * CELL });
   // Decoración con volumen (no se puede atravesar): x, z en metros y radio de choque. El cliente dibuja cada tipo.
+  // Decoración con volumen (no se puede atravesar), x, z en metros. Choque: r = círculo, w/h = rectángulo, len = motor (rectángulo len x 2r).
+  // El cliente dibuja cada tipo. Las salas van llenas como en The Skeld: mesas, motores, reactor, camas, cajas, plantas...
   const DECOR = [
-    { kind: 'core',   room: 'reactor',    x: 14,  z: 54,  r: 2.4 },
-    { kind: 'table',  room: 'cafeteria',  x: 75,  z: 12,  r: 1.45 },
-    { kind: 'table',  room: 'cafeteria',  x: 97,  z: 25,  r: 1.45 },
-    { kind: 'bed',    room: 'enfermeria', x: 52,  z: 38.6, r: 1.25 },
-    { kind: 'chair',  room: 'navegacion', x: 160, z: 58,  r: 1.1, rot: -Math.PI / 2 },
-    { kind: 'crates', room: 'almacen',    x: 90,  z: 78.5, r: 1.5 },
-    { kind: 'crates', room: 'almacen',    x: 66.5, z: 105.5, r: 1.3 },
-    { kind: 'engine', room: 'motores',    x: 17,  z: 21,  r: 1.6, len: 7 },
-    { kind: 'engine', room: 'motorinf',   x: 17,  z: 99,  r: 1.6, len: 7 }
+    { kind: 'table',     room: 'cafeteria',      x: 76,  z: 11,  r: 2.6 },
+    { kind: 'table',     room: 'cafeteria',      x: 96,  z: 11,  r: 2.6 },
+    { kind: 'table',     room: 'cafeteria',      x: 76,  z: 25,  r: 2.6 },
+    { kind: 'table',     room: 'cafeteria',      x: 96,  z: 25,  r: 2.6 },
+    { kind: 'engine',    room: 'motores',        x: 18,  z: 19,  r: 3.4, len: 12 },
+    { kind: 'cans',      room: 'motores',        x: 28,  z: 10.5, r: 1 },
+    { kind: 'engine',    room: 'motorinf',       x: 18,  z: 97,  r: 3.4, len: 12 },
+    { kind: 'cans',      room: 'motorinf',       x: 28,  z: 105, r: 1 },
+    { kind: 'core',      room: 'reactor',        x: 14,  z: 57,  r: 3 },
+    { kind: 'tank',      room: 'reactor',        x: 21,  z: 64,  r: 1.2 },
+    { kind: 'desk',      room: 'seguridad',      x: 55,  z: 45.6, w: 5, h: 1.6 },
+    { kind: 'rack',      room: 'seguridad',      x: 50,  z: 58.6, w: 2.4, h: 1.8 },
+    { kind: 'chair',     room: 'seguridad',      x: 56,  z: 48.6, r: .8 },
+    { kind: 'bed',       room: 'enfermeria',     x: 52,  z: 38.6, w: 3, h: 1.5 },
+    { kind: 'bed',       room: 'enfermeria',     x: 60.5, z: 28.2, w: 3, h: 1.5 },
+    { kind: 'gen',       room: 'electrica',      x: 52,  z: 65.2, w: 3, h: 1.6 },
+    { kind: 'rack',      room: 'electrica',      x: 59,  z: 72,  w: 1.6, h: 2.4 },
+    { kind: 'cratepile', room: 'almacen',        x: 78,  z: 90,  w: 6, h: 4.4 },
+    { kind: 'crates',    room: 'almacen',        x: 90,  z: 78.5, r: 1.5 },
+    { kind: 'crates',    room: 'almacen',        x: 66.5, z: 105.5, r: 1.3 },
+    { kind: 'barrel',    room: 'almacen',        x: 70,  z: 79,  r: 1 },
+    { kind: 'barrel',    room: 'almacen',        x: 84,  z: 106, r: 1 },
+    { kind: 'cans',      room: 'almacen',        x: 66,  z: 84,  r: .9 },
+    { kind: 'sofa',      room: 'administracion', x: 104, z: 70.8, w: 4, h: 1.4 },
+    { kind: 'plant',     room: 'administracion', x: 119, z: 71,  r: .8 },
+    { kind: 'rack',      room: 'administracion', x: 119.4, z: 64, w: 1.4, h: 3 },
+    { kind: 'plant',     room: 'administracion', x: 97.4, z: 53.2, r: .8 },
+    { kind: 'desk',      room: 'comunicaciones', x: 112, z: 113.8, w: 2.8, h: 1.4 },
+    { kind: 'radio',     room: 'comunicaciones', x: 120, z: 107, w: 2, h: 2.4 },
+    { kind: 'shieldgen', room: 'escudos',        x: 144, z: 96,  r: 2 },
+    { kind: 'crates',    room: 'escudos',        x: 135, z: 101.5, r: 1.1 },
+    { kind: 'barrel',    room: 'escudos',        x: 154, z: 86.5, r: .9 },
+    { kind: 'chair',     room: 'navegacion',     x: 162, z: 51,  r: 1.1, rot: -Math.PI / 2 },
+    { kind: 'chair',     room: 'navegacion',     x: 162, z: 63,  r: 1.1, rot: -Math.PI / 2 },
+    { kind: 'console',   room: 'navegacion',     x: 169, z: 52,  w: 1.6, h: 5 },
+    { kind: 'console',   room: 'navegacion',     x: 169, z: 64,  w: 1.6, h: 5 },
+    { kind: 'plant',     room: 'oxigeno',        x: 121, z: 40,  r: 1.4, big: 1 },
+    { kind: 'tank',      room: 'oxigeno',        x: 124, z: 37.2, r: .8, o2: 1 },
+    { kind: 'turret',    room: 'armeria',        x: 134, z: 9,   r: 2 },
+    { kind: 'crates',    room: 'armeria',        x: 142, z: 24,  r: 1.2 },
+    { kind: 'rack',      room: 'armeria',        x: 122, z: 26,  w: 1.6, h: 2.6 }
   ];
   const BUTTON = { x: 86, z: 18 }; // mesa de la cafetería
 
@@ -183,6 +217,8 @@
     for (const d of DECOR) {
       if (d.len) {   // cilindro tumbado a lo largo del eje x (motores)
         if (Math.abs(x - d.x) < d.len / 2 + r && Math.abs(z - d.z) < d.r + r) return true;
+      } else if (d.w) {
+        if (Math.abs(x - d.x) < d.w / 2 + r && Math.abs(z - d.z) < d.h / 2 + r) return true;
       } else { dx = x - d.x; dz = z - d.z; if (dx * dx + dz * dz < (d.r + r) * (d.r + r)) return true; }
     }
     if (closedCells.size && (isClosedCell(x - r, z - r) || isClosedCell(x + r, z - r) || isClosedCell(x - r, z + r) || isClosedCell(x + r, z + r))) return true;
