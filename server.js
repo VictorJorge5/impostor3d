@@ -17,7 +17,7 @@ const SABS = {
   reactor: { name: 'Reactor',        panels: ['reactorA', 'reactorB'], mode: 'simul', crisis: true },
   o2:      { name: 'Oxígeno',        panels: ['o2a', 'o2b'],           mode: 'both',  crisis: true }
 };
-const KILL_RANGES = { corta: 3.5, media: 5.5, larga: 8 };
+const KILL_RANGES = { corta: 2.4, media: 3.8, larga: 5.5 };   // en metros; 1 unidad de The Skeld = 2,2 m (corta 1,1 · media 1,7 · larga 2,5)
 const killCdMs = r => ms(r.set.killCd), firstKillMs = r => ms(Math.min(r.set.killCd, 10)), sabCdMs = r => ms(r.set.sabCd), sabFirstMs = r => ms(Math.min(r.set.sabCd, 20));
 const sabMs = (r, t) => t === 'puertas' ? ms(r.set.doorTime) : t === 'reactor' ? ms(r.set.reactorTime) : t === 'o2' ? ms(r.set.o2Time) : 0;
 const sabEnabled = (r, t) => ({ luces: r.set.sabLuces, coms: r.set.sabComs, puertas: r.set.sabPuertas, reactor: r.set.sabReactor, o2: r.set.sabO2 })[t];
@@ -601,7 +601,7 @@ const WALK = []; const walkSet = new Set();
   for (let j = 0; j < S.H; j++) for (let i = 0; i < S.W; i++) {
     if (S.grid[j][i]) continue; const x = (i + .5) * S.CELL, z = (j + .5) * S.CELL;
     if (props.some(p => Math.hypot(p.x - x, p.z - z) < 2.2) || Math.hypot(S.BUTTON.x - x, S.BUTTON.z - z) < 3.4) continue;
-    if (S.blocked(x, z, 1.4)) continue;   // decoración y bordes: los bots no se quedan pegados
+    if (S.blocked(x, z, 1)) continue;   // decoración y bordes: los bots no se quedan pegados
     WALK.push([i, j]); walkSet.add(i + ',' + j);
   }
 })();
