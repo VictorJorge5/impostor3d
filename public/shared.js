@@ -2,10 +2,9 @@
 (function (root) {
   const CELL = 4, W = 44, H = 30, WALL_H = 3, TASKS_PER = 4, TABLE_R = 1.8;
 
-  const COLORS = [
-    ['Rojo', '#e53935'], ['Azul', '#1e88e5'], ['Verde', '#43a047'], ['Amarillo', '#fdd835'],
-    ['Naranja', '#fb8c00'], ['Morado', '#8e24aa'], ['Rosa', '#ec407a'], ['Cian', '#00acc1'],
-    ['Marrón', '#6d4c41'], ['Blanco', '#eceff1']
+  const COLORS = [   // los colores de Among Us
+    ['Rojo', '#c51111'], ['Azul', '#132ed1'], ['Verde', '#117f2d'], ['Rosa', '#ed54ba'], ['Naranja', '#ef7d0d'], ['Amarillo', '#f5f557'],
+    ['Negro', '#3f474e'], ['Blanco', '#d6e0f0'], ['Morado', '#6b2fbb'], ['Marrón', '#71491e'], ['Cian', '#38fedc'], ['Lima', '#50ef39']
   ];
 
   // Distribución inspirada en The Skeld: 14 salas unidas por pasillos largos.
@@ -213,7 +212,7 @@
     acc: ['Nada', 'Bandolera', 'Bufanda', 'Cadena de oro', 'Capa', 'Pajarita'],
     pet: ['Ninguna', 'Perrito', 'Gatito', 'Robot', 'Minitripulante', 'Pollito', 'Dron']
   };
-  const LOOK_SIZES = { s: SKINS.length, h: OPT.hair.length, hc: HAIR_COLORS.length, b: OPT.beard.length, g: OPT.glasses.length, t: OPT.hat.length, tc: CLOTHES.length, sh: CLOTHES.length, pa: CLOTHES.length, bd: OPT.build.length, ej: OPT.brows.length, hv: 4, hr: 2, ss: 2, mo: 2, ml: OPT.sleeve.length, pl: OPT.pants.length, ac: OPT.acc.length, tp: OPT.top.length, kit: OPT.kit.length, num: 100, nn: 2, pet: OPT.pet.length };
+  const LOOK_SIZES = { col: 12, s: SKINS.length, h: OPT.hair.length, hc: HAIR_COLORS.length, b: OPT.beard.length, g: OPT.glasses.length, t: OPT.hat.length, tc: CLOTHES.length, sh: CLOTHES.length, pa: CLOTHES.length, bd: OPT.build.length, ej: OPT.brows.length, hv: 4, hr: 2, ss: 2, mo: 2, ml: OPT.sleeve.length, pl: OPT.pants.length, ac: OPT.acc.length, tp: OPT.top.length, kit: OPT.kit.length, num: 100, nn: 2, pet: OPT.pet.length };
   // Equipaciones (colores de cada club, sin escudos): camiseta, raya, rayas verticales, ribete, mangas, pantalón, medias y color del dorsal
   const KITS = [null,
     { shirt: '#f4f4f2', alt: null,      trim: '#c9a227', sleeve: '#f4f4f2', shorts: '#f4f4f2', socks: '#f4f4f2', num: '#1b2a5b', edge: '#c9a227', boots: '#111111' },

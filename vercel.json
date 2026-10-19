@@ -37,7 +37,7 @@
       ]
     },
     {
-      "source": "/:file(three\\.min\\.js|og-image\\.png|icon-192\\.png|icon-512\\.png)",
+      "source": "/:file(og-image\\.png|icon-192\\.png|icon-512\\.png)",
       "headers": [
         {
           "key": "Cache-Control",
