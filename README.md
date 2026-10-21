@@ -5,6 +5,7 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
 ## Novedades 5.6 · la cara se amolda y todas las tareas de The Skeld
+- **Las tareas son aparatos en la pared**, como en el original: cuadros de cables, lectores de tarjeta, terminales de datos, distribuidor con diales, panel de desvío con 8 palancas, depósitos de combustible, trampilla de basura, filtro de oxígeno, paneles del reactor y de escudos... Si no hay pared detrás, van sobre un pedestal. El escáner médico es una plataforma en el suelo. Los paneles de sabotaje (luces, teclados de oxígeno, rueda de comunicaciones, escáneres de mano del reactor) también.
 - **Velocidad fija** como en el original: el joystick solo marca la dirección; aunque lo muevas poco, el personaje va siempre a la misma velocidad.
 - **Ajustes del móvil** (botón de rueda en el menú y en la partida): joystick a la derecha con los botones a la izquierda, vibración, sonido y ayuda de teclas.
 - **El impostor no hace tareas** en las partidas con amigos: tiene una lista de tareas falsas para disimular, como en el juego (sí puede arreglar sabotajes). En el modo pruebas sigue pudiendo hacerlas para probar los minijuegos.
