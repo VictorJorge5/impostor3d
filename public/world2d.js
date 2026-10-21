@@ -27,7 +27,7 @@
     if (!look || !look.f) return null;
     const im = imgFor(look.f); if (!im.complete || !im.naturalWidth) return null;
     const W = im.naturalWidth, H = im.naturalHeight;
-    const sh = look.am ? H * .56 : H * .64, cy = look.am ? H * .45 : H * .49, sw = sh * aspect;
+    const sh = look.am ? H * .5 : H * .52, cy = look.am ? H * .46 : H * .5, sw = Math.min(W, sh * aspect);   // encuadre cerrado: ojos, nariz y boca llenan el visor
     return { im, sx: W / 2 - sw / 2, sy: cy - sh / 2, sw, sh };
   }
   W2.faceCrop = faceCrop;
@@ -89,7 +89,7 @@
       if (look.ac === 5) { g.fillStyle = cc; g.beginPath(); g.moveTo(dir * bw * .3, ny); g.lineTo(dir * bw * .3 + h * .07, ny - h * .05); g.lineTo(dir * bw * .3 + h * .07, ny + h * .05); g.closePath(); g.moveTo(dir * bw * .3, ny); g.lineTo(dir * bw * .3 - h * .07, ny - h * .05); g.lineTo(dir * bw * .3 - h * .07, ny + h * .05); g.closePath(); g.fill(); g.stroke(); }
     }
     // visor con la cara
-    visor(g, dir * bw * .13, top + h * .31, bw * .5, h * .235, look, lw);   // visor grande: la gracia es ver la cara
+    visor(g, dir * bw * .09, top + h * .37, bw * .57, h * .27, look, lw);   // visor muy grande: la gracia del juego es ver la cara de cada uno
     // sombrero
     hat(g, look, dir * bw * .05, top, bw, h, lw);
     g.restore();
@@ -100,13 +100,14 @@
     g.beginPath(); g.ellipse(cx, cy, rx, ry, 0, 0, TAU);
     const fc = faceCrop(look, rx / ry);
     if (fc) {
-      g.save(); g.clip(); g.fillStyle = '#222'; g.fill(); g.drawImage(fc.im, fc.sx, fc.sy, fc.sw, fc.sh, cx - rx, cy - ry, rx * 2, ry * 2); g.restore();
-      g.fillStyle = 'rgba(160,215,235,.12)'; g.fill();
+      g.save(); g.clip(); g.fillStyle = '#222'; g.fill(); if ('filter' in g) g.filter = 'brightness(1.08) contrast(1.1) saturate(1.1)';
+      g.drawImage(fc.im, fc.sx, fc.sy, fc.sw, fc.sh, cx - rx, cy - ry, rx * 2, ry * 2); if ('filter' in g) g.filter = 'none';
+      const sh = g.createRadialGradient(cx, cy, Math.min(rx, ry) * .7, cx, cy, Math.max(rx, ry) * 1.05); sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(10,20,30,.35)'); g.fillStyle = sh; g.fill(); g.restore();
     } else {
       const gr = g.createLinearGradient(0, cy - ry, 0, cy + ry); gr.addColorStop(0, '#c6ecf5'); gr.addColorStop(.55, '#86c3d7'); gr.addColorStop(1, '#4b8aa3'); g.fillStyle = gr; g.fill();
     }
     g.lineWidth = lw * 1.1; g.strokeStyle = OUT; g.stroke();
-    g.strokeStyle = 'rgba(255,255,255,.75)'; g.lineWidth = Math.max(1, lw * .7); g.beginPath(); g.ellipse(cx + rx * .1, cy - ry * .1, rx * .78, ry * .72, 0, -2.5, -1.6); g.stroke();
+    g.strokeStyle = 'rgba(255,255,255,.8)'; g.lineWidth = Math.max(1, lw * .8); g.beginPath(); g.ellipse(cx, cy, rx * .86, ry * .82, 0, fc ? -2.35 : -2.5, fc ? -1.95 : -1.6); g.stroke();   // brillo pequeño en la esquina: no tapa la cara
     g.restore();
   }
   // sombreros (el número coincide con S.OPT.hat)
@@ -175,7 +176,7 @@
     g.save(); g.lineJoin = 'round'; g.strokeStyle = OUT; g.lineWidth = lw;
     g.fillStyle = col; g.beginPath(); g.moveTo(s * .12, s * 1.05); g.lineTo(s * .12, s * .45); g.arc(s * .5, s * .45, s * .38, Math.PI, 0); g.lineTo(s * .88, s * 1.05); g.closePath(); g.fill();
     g.save(); g.clip(); { const gr = g.createLinearGradient(s * .12, 0, s * .5, 0); gr.addColorStop(0, shade(col, -.4)); gr.addColorStop(.45, shade(col, -.2)); gr.addColorStop(1, col); g.fillStyle = gr; g.globalAlpha = .55; g.fillRect(0, 0, s * .5, s); } g.restore(); g.stroke();
-    visor(g, s * .54, s * .5, s * .29, s * .33, look || {}, lw);
+    visor(g, s * .53, s * .53, s * .36, s * .34, look || {}, lw);   // la cara ocupa casi todo el retrato
     hat(g, look || {}, s * .52, s * .08, s * .76, s * .9, lw);
     g.restore();
     if (look && look.f) { const im = imgFor(look.f); if (!im.complete) im.addEventListener('load', () => W2.bust(c, look, color), { once: true }); }
