@@ -38,7 +38,8 @@ test('se puede entrar en todas las salas', () => {
     const xs = rm.poly.map(q => q[0]), zs = rm.poly.map(q => q[1]), pts = [];
     for (let z = Math.min(...zs) + 1; z < Math.max(...zs); z += 2) for (let x = Math.min(...xs) + 1; x < Math.max(...xs); x += 2) if ([[0, 0], [.7, 0], [-.7, 0], [0, .7], [0, -.7]].every(([a, b]) => S.inPoly(x + a, z + b, rm.poly))) pts.push([x, z]);
     const n = pts.filter(p => ok([p])).length;
-    assert.ok(n >= pts.length * 0.65, `${rm.name}: solo ${n}/${pts.length} puntos accesibles`);
+    const min = ['motores', 'motorinf', 'reactor'].includes(rm.id) ? 0.5 : 0.65;   // los motores y el reactor ocupan media sala, como en el original
+    assert.ok(n >= pts.length * min, `${rm.name}: solo ${n}/${pts.length} puntos accesibles`);
   });
 });
 

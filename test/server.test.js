@@ -76,6 +76,14 @@ test('crear sala, unirse con el código y empezar la partida', async () => {
   assert.equal(roles.filter(r => r === 'crew').length, 2);
   st.forEach(s => assert.equal(s.players.length, 3));
 
+  // el impostor solo tiene tareas falsas (fuera del modo pruebas); la tripulación sí las hace
+  const S = require('../public/shared.js'), socks = [a, b, c];
+  const tryTask = async (k) => { const s = st[k], id = s.tasks.find(i => S.taskPrev(s.tasks)[i] == null), p = S.stationPos(S.STATIONS[id]);
+    socks[k].emit('move', { x: p.x, z: p.z + 1, ry: 0, mv: 0 }); await new Promise(r => setTimeout(r, 80));
+    let got = false; socks[k].once('taskDone', () => { got = true; }); socks[k].emit('task', id); await new Promise(r => setTimeout(r, 250)); return got; };
+  assert.equal(await tryTask(roles.indexOf('impostor')), false, 'el impostor no puede hacer tareas');
+  assert.equal(await tryTask(roles.indexOf('crew')), true, 'la tripulación sí');
+
   // reconexión: un jugador recarga y vuelve a su sitio con el mismo rol
   const rb = await new Promise(res => b.emit('rejoin', { code: ra.code, token: 'malo' }, res));
   assert.ok(rb.error);

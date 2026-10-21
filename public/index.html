@@ -702,13 +702,31 @@ body.ready #splash{opacity:0;visibility:hidden}
 #mapBox{position:relative;width:min(94vw,calc(86vh * 188 / 122));aspect-ratio:188/122;border-radius:18px;border:5px solid #d9ecff;background:#0a1a3a;box-shadow:0 0 0 4px #0a1a3a,0 20px 60px #000}
 #mapBox canvas{width:100%;height:100%;display:block;border-radius:13px}
 #mapBox .x{position:absolute;top:-16px;right:-16px;width:40px;height:40px;border-radius:50%;background:#c4162f;color:#fff;border:3px solid #fff;font-size:18px;font-weight:900;cursor:pointer}
+
+/* ---------- ajustes del móvil y joystick a la derecha ---------- */
+#cfgOv{align-items:center;justify-content:center;background:#000b;z-index:60;padding:16px}
+#cfgBox{width:min(440px,100%);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(180deg,#1b2a4d,#101a33);border:1px solid #6d8fd655}
+.cfgHead{display:flex;align-items:center;justify-content:space-between;font:800 20px var(--fd);margin-bottom:4px}
+.cfgHead .x{width:36px;height:36px;border-radius:50%;border:none;background:#ffffff1a;color:#fff;font-size:16px;cursor:pointer}
+.cfgRow{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#ffffff0d;cursor:pointer}
+.cfgRow span{flex:1;display:flex;flex-direction:column;gap:2px}.cfgRow small{color:var(--steel);font-size:12.5px}
+.cfgRow input{width:46px;height:26px;appearance:none;-webkit-appearance:none;border-radius:13px;background:#3a445c;position:relative;cursor:pointer;transition:background .2s;flex:none}
+.cfgRow input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.cfgRow input:checked{background:#2fbf71}.cfgRow input:checked::after{transform:translateX(20px)}
+body.lefty #stickZone{left:auto;right:0}
+body.lefty #stick{left:auto;right:max(26px,env(safe-area-inset-right))}
+body.lefty #actions{right:auto;left:max(18px,env(safe-area-inset-left));grid-template-columns:auto auto auto;grid-template-areas:"use report kill"}
+body.lefty #actions2{left:auto;right:max(18px,env(safe-area-inset-right));bottom:auto;top:calc(max(10px,env(safe-area-inset-top)) + 150px);flex-direction:row}
+@media (orientation:portrait){body.lefty #actions{grid-template-columns:auto auto;grid-template-areas:". kill" "use report"}body.lefty #actions2{top:calc(max(10px,env(safe-area-inset-top)) + 200px);flex-direction:column}}
+body.nokeys #keys{display:none!important}
+#taskList .fake{color:#ff6b81;font-weight:700}
 #endCv{width:min(760px,100%);height:clamp(200px,46vh,340px);flex:none;margin-top:4px}
 </style>
 <link rel="preload" href="fonts/chakra-petch-latin-700-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-zin" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5M8 11h6M11 8v6"/></symbol><symbol id="i-zout" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5M8 11h6"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></symbol><symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></symbol><symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol><symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></symbol><symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></symbol><symbol id="i-max" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M16 21h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></symbol><symbol id="i-min" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></symbol><symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4z"/><rect x="2" y="6" width="14" height="12" rx="2.5"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol><symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol><symbol id="i-crown" viewBox="0 0 24 24"><path d="m2 6 4 11h12l4-11-6 5-4-7-4 7z"/></symbol><symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.3l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></symbol><symbol id="i-report" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol><symbol id="i-knife" viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol><symbol id="i-vent" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8h10M7 12h10M7 16h10"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></symbol><symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></symbol><symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><rect x="2" y="6" width="20" height="12" rx="6"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-zin" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5M8 11h6M11 8v6"/></symbol><symbol id="i-zout" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5M8 11h6"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></symbol><symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></symbol><symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol><symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></symbol><symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></symbol><symbol id="i-max" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M16 21h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></symbol><symbol id="i-min" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></symbol><symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4z"/><rect x="2" y="6" width="14" height="12" rx="2.5"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol><symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol><symbol id="i-crown" viewBox="0 0 24 24"><path d="m2 6 4 11h12l4-11-6 5-4-7-4 7z"/></symbol><symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.3l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></symbol><symbol id="i-report" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol><symbol id="i-knife" viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol><symbol id="i-vent" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8h10M7 12h10M7 16h10"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></symbol><symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></symbol><symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><rect x="2" y="6" width="20" height="12" rx="6"/></symbol><symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol></defs></svg>
 <div id="splash" aria-hidden="true"><div class="logo"><span>IMPOSTOR</span><b>3D</b></div><div class="ld"><i></i></div></div>
 <script>setTimeout(function(){document.body.classList.add('ready')},9000)</script>
 
@@ -717,7 +735,7 @@ body.ready #splash{opacity:0;visibility:hidden}
   <div class="card">
     <header class="topbar">
       <button class="ibtn" id="btnHelp" aria-label="Cómo se juega"><svg class="i" aria-hidden="true"><use href="#i-help"/></svg></button>
-      <div class="tb-r" style="display:flex;gap:8px"><button class="ibtn" id="btnInstall" aria-label="Instalar la app" hidden><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></button><button class="ibtn sndBtn" id="btnSoundMenu" aria-label="Sonido"></button></div>
+      <div class="tb-r" style="display:flex;gap:8px"><button class="ibtn" id="btnCfgMenu" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button><button class="ibtn" id="btnInstall" aria-label="Instalar la app" hidden><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></button><button class="ibtn sndBtn" id="btnSoundMenu" aria-label="Sonido"></button></div>
     </header>
     <div class="hero">
       <h1 class="logo" aria-label="Impostor 3D"><span>IMPOSTOR</span><b>3D</b></h1>
@@ -737,7 +755,7 @@ body.ready #splash{opacity:0;visibility:hidden}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.5</span></footer>
+    <footer class="foot"><span>Impostor 3D · v5.6</span></footer>
   </div>
 </div>
 
@@ -785,7 +803,7 @@ body.ready #splash{opacity:0;visibility:hidden}
   <canvas id="cv"></canvas>
   <div id="vignette"></div>
   <div id="topLeft" class="hud"><div id="taskBox" class="hglass"><div id="taskHead" role="button" aria-label="Mostrar u ocultar tareas"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tareas</span><b id="taskCount"></b><i class="chev"></i></div><div id="barWrap"><div id="bar"></div><span>TAREAS COMPLETADAS</span></div><div id="taskList"></div></div><div id="testTag" style="display:none">MODO PRUEBAS</div></div>
-  <div id="topRight" class="hud"><canvas id="minimap" width="300" height="205"></canvas><div class="tools"><button id="btnView" class="ibtn" aria-label="Alejar la cámara"><svg class="i" aria-hidden="true"><use href="#i-zout"/></svg></button><button id="btnSound" class="ibtn sndBtn" aria-label="Sonido"></button><button id="btnFull" class="ibtn" aria-label="Pantalla completa"><svg class="i" aria-hidden="true"><use href="#i-max"/></svg></button><button id="btnTest" class="ibtn" style="display:none" aria-label="Herramientas de prueba"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg></button><button id="btnEndTest" class="ibtn" style="display:none" aria-label="Terminar prueba"><svg class="i" aria-hidden="true"><use href="#i-flag"/></svg></button><button id="btnQuit" class="ibtn" aria-label="Salir de la partida"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button></div></div>
+  <div id="topRight" class="hud"><canvas id="minimap" width="300" height="205"></canvas><div class="tools"><button id="btnView" class="ibtn" aria-label="Alejar la cámara"><svg class="i" aria-hidden="true"><use href="#i-zout"/></svg></button><button id="btnSound" class="ibtn sndBtn" aria-label="Sonido"></button><button id="btnCfg" class="ibtn" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button><button id="btnFull" class="ibtn" aria-label="Pantalla completa"><svg class="i" aria-hidden="true"><use href="#i-max"/></svg></button><button id="btnTest" class="ibtn" style="display:none" aria-label="Herramientas de prueba"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg></button><button id="btnEndTest" class="ibtn" style="display:none" aria-label="Terminar prueba"><svg class="i" aria-hidden="true"><use href="#i-flag"/></svg></button><button id="btnQuit" class="ibtn" aria-label="Salir de la partida"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button></div></div>
   <div id="ghost" class="hud">Eres un fantasma: sigue con las tareas y observa</div>
   <div id="keys" class="hud">WASD / flechas mover · E usar · R reportar · Q matar · G sabotaje · F ventilación · Z zoom</div>
   <div id="sabBanner" class="hud"></div><div id="redFlash" class="hud"></div>
@@ -803,6 +821,12 @@ body.ready #splash{opacity:0;visibility:hidden}
 <div id="roleOv" class="ov"><canvas id="roleCv"></canvas><div id="roleTxt"><b id="roleTitle"></b><span id="roleSub"></span></div></div>
 <div id="deathOv" class="ov"></div><div id="hitFlash"></div>
 <div id="bannerOv" class="ov"><div id="bannerWho"></div><b id="bannerTxt"></b><span id="bannerSub"></span></div>
+<div id="cfgOv" class="ov" role="dialog" aria-label="Ajustes"><div id="cfgBox" class="glass"><div class="cfgHead"><b>Ajustes</b><button class="x" id="cfgClose" aria-label="Cerrar">✕</button></div>
+  <label class="cfgRow"><span><b>Joystick a la derecha</b><small>Los botones de usar, matar y reportar pasan a la izquierda</small></span><input type="checkbox" id="cfgLefty"></label>
+  <label class="cfgRow"><span><b>Vibración</b><small>Al matar, al votar y al completar tareas</small></span><input type="checkbox" id="cfgBuzz"></label>
+  <label class="cfgRow"><span><b>Sonido</b><small>Efectos del juego</small></span><input type="checkbox" id="cfgSound"></label>
+  <label class="cfgRow"><span><b>Ayuda de teclas</b><small>En el ordenador: WASD, E, R, Q…</small></span><input type="checkbox" id="cfgKeys"></label>
+</div></div>
 <div id="mapOv" class="ov" role="dialog" aria-label="Mapa de la nave"><div id="mapBox"><canvas id="mapCv"></canvas><button class="x" id="mapClose" aria-label="Cerrar mapa">✕</button></div></div>
 <div id="ejectOv" class="ov"><canvas id="ejectCv"></canvas><div id="ejectTxt"></div><div id="ejectSub"></div></div>
 <div id="infoOv" class="ov"><div id="infoBar"><b id="infoTitle"></b><span id="infoRec"></span><button class="x" id="infoClose">✕</button></div><div id="infoBody"></div></div>
@@ -930,7 +954,10 @@ setInterval(() => { if (document.visibilityState === 'visible') pingNow(); rende
 renderNet();
 
 /* ---------- móvil: vibración y pantalla siempre encendida ---------- */
-const buzz = pat => { try { if (navigator.vibrate && !document.hidden) navigator.vibrate(pat); } catch (e) {} };
+// ajustes de este móvil (no son de la partida): lado del joystick, vibración, sonido, ayuda de teclas
+const PREFS = (() => { try { return Object.assign({ lefty: false, buzz: true, keys: true }, JSON.parse(localStorage.getItem('i3d_prefs') || '{}')); } catch (e) { return { lefty: false, buzz: true, keys: true }; } })();
+const savePrefs = () => { try { localStorage.setItem('i3d_prefs', JSON.stringify(PREFS)); } catch (e) {} };
+const buzz = pat => { try { if (PREFS.buzz && navigator.vibrate && !document.hidden) navigator.vibrate(pat); } catch (e) {} };
 let wakeLock = null;
 async function keepAwake(on) {
   try {
@@ -1435,6 +1462,7 @@ function updateTasksUI() {
   // una línea por tarea; las de varios pasos muestran el paso que toca y cuántos llevas, como en el original
   const heads = G.tasks.filter(id => tPrev()[id] == null), fin = heads.filter(h => chainOf(h).every(q => G.done.has(q))).length;
   $('taskCount').textContent = heads.length ? `${fin}/${heads.length}` : '';
+  if (G.role === 'impostor' && !G.cfg.test) box.append(el('div', 'fake', 'Sabotea y elimina a todos. Tareas falsas:'));
   heads.forEach(h => {
     const ch = chainOf(h), n = ch.filter(q => G.done.has(q)).length, all = n === ch.length, cur = S.STATIONS[all ? ch[ch.length - 1] : ch[n]];
     const line = el('div', all ? 'd' : '', cur.name + ' · ' + roomName(cur.room) + (ch.length > 1 ? ` (${n}/${ch.length})` : '') + (ch.some(q => (G.common || []).includes(q)) ? ' ★' : ''));
@@ -1447,6 +1475,14 @@ $('taskHead').addEventListener('click', () => { const b = $('taskBox'); b.classL
 function updateBar() { $('bar').style.width = (G.total ? Math.min(100, G.doneN / G.total * 100) : 0) + '%'; }
 function updateGhost() { $('ghost').style.display = !G.alive && G.state !== 'menu' ? 'block' : 'none'; }
 $('btnView').onclick = toggleView;
+function applyPrefs() { document.body.classList.toggle('lefty', !!PREFS.lefty); document.body.classList.toggle('nokeys', !PREFS.keys); }
+function openCfg() { $('cfgLefty').checked = !!PREFS.lefty; $('cfgBuzz').checked = !!PREFS.buzz; $('cfgKeys').checked = !!PREFS.keys; $('cfgSound').checked = !sfx.isMuted(); ov('cfgOv', true); snd('click'); }
+$('btnCfg').onclick = openCfg; $('btnCfgMenu').onclick = openCfg; $('cfgClose').onclick = () => ov('cfgOv', false); $('cfgOv').onclick = e => { if (e.target.id === 'cfgOv') ov('cfgOv', false); };
+$('cfgLefty').onchange = e => { PREFS.lefty = e.target.checked; savePrefs(); applyPrefs(); };
+$('cfgBuzz').onchange = e => { PREFS.buzz = e.target.checked; savePrefs(); buzz(30); };
+$('cfgKeys').onchange = e => { PREFS.keys = e.target.checked; savePrefs(); applyPrefs(); };
+$('cfgSound').onchange = e => { if (e.target.checked === sfx.isMuted()) document.querySelector('.sndBtn').click(); };
+applyPrefs();
 // mapa grande al tocar el minimapa, como el botón de mapa del original: salas, tus tareas, los sabotajes y dónde estás
 let bigMap = null;
 function openMap() { if (G.state !== 'play') return; G.mapOpen = true; ov('mapOv', true); snd('click'); drawBigMap(performance.now()); }
@@ -2018,7 +2054,7 @@ function stickMove(e) {
   const R = st$.offsetWidth / 2 || 66;
   let dx = e.clientX - scx, dy = e.clientY - scy; const len = Math.hypot(dx, dy);
   if (len > R) { dx = dx / len * R; dy = dy / len * R; }
-  const k = Math.min(1, Math.hypot(dx, dy) / R), dz = .12, m = k < dz ? 0 : (k - dz) / (1 - dz) / (k || 1);   // zona muerta pequeña
+  const k = Math.min(1, Math.hypot(dx, dy) / R), dz = .12, m = k < dz ? 0 : 1 / (k || 1);   // como en el original: velocidad fija, el joystick solo marca la dirección
   stick.x = dx / R * m; stick.y = dy / R * m; kb.style.transform = `translate(${dx}px,${dy}px)`;
 }
 sz$.addEventListener('pointerdown', e => {
@@ -2064,7 +2100,7 @@ function updateActions(now) {
     }
     // un sabotaje por arreglar va antes que los terminales
     if (G.alive && G.cfg.info !== false && !(act.use && act.use.type === 'panel')) for (const t of S.INFO) { const ip = S.cellPos(t), d = Math.hypot(G.x - ip.x, G.z - ip.z); if (d < bd) { bd = d; act.use = { type: 'info', tool: t }; } }
-    if (!(act.use && (act.use.type === 'panel' || act.use.type === 'info'))) for (const id of G.tasks) {
+    if (!(act.use && (act.use.type === 'panel' || act.use.type === 'info')) && (G.role !== 'impostor' || G.cfg.test)) for (const id of G.tasks) {   // el impostor no puede hacer sus tareas falsas (salvo en modo pruebas)
       if (!canDo(id)) continue;
       const p = S.stationPos(S.STATIONS[id]), d = Math.hypot(G.x - p.x, G.z - p.z);
       if (d < bd) { bd = d; act.use = { type: 'task', st: S.STATIONS[id] }; }
