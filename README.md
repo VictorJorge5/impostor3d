@@ -5,6 +5,9 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
 ## Novedades 5.6 · la cara se amolda y todas las tareas de The Skeld
+- **Velocidad fija** como en el original: el joystick solo marca la dirección; aunque lo muevas poco, el personaje va siempre a la misma velocidad.
+- **Ajustes del móvil** (botón de rueda en el menú y en la partida): joystick a la derecha con los botones a la izquierda, vibración, sonido y ayuda de teclas.
+- **El impostor no hace tareas** en las partidas con amigos: tiene una lista de tareas falsas para disimular, como en el juego (sí puede arreglar sabotajes). En el modo pruebas sigue pudiendo hacerlas para probar los minijuegos.
 - **La cara se amolda al visor**: con foto, el visor toma la forma de la cara (un poco más alto que ancho) y se ve la cara entera, de la frente a la barbilla, sin deformarla y con un sombreado de esfera, como si estuviera sobre la cabeza. Sin foto se queda el visor ancho del original.
 - **Eléctrica como en el original**: al entrar (abajo a la derecha) está el panel de las luces en un gran tabique que separa la entrada de la parte de atrás, donde están los cables, el distribuidor, desviar energía y la rejilla.
 - **Todas las tareas de The Skeld**:
@@ -71,7 +74,7 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 - **Fallos arreglados**: la reconexión ya no caduca en partidas de más de 15 minutos; el anfitrión que se reconecta en la pantalla final conserva "Volver a la sala"; si el anfitrión se desconecta en la sala o al final, otro jugador pasa a serlo; no se puede empezar una partida contando a jugadores desconectados; si el último impostor se va durante una reunión, la tripulación gana al momento; los menús de sabotaje y de pruebas ya no se quedan abiertos entre partidas; una tarea terminada cuenta aunque cierres el minijuego enseguida; al morir durante un apagón o con las comunicaciones caídas dejas de sufrir sus efectos; el impostor que se mete en una rejilla deja de sujetar el panel del reactor; al reconectar no se pierden reuniones de emergencia.
 
 ## Novedades 4.3 · más juego para todos
-- **El impostor puede arreglar sabotajes** (luces, comunicaciones, oxígeno y reactor) y **hacer sus tareas** con los mismos minijuegos, para disimular. Sus tareas no suman a la barra de la tripulación.
+- **El impostor puede arreglar sabotajes** (luces, comunicaciones, oxígeno y reactor). Sus tareas son falsas: no las puede hacer (desde la 5.6; antes sí).
 - **Puedes votarte a ti mismo** en las reuniones.
 - **Tareas visuales**: cuando un tripulante hace el escáner médico, los asteroides, la basura o los escudos, los demás lo ven (haz verde sobre él, rayos desde Armería, basura cayendo, cúpula azul del escudo). Si lo ves con tus ojos, es inocente; el impostor puede hacer la tarea, pero no se ve nada. Se puede desactivar en los ajustes de la sala (*Tareas visuales*).
 - **Los fantasmas siguen haciendo tareas**, que cuentan para la victoria de la tripulación.

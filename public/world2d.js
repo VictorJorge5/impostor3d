@@ -399,10 +399,7 @@
     // terminales de información
     S.INFO.forEach(it => {
       const p = S.cellPos(it); if (!vis(p.x, p.z, 3)) return; const x = X(p.x), y = Y(p.z), near = o.use === 'info:' + it.id;
-      if (it.id === 'admin') {   // la mesa del mapa de Administración, con el holograma de la nave
-        g.fillStyle = '#3e465c'; rrect(g, x - sc * 1.8, y - sc * .9, sc * 3.6, sc * 1.1, sc * .2); P(); g.fillStyle = '#5c667f'; rrect(g, x - sc * 1.8, y - sc * 2.1, sc * 3.6, sc * 1.4, sc * .25); P();
-        g.fillStyle = '#123a5a'; rrect(g, x - sc * 1.5, y - sc * 1.95, sc * 3, sc * 1.1, sc * .12); P(); if (W2._mini) { g.globalAlpha = .55 + Math.sin(t * 3) * .1; g.drawImage(W2._mini, x - sc * 1.4, y - sc * 1.9, sc * 2.8, sc * 1); g.globalAlpha = 1; }
-        const hg = g.createLinearGradient(0, y - sc * 3.2, 0, y - sc * 1.9); hg.addColorStop(0, 'rgba(90,200,255,0)'); hg.addColorStop(1, 'rgba(90,200,255,.25)'); g.fillStyle = hg; g.beginPath(); g.moveTo(x - sc * 1.4, y - sc * 1.9); g.lineTo(x + sc * 1.4, y - sc * 1.9); g.lineTo(x + sc * 1.1, y - sc * 3.2); g.lineTo(x - sc * 1.1, y - sc * 3.2); g.fill(); }
+      if (it.id === 'admin') { g.fillStyle = '#4a5370'; rrect(g, x - sc * .7, y - sc * .9, sc * 1.4, sc * 1, sc * .2); P(); g.fillStyle = '#3ad0ff'; rrect(g, x - sc * .5, y - sc * .75, sc, sc * .45, sc * .08); P(); }   // mando de la mesa del mapa
       else { g.fillStyle = '#4a5370'; rrect(g, x - sc * .9, y - sc * 1.6, sc * 1.8, sc * 1.7, sc * .2); P(); g.fillStyle = it.id === 'vitals' ? '#183a2b' : '#1b2a44'; rrect(g, x - sc * .7, y - sc * 1.4, sc * 1.4, sc * .9, sc * .1); P();
         g.strokeStyle = it.id === 'vitals' ? '#4ef0b8' : '#7fb8ff'; g.lineWidth = lw * .8; g.beginPath(); for (let k = 0; k <= 10; k++) { const xx = x - sc * .6 + k * sc * .12, yy = y - sc * .95 + (it.id === 'vitals' && k === 5 ? -sc * .3 : Math.sin(k + t * 3) * sc * .06); k ? g.lineTo(xx, yy) : g.moveTo(xx, yy); } g.stroke(); g.strokeStyle = OUT; g.lineWidth = lw; }
       if (near) { g.save(); g.strokeStyle = '#ffe14d'; g.lineWidth = lw * 2.4; rrect(g, x - sc * 1.45, y - sc * 1.8, sc * 2.9, sc * 2.1, sc * .25); g.stroke(); g.restore(); }
@@ -563,6 +560,14 @@
         g.fillStyle = 'rgba(255,255,255,.3)'; g.fillRect(x - r * .65, y - hh, r * .25, hh); g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(x + r * .45, y - hh, r * .4, hh);
         g.fillStyle = d.o2 ? '#e9eef5' : '#f2b800'; g.fillRect(x - r, y - hh * .55, r * 2, sc * .3); g.strokeRect(x - r, y - hh * .55, r * 2, sc * .3);
         E(x, y - hh, r, r * .55, shade(c, .2)); E(x, y - hh, r * .3, r * .18, '#5c667f');
+        break; }
+      case 'admintable': {   // mesa del mapa de Administración con el holograma de la nave
+        const hh = sc * .9; shadow(x, y + H * .35, W * .58, H * .5);
+        block(x, y, W, H, hh, '#5c667f', '#3e465c');
+        g.fillStyle = '#123a5a'; rrect(g, x - W * .44, y - H / 2 - hh + H * .1, W * .88, H * .8, sc * .12); g.fill(); g.stroke();
+        if (W2._mini) { g.globalAlpha = .6 + Math.sin(t * 3) * .1; g.drawImage(W2._mini, x - W * .42, y - H / 2 - hh + H * .14, W * .84, H * .72); g.globalAlpha = 1; }
+        const hg = g.createLinearGradient(0, y - H / 2 - hh - sc * 1.6, 0, y - H / 2 - hh + H * .5); hg.addColorStop(0, 'rgba(90,200,255,0)'); hg.addColorStop(1, 'rgba(90,200,255,.22)'); g.fillStyle = hg;
+        g.beginPath(); g.moveTo(x - W * .44, y - H / 2 - hh + H * .5); g.lineTo(x + W * .44, y - H / 2 - hh + H * .5); g.lineTo(x + W * .32, y - H / 2 - hh - sc * 1.6); g.lineTo(x - W * .32, y - H / 2 - hh - sc * 1.6); g.fill();
         break; }
       case 'chair': {
         shadow(x, y + sc * .1, r * .9, r * .5);

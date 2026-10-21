@@ -399,8 +399,10 @@ io.on('connection', sock => {
   });
 
   sock.on('task', id => {
-    // también los fantasmas; el impostor puede hacer sus tareas, pero no suman a la barra de la tripulación
+    // también los fantasmas de la tripulación. El impostor solo tiene tareas falsas, como en el original
+    // (en el modo pruebas sí puede hacerlas, para probar los minijuegos; allí no suman a la barra)
     if (!room || room.state !== 'play' || !me.role) return;
+    if (me.role === 'impostor' && !room.set.testMode) return;
     if (!me.tasks.includes(id) || me.done.includes(id)) return;
     const pv = S.taskPrev(me.tasks)[id]; if (pv != null && !me.done.includes(pv)) return;   // las tareas por pasos van en orden
     const st = S.STATIONS[id];

@@ -163,7 +163,7 @@
   // Terminales de información (las puede usar cualquier jugador vivo; las desactiva el sabotaje de comunicaciones salvo los signos vitales)
   const INFO = [
     at({ id: 'cams',    name: 'Cámaras de seguridad',    short: 'Cámaras', room: 'seguridad' },      -12.7, -5.3),
-    at({ id: 'admin',   name: 'Panel de administración', short: 'Admin',   room: 'administracion' }, 4.5, -8.4),
+    at({ id: 'admin',   name: 'Panel de administración', short: 'Admin',   room: 'administracion' }, 4.5, -9.4),
     at({ id: 'vitals',  name: 'Signos vitales',          short: 'Vitales', room: 'enfermeria' },     -7.3, -3.6),
     at({ id: 'doorlog', name: 'Registro de puertas',     short: 'Puertas', room: 'electrica' },      -11.1, -10.7)
   ];
@@ -207,17 +207,17 @@
     D({ kind: 'table',     room: 'cafeteria',      r: 1.6 },  2.8, 3.9),
     D({ kind: 'table',     room: 'cafeteria',      r: 1.6 },  -2.6, 0.2),
     D({ kind: 'table',     room: 'cafeteria',      r: 1.6 },  2.6, 0.4),
-    D({ kind: 'engine',    room: 'motores',        r: 2.4, len: 7 },  -17.8, 0.6),
-    D({ kind: 'engine',    room: 'motorinf',       r: 2.4, len: 7 },  -17.8, -13.4),
+    D({ kind: 'engine',    room: 'motores',        r: 2.8, len: 7.4 },  -17.9, 0.4),
+    D({ kind: 'engine',    room: 'motorinf',       r: 2.8, len: 7.4 },  -17.9, -13.3),
     D({ kind: 'cans',      room: 'motorinf',       r: .9 },   -16.6, -15.6),
-    D({ kind: 'core',      room: 'reactor',        r: 2.2 },  -23, -4.9),
+    D({ kind: 'core',      room: 'reactor',        r: 2.7 },  -22.9, -4.9),
     D({ kind: 'desk',      room: 'seguridad',      w: 2.6, h: 1.2 }, -14.2, -5.25),
     D({ kind: 'bed',       room: 'enfermeria',     w: 3, h: 1.4 },   -10.4, -2.4),
     D({ kind: 'cratepile', room: 'almacen',        w: 5.6, h: 4 },   -2.8, -10.4),
     D({ kind: 'crates',    room: 'almacen',        r: 1.3 },  -5.3, -7.6),
     D({ kind: 'barrel',    room: 'almacen',        r: .9 },   0, -7.5),
     D({ kind: 'cans',      room: 'almacen',        r: .8 },   -2.7, -15.7),
-    D({ kind: 'sofa',      room: 'administracion', w: 3.4, h: 1.2 }, 4.4, -10.05),
+    D({ kind: 'admintable', room: 'administracion', w: 4.2, h: 2 }, 4.5, -8.1),   // la gran mesa del mapa, en el centro
     D({ kind: 'plant',     room: 'administracion', r: .7 },   6.6, -6.9),
     D({ kind: 'desk',      room: 'comunicaciones', w: 2.4, h: 1.1 }, 4.4, -17.65),
     D({ kind: 'shieldgen', room: 'escudos',        r: 1.2 },  8.3, -11.3),
