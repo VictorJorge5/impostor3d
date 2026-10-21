@@ -4,6 +4,11 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.5 · caras bien visibles
+- **Visor mucho más grande** en los crewmates: la cara ocupa casi todo el frente del casco, con un encuadre cerrado (ojos, nariz y boca) y un poco más de brillo y contraste.
+- El reflejo del cristal se queda en una esquina y ya no cruza la cara.
+- Personajes un poco más grandes en el mapa y retratos (menú, sala, reuniones) con la cara llenando el círculo.
+
 ## Novedades 5.4 · tareas como en el original
 - **Tareas por partes como en The Skeld**:
   - Cables: tres cuadros seguidos (Eléctrica o Almacén → Administración o Cafetería → Navegación).
