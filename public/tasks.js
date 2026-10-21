@@ -80,12 +80,12 @@
     }
     const wait = t => new Promise(r => setTimeout(r, t));
 
-    const T = {};
+    const T = {}, MEM = {};   // MEM: lo que una tarea recuerda si la cierras a medias (el análisis de muestras)
 
     /* 1 · Conectar cables: arrastra cada cable hasta el conector de su color */
     T.wires = (body) => {
       const S = mk(body, 1.3), { g, W } = S, Hh = S.H;
-      const COLS = [['#ff3b3b', 'rojo'], ['#3b7bff', 'azul'], ['#ffd93b', 'amarillo'], ['#ff4fd8', 'rosa']];
+      const COLS = [['#e8101b', 'rojo'], ['#1f3fff', 'azul'], ['#ffe600', 'amarillo'], ['#ff2fe0', 'rosa']];   // los cuatro colores del original
       const L = shuffle([0, 1, 2, 3]), R = shuffle([0, 1, 2, 3]), y = i => Hh * (.2 + i * .2);
       const done = new Set(); let drag = null, sparks = [];
       S.hint('Arrastra cada cable hasta el conector del mismo color.');
@@ -102,6 +102,7 @@
       S.loop((dt, t) => {
         bg(g, W, Hh);
         metal(g, 6, Hh * .08, 52, Hh * .84, 10); metal(g, W - 58, Hh * .08, 52, Hh * .84, 10);
+        [[62, 10], [W - 72, 10]].forEach(([sx, sw]) => { g.save(); g.beginPath(); g.rect(sx, Hh * .08, sw, Hh * .84); g.clip(); g.fillStyle = '#f2b800'; g.fillRect(sx, Hh * .08, sw, Hh * .84); g.fillStyle = '#1b1f2b'; for (let yy = Hh * .08 - 20; yy < Hh; yy += 16) { g.beginPath(); g.moveTo(sx, yy); g.lineTo(sx + sw, yy - 8); g.lineTo(sx + sw, yy); g.lineTo(sx, yy + 8); g.fill(); } g.restore(); });
         const wire = (x1, y1, x2, y2, col) => { g.lineCap = 'round'; g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 15; g.beginPath(); g.moveTo(x1, y1 + 3); g.bezierCurveTo(lerp(x1, x2, .4), y1 + 3, lerp(x1, x2, .6), y2 + 3, x2, y2 + 3); g.stroke(); g.strokeStyle = col; g.lineWidth = 12; g.beginPath(); g.moveTo(x1, y1); g.bezierCurveTo(lerp(x1, x2, .4), y1, lerp(x1, x2, .6), y2, x2, y2); g.stroke(); g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 3; g.beginPath(); g.moveTo(x1, y1 - 3); g.bezierCurveTo(lerp(x1, x2, .4), y1 - 3, lerp(x1, x2, .6), y2 - 3, x2, y2 - 3); g.stroke(); };
         for (let i = 0; i < 4; i++) {
           const c = L[i]; if (done.has(c)) wire(48, y(i), W - 48, y(R.indexOf(c)), COLS[c][0]);
@@ -176,7 +177,7 @@
         const fy = Hh * .36;
         if (up) { tablet(W * .2, fy, 'Tableta'); cloud(W * .8, fy, 'Sede central'); } else { folder(W * .2, fy, st === 'run', o.room || 'Sala'); tablet(W * .8, fy, 'Tableta'); }
         if (st === 'run') {
-          p = Math.min(1, p + dt / 5.5); etaT -= dt; if (etaT <= 0) { etaT = .7; const s = Math.max(0, Math.round((1 - p) * 5.5 + rand(-1, 2))); eta = p > .97 ? 'Casi listo' : `Quedan ${s} s`; }
+          p = Math.min(1, p + dt / 8.5); etaT -= dt; if (etaT <= 0) { etaT = .5; const s = Math.max(0, Math.round((1 - p) * 8.5)); eta = p > .97 ? 'Tiempo estimado: 0 s' : Math.random() < .35 ? `Tiempo estimado: ${Math.floor(rand(1, 9))} d ${Math.floor(rand(0, 24))} h ${Math.floor(rand(0, 60))} min` : `Tiempo estimado: ${s} s`; }   // como en el original, la estimación da saltos absurdos
           if (Math.random() < dt * 6) files.push({ k: 0 });
           if (p >= 1) { st = 'end'; snd('fixed'); S.hint(up ? '¡Datos subidos!' : '¡Descarga completada! Ahora súbelos en Administración.', 'ok'); S.win(); }
         }
@@ -230,7 +231,7 @@
     /* 5 · Iniciar reactor: memoriza la secuencia de la izquierda y repítela a la derecha */
     T.simon = (body) => {
       const S = mk(body, 2.05), { g, W } = S, Hh = S.H;
-      const ROUNDS = 4, seq = Array.from({ length: ROUNDS + 1 }, () => Math.floor(Math.random() * 9));
+      const ROUNDS = 5, seq = Array.from({ length: ROUNDS + 1 }, () => Math.floor(Math.random() * 9));
       let round = 1, phase = 'show', showI = 0, showT = .6, lit = -1, litT = 0, inp = 0, press = -1, pressT = 0, flashBad = 0;
       const cell = Math.min((W / 2 - 40) / 3, (Hh - 54) / 3), gap = 6, gx = [W * .25 - 1.5 * cell, W * .75 - 1.5 * cell], gy = 40;
       const rect = (side, k) => ({ x: gx[side] + (k % 3) * cell + gap / 2, y: gy + Math.floor(k / 3) * cell + gap / 2, w: cell - gap, h: cell - gap });
@@ -290,7 +291,7 @@
       const S = mk(body, 1.6), { g, W } = S, Hh = S.H, me = H.me();
       const size = Math.min(Hh * .58, W * .36), pc = me.portrait ? me.portrait(size) : null;
       const lines = [`ID: ${String(me.name || 'TRIPULANTE').toUpperCase()}`, `ALTURA: ${me.look && me.look.ht ? me.look.ht : 175} cm`, `GRUPO: ${['A+', 'B-', '0+', 'AB+'][(me.name || '').length % 4]}`, `PESO: ${60 + ((me.name || 'x').charCodeAt(0) % 30)} kg`, 'ESTADO: SANO'];
-      let p = 0; const DUR = 6.5;
+      let p = 0; const DUR = 10;
       S.hint('Escaneando… quédate en la plataforma.');
       snd('scan');
       S.loop((dt, t) => {
@@ -313,21 +314,22 @@
     };
 
     /* 8 · Analizar muestra: inicia el análisis, espera y elige el tubo anómalo */
-    T.samples = (body) => {
-      const S = mk(body, 1.6), { g, W } = S, Hh = S.H;
-      let st = 'idle', fill = 0, wt = 0, bad = Math.floor(Math.random() * 5); const WAIT = 5;
+    T.samples = (body, o) => {
+      const S = mk(body, 1.6), { g, W } = S, Hh = S.H, key = 'samples:' + (o && o.id), mem = MEM[key] || (MEM[key] = { bad: Math.floor(Math.random() * 5) });
+      // como en el original: el análisis tarda 60 s y puedes irte mientras tanto; al volver sigue donde estaba
+      const WAIT = 60; let st = mem.t0 ? 'wait' : 'idle', fill = mem.t0 ? 1 : 0, wt = 0, bad = mem.bad;
       const b = { x: W / 2 - 80, y: Hh * .8, w: 160, h: Math.min(40, Hh * .15) };
       const tx = i => W * (.18 + i * .16), tubeTop = Hh * .14, tubeH = Hh * .5, tw = Math.min(30, W * .07);
       const pick = i => ({ x: tx(i) - 22, y: tubeTop + tubeH + 10, w: 44, h: Math.min(32, Hh * .13) });
       S.hint('Pulsa "Analizar" para empezar.');
       S.on({ down: p => {
         if (st === 'idle' && hit(p, b)) { st = 'fill'; snd('click'); S.hint('Llenando los tubos…'); return; }
-        if (st === 'pick') { const i = [0, 1, 2, 3, 4].find(k => hit(p, pick(k))); if (i == null) return; if (i === bad) { st = 'end'; snd('fixed'); S.hint('Muestra anómala identificada.', 'ok'); S.win(); } else { S.fail('Esa muestra está bien. Fíjate en la roja.'); } }
+        if (st === 'pick') { const i = [0, 1, 2, 3, 4].find(k => hit(p, pick(k))); if (i == null) return; if (i === bad) { st = 'end'; delete MEM[key]; snd('fixed'); S.hint('Muestra anómala identificada.', 'ok'); S.win(); } else { S.fail('Esa muestra está bien. Fíjate en la roja.'); } }
       } });
       S.loop((dt, t) => {
         bg(g, W, Hh);
-        if (st === 'fill') { fill = Math.min(1, fill + dt / 1.6); if (fill >= 1) { st = 'wait'; wt = WAIT; S.hint('Analizando…'); } }
-        if (st === 'wait') { wt -= dt; if (wt <= 0) { st = 'pick'; snd('warn'); S.hint('Toca el botón de la muestra anómala (la roja).'); } }
+        if (st === 'fill') { fill = Math.min(1, fill + dt / 1.6); if (fill >= 1) { st = 'wait'; mem.t0 = Date.now(); S.hint('Analizando… puedes irte y volver en 60 s.'); } }
+        if (st === 'wait') { wt = WAIT - (Date.now() - mem.t0) / 1000; if (wt <= 0) { st = 'pick'; snd('warn'); S.hint('Toca el botón de la muestra anómala (la roja).'); } }
         metal(g, W * .08, tubeTop - 14, W * .84, 12, 6);
         for (let i = 0; i < 5; i++) {
           const x = tx(i), lv = fill * tubeH * .85, red = (st === 'pick' || st === 'end') && i === bad;
@@ -341,7 +343,7 @@
         if (st === 'idle') btn(g, b, 'ANALIZAR', { color: '#3fe0ff' });
         if (st === 'wait') txt(g, `Tiempo restante: ${Math.ceil(wt)} s`, W / 2, Hh * .85, 14, '#ffb547');
       });
-      S.cv._solve = async () => { S.tap(b.x + b.w / 2, b.y + b.h / 2); for (let k = 0; k < 1000 && st !== 'pick'; k++) await wait(10); const q = pick(bad); S.tap(q.x + q.w / 2, q.y + q.h / 2); };
+      S.cv._solve = async () => { S.tap(b.x + b.w / 2, b.y + b.h / 2); for (let k = 0; k < 300 && st !== 'wait'; k++) await wait(10); mem.t0 -= WAIT * 1000; for (let k = 0; k < 300 && st !== 'pick'; k++) await wait(10); const q = pick(bad); S.tap(q.x + q.w / 2, q.y + q.h / 2); };
     };
 
     /* 9 · Repostar motor: mantén pulsado hasta llenar el depósito */
@@ -501,7 +503,7 @@
 
     /* 14 · Destruir asteroides: toca los asteroides para dispararles antes de que crucen */
     T.asteroids = (body) => {
-      const S = mk(body, 1.6), { g, W } = S, Hh = S.H, GOAL = 15;
+      const S = mk(body, 1.6), { g, W } = S, Hh = S.H, GOAL = 20;
       const stars = Array.from({ length: 70 }, () => ({ x: rand(0, W), y: rand(0, Hh), r: rand(.5, 1.6), v: rand(8, 30) }));
       let rocks = [], shots = [], boom = [], hits = 0, spawnT = 0, cross = { x: W / 2, y: Hh / 2 };
       S.hint(`Toca los asteroides para destruirlos (${GOAL}).`);
@@ -551,11 +553,12 @@
     };
 
     /* 16 · Desviar energía (Reactor, paso 1): sube la palanca de la sala que te toca; el resto están bloqueadas */
-    const POWER_ROOMS = ['Navegación', 'Escudos', 'Oxígeno', 'Seguridad', 'Armería', 'Comunicaciones'];
+    const SHORT = { 'Motor inferior': 'Mot. inf.', 'Motor superior': 'Mot. sup.', 'Navegación': 'Naveg.', 'Seguridad': 'Segur.', 'Comunicaciones': 'Comun.' };
+    const POWER_ROOMS = ['Motor inferior', 'Motor superior', 'Navegación', 'Oxígeno', 'Seguridad', 'Escudos', 'Armería', 'Comunicaciones'];   // las 8 palancas del original
     T.divert = (body, o) => {
       const S = mk(body, 1.7), { g, W } = S, Hh = S.H, target = (o && o.target) || POWER_ROOMS[0];
-      const names = POWER_ROOMS.includes(target) ? POWER_ROOMS : [target].concat(POWER_ROOMS.slice(0, 5)), ti = names.indexOf(target);
-      const n = names.length, col = i => ({ x: W * (.08 + i * .84 / (n - 1)), top: Hh * .2, bot: Hh * .72 });
+      const names = POWER_ROOMS.includes(target) ? POWER_ROOMS : [target].concat(POWER_ROOMS.slice(0, 7)), ti = names.indexOf(target);
+      const n = names.length, col = i => ({ x: W * (.07 + i * .86 / (n - 1)), top: Hh * .2, bot: Hh * .72 });
       let lv = 0, drag = false, flow = 0;
       S.hint(`Sube la palanca de ${target} hasta arriba.`);
       S.on({
@@ -571,7 +574,7 @@
           if (on) { g.fillStyle = '#ffd23f'; g.save(); g.shadowColor = '#ffd23f'; g.shadowBlur = 10 + Math.sin(t * 5) * 4; g.fillRect(c.x - 3, c.bot - (c.bot - c.top) * k, 6, (c.bot - c.top) * k); g.restore(); }
           const ky = lerp(c.bot, c.top, k); rr(g, c.x - 18, ky - 10, 36, 20, 6); g.fillStyle = on ? '#ffd23f' : '#4a5168'; g.fill();
           lamp(g, c.x, c.top - 26, 6, on && (k > .97 || Math.sin(t * 8) > 0), '#ffd23f');
-          txt(g, nm.length > 8 ? nm.slice(0, 7) + '.' : nm, c.x, c.bot + 30, 11, on ? '#ffd23f' : '#6f7895');
+          txt(g, SHORT[nm] || nm, c.x, c.bot + 30, Math.min(11, W / 50), on ? '#ffd23f' : '#6f7895');
         });
       });
       S.cv._solve = async () => { const c = col(ti); await S.drag([[c.x, c.bot], [c.x, (c.bot + c.top) / 2], [c.x, c.top - 6]], 40); };
@@ -596,6 +599,64 @@
         if (st === 'idle') btn(g, b, 'ACEPTAR', { color: '#ffd23f', size: 15 });
       });
       S.cv._solve = async () => S.tap(b.x + b.w / 2, b.y + b.h / 2);
+    };
+
+    /* 18 · Estabilizar dirección: arrastra la mira hasta el centro de la pantalla de navegación */
+    T.steering = (body) => {
+      const S = mk(body, 1.4), { g, W } = S, Hh = S.H, cx = W / 2, cy = Hh / 2, R = Math.min(W, Hh) * .42;
+      const a0 = rand(0, TAU); let tx = cx + Math.cos(a0) * R * rand(.45, .8), ty = cy + Math.sin(a0) * R * rand(.45, .8), drag = null, drift = rand(0, TAU);
+      S.hint('Arrastra la mira hasta el centro para estabilizar la nave.');
+      S.on({
+        down: p => { if (Math.hypot(p.x - tx, p.y - ty) < 44) { drag = { dx: p.x - tx, dy: p.y - ty }; snd('click'); } },
+        move: p => { if (!drag) return; const x = p.x - drag.dx, y = p.y - drag.dy, d = Math.hypot(x - cx, y - cy), k = d > R ? R / d : 1; tx = cx + (x - cx) * k; ty = cy + (y - cy) * k; },
+        up: () => { if (!drag) return; drag = null; if (Math.hypot(tx - cx, ty - cy) < R * .09) { tx = cx; ty = cy; snd('fixed'); S.hint('Dirección estabilizada.', 'ok'); S.win(); } }
+      });
+      S.loop((dt, t) => {
+        if (!drag && !S.finished) { drift += dt * .7; tx += Math.cos(drift) * dt * 6; ty += Math.sin(drift * 1.3) * dt * 6; }
+        g.fillStyle = '#0a1426'; g.fillRect(0, 0, W, Hh);
+        g.fillStyle = '#0d2346'; g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.fill();
+        g.strokeStyle = 'rgba(120,190,255,.25)'; g.lineWidth = 1; for (let k = 1; k <= 3; k++) { g.beginPath(); g.arc(cx, cy, R * k / 3, 0, TAU); g.stroke(); }
+        g.beginPath(); g.moveTo(cx - R, cy); g.lineTo(cx + R, cy); g.moveTo(cx, cy - R); g.lineTo(cx, cy + R); g.stroke();
+        g.strokeStyle = '#7fc4ff'; g.lineWidth = 3; g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.stroke();
+        g.strokeStyle = '#4ef0b8'; g.lineWidth = 2; g.beginPath(); g.arc(cx, cy, R * .09, 0, TAU); g.stroke();
+        const ok = Math.hypot(tx - cx, ty - cy) < R * .09, c = ok ? '#4ef0b8' : '#ffffff';
+        g.strokeStyle = c; g.lineWidth = 3; g.beginPath(); g.arc(tx, ty, 18, 0, TAU); g.moveTo(tx - 30, ty); g.lineTo(tx - 10, ty); g.moveTo(tx + 10, ty); g.lineTo(tx + 30, ty); g.moveTo(tx, ty - 30); g.lineTo(tx, ty - 10); g.moveTo(tx, ty + 10); g.lineTo(tx, ty + 30); g.stroke();
+        g.fillStyle = c; g.beginPath(); g.arc(tx, ty, 3, 0, TAU); g.fill();
+      });
+      S.cv._solve = async () => { const x0 = tx, y0 = ty; await S.drag([[x0, y0], [(x0 + cx) / 2, (y0 + cy) / 2], [cx, cy]], 30); };
+    };
+
+    /* Sabotaje de comunicaciones: gira la rueda hasta que la señal quede limpia, como en el original */
+    T.dial = (body) => {
+      const S = mk(body, 1.7), { g, W } = S, Hh = S.H, kx = W * .76, ky = Hh * .52, kr = Math.min(Hh * .3, W * .16);
+      const target = rand(-Math.PI, Math.PI); let a = target + (Math.random() < .5 ? -1 : 1) * rand(1.4, 2.8), drag = null, hold = 0;
+      const err = () => { let d = a - target; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU; return d; };
+      S.hint('Gira la rueda hasta que la señal quede limpia.');
+      S.on({
+        down: p => { if (Math.hypot(p.x - kx, p.y - ky) < kr + 24) { drag = { a0: Math.atan2(p.y - ky, p.x - kx) }; snd('click'); } },
+        move: p => { if (!drag) return; const an = Math.atan2(p.y - ky, p.x - kx); let d = an - drag.a0; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU; a += d; drag.a0 = an; },
+        up: () => { drag = null; }
+      });
+      S.loop((dt, t) => {
+        const e = Math.abs(err()), ok = e < .14;
+        if (!S.finished) { hold = ok ? hold + dt : 0; if (hold > .8) { snd('fixed'); S.hint('Comunicaciones restablecidas.', 'ok'); S.win(); } }
+        bg(g, W, Hh);
+        const sx = W * .05, sw = W * .52, sy = Hh * .14, sh = Hh * .72;
+        g.fillStyle = '#04120a'; rr(g, sx, sy, sw, sh, 10); g.fill(); g.strokeStyle = '#5b6886'; g.lineWidth = 3; g.stroke();
+        g.strokeStyle = 'rgba(78,240,184,.12)'; g.lineWidth = 1; for (let k = 1; k < 6; k++) { g.beginPath(); g.moveTo(sx + sw * k / 6, sy); g.lineTo(sx + sw * k / 6, sy + sh); g.stroke(); }
+        g.strokeStyle = ok ? '#4ef0b8' : '#ff3d5e'; g.lineWidth = 2.5; g.beginPath();
+        for (let x = 0; x <= sw; x += 3) { const n = Math.min(1, e / 1.5), y = sy + sh / 2 + Math.sin(x * .06 + t * 6) * sh * .25 + (Math.random() - .5) * sh * .55 * n; x ? g.lineTo(sx + x, y) : g.moveTo(sx + x, y); }
+        g.stroke();
+        lamp(g, sx + sw - 16, sy + 16, 7, ok, '#4ef0b8'); lamp(g, sx + sw - 36, sy + 16, 7, !ok && Math.sin(t * 8) > 0, '#ff3d5e');
+        metal(g, kx - kr - 14, ky - kr - 14, kr * 2 + 28, kr * 2 + 28, 18);
+        g.save(); g.translate(kx, ky); g.rotate(a);
+        g.fillStyle = '#c8d0de'; g.beginPath(); g.arc(0, 0, kr, 0, TAU); g.fill(); g.strokeStyle = '#2a3144'; g.lineWidth = 3; g.stroke();
+        for (let k = 0; k < 12; k++) { g.save(); g.rotate(k / 12 * TAU); g.fillStyle = '#8a94aa'; g.fillRect(kr * .72, -2, kr * .2, 4); g.restore(); }
+        g.fillStyle = '#ff3d5e'; g.fillRect(-3, -kr * .9, 6, kr * .45); g.restore();
+        txt(g, 'FRECUENCIA', kx, ky + kr + 26, 11, '#a9b8dc');
+      });
+      // para las pruebas: gira la rueda poco a poco por un arco hasta la frecuencia buena
+      S.cv._solve = async () => { const r = kr * .8, d = -err(), pts = []; for (let k = 0; k <= 24; k++) { const an = d * k / 24; pts.push([kx + Math.cos(an) * r, ky + Math.sin(an) * r]); } await S.drag(pts, 20); for (let k = 0; k < 200 && !S.finished; k++) await wait(10); };
     };
 
     /* Sabotaje de luces: sube las 5 palancas */

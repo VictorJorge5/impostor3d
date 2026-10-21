@@ -85,7 +85,7 @@
   // [nombre, sala, x, z (metros), minijuego (public/tasks.js), cadena, paso]. Las tareas con cadena van por pasos, como en el
   // original: primero descargas los datos y luego los subes. Si un paso tiene varias consolas, a cada uno le toca una.
   const STATIONS = [
-    ['Conectar cables',        'electrica',      -7.8, -7.4,  'wires'],
+    ['Conectar cables',        'electrica',      -7.8, -7.4,  'wires', 'cables', 0],
     ['Calibrar distribuidor',  'electrica',      -10.6, -7.4, 'calibrate'],
     ['Descargar datos',        'comunicaciones', 6.3, -16.4,    'download', 'datos', 0],
     ['Trazar rumbo',           'navegacion',     18.8, -4.8,  'course'],
@@ -93,10 +93,10 @@
     ['Desbloquear colectores', 'reactor',        -22.6, -1.5, 'manifolds'],
     ['Escáner médico',         'enfermeria',     -9, -4.6,    'scan'],
     ['Analizar muestra',       'enfermeria',     -7.4, -2.2,  'samples'],
-    ['Repostar motor inferior', 'motorinf',      -18.6, -11.2, 'fuel', 'combustible', 2],
-    ['Alinear motor',          'motores',        -13.8, -0.4, 'align'],
+    ['Repostar motor inferior', 'motorinf',      -18.6, -11.2, 'fuel', 'combustible', 3],
+    ['Alinear motor superior', 'motores',        -13.8, -0.4, 'align', 'alinear', 0],
     ['Pasar tarjeta',          'administracion', 6.6, -8.2,   'card'],
-    ['Vaciar basura',          'almacen',        -1, -15.2,   'trash'],
+    ['Vaciar basura',          'almacen',        -1, -15.2,   'trash', 'basura', 1],
     ['Limpiar filtro',         'oxigeno',        5, -2.9,     'leaves'],
     ['Destruir asteroides',    'armeria',        10, 2.2,     'asteroids'],
     ['Activar escudos',        'escudos',        11.8, -12.4, 'shields'],
@@ -110,7 +110,18 @@
     ['Aceptar energía',        'navegacion',     17.2, -7.2,  'accept', 'energia', 1],
     ['Aceptar energía',        'escudos',        8, -15.6,    'accept', 'energia', 1],
     ['Aceptar energía',        'oxigeno',        5.2, -4.25,     'accept', 'energia', 1],
-    ['Aceptar energía',        'seguridad',      -14.6, -7.9, 'accept', 'energia', 1]
+    ['Aceptar energía',        'seguridad',      -14.6, -7.9, 'accept', 'energia', 1],
+    // como en The Skeld: los cables se arreglan en tres cuadros seguidos, el combustible se llena dos veces,
+    // los dos motores se alinean y la basura de la cafetería o el conducto de oxígeno se vacían luego en el almacén
+    ['Conectar cables',        'almacen',        -4, -6.95,   'wires', 'cables', 0],
+    ['Conectar cables',        'administracion', 5, -6.4,     'wires', 'cables', 1],
+    ['Conectar cables',        'cafeteria',      -1.6, 5.2,   'wires', 'cables', 1],
+    ['Conectar cables',        'navegacion',     16, -7.6,    'wires', 'cables', 2],
+    ['Alinear motor inferior', 'motorinf',       -13.8, -11,  'align', 'alinear', 1],
+    ['Llenar bidón',           'almacen',        -4.4, -15.6, 'fillcan', 'combustible', 2],
+    ['Vaciar basura',          'cafeteria',      1.6, -1.2,   'trash', 'basura', 0],
+    ['Vaciar conducto',        'oxigeno',        7.2, -4.3,   'trash', 'basura', 0],
+    ['Estabilizar dirección',  'navegacion',     18.2, -3.4,  'steering']
   ].map((s, id) => ({ id, name: s[0], room: s[1], x: U(s[2], s[3])[0], z: U(s[2], s[3])[1], type: s[4], chain: s[5] || null, step: s[6] || 0 }));
   // Tareas que se reparten: cada una es una lista de pasos y cada paso una lista de consolas posibles
   const CHAINS = {};
@@ -135,7 +146,7 @@
     at({ id: 'o2a',      name: 'Depurador de oxígeno',    room: 'oxigeno' },        7.5, -2.85),
     at({ id: 'o2b',      name: 'Depurador de oxígeno',    room: 'administracion' }, 6.6, -9.8)
   ];
-  PANELS.forEach(p => { p.type = p.id === 'luces' ? 'switches' : p.id.startsWith('reactor') ? 'holdPanel' : 'code'; });
+  PANELS.forEach(p => { p.type = p.id === 'luces' ? 'switches' : p.id === 'coms' ? 'dial' : p.id.startsWith('reactor') ? 'holdPanel' : 'code'; });
   // Terminales de información (las puede usar cualquier jugador vivo; las desactiva el sabotaje de comunicaciones salvo los signos vitales)
   const INFO = [
     at({ id: 'cams',    name: 'Cámaras de seguridad',    short: 'Cámaras', room: 'seguridad' },      -12.7, -5.3),
@@ -192,13 +203,12 @@
     D({ kind: 'cratepile', room: 'almacen',        w: 5.6, h: 4 },   -2.8, -10.4),
     D({ kind: 'crates',    room: 'almacen',        r: 1.3 },  -5.3, -7.6),
     D({ kind: 'barrel',    room: 'almacen',        r: .9 },   0, -7.5),
-    D({ kind: 'cans',      room: 'almacen',        r: .8 },   -4, -15.6),
+    D({ kind: 'cans',      room: 'almacen',        r: .8 },   -2.7, -15.7),
     D({ kind: 'sofa',      room: 'administracion', w: 3.4, h: 1.2 }, 4.4, -10.05),
     D({ kind: 'plant',     room: 'administracion', r: .7 },   6.6, -6.9),
     D({ kind: 'desk',      room: 'comunicaciones', w: 2.4, h: 1.1 }, 4.5, -17.3),
     D({ kind: 'shieldgen', room: 'escudos',        r: 1.2 },  8.3, -11.3),
-    D({ kind: 'chair',     room: 'navegacion',     r: 1, rot: -Math.PI / 2 }, 17.4, -3.9),
-    D({ kind: 'chair',     room: 'navegacion',     r: 1, rot: -Math.PI / 2 }, 17.4, -5.7),
+    D({ kind: 'chair',     room: 'navegacion',     r: 1, rot: -Math.PI / 2 }, 17.3, -5.2),
     D({ kind: 'turret',    room: 'armeria',        r: 1.6 },  10.8, 3.9),
     D({ kind: 'crates',    room: 'armeria',        r: 1 },    11.5, 0.1)
   ];

@@ -4,6 +4,23 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.4 · tareas como en el original
+- **Tareas por partes como en The Skeld**:
+  - Cables: tres cuadros seguidos (Eléctrica o Almacén → Administración o Cafetería → Navegación).
+  - Combustible: llenar el bidón, motor superior, volver a llenarlo y motor inferior.
+  - Alinear motores: superior y después inferior.
+  - Basura: la de la Cafetería o el conducto de Oxígeno, y después el Almacén.
+- **Nueva tarea "Estabilizar dirección"** en Navegación: arrastra la mira al centro.
+- **Comunicaciones** se arreglan girando la rueda de frecuencia hasta que la señal quede limpia (antes era un código; el código se queda para el oxígeno, como en el original).
+- **Duraciones y reglas del original**:
+  - Analizar muestra: 60 s, y puedes irte y volver.
+  - Escáner médico: 10 s.
+  - Iniciar reactor: 5 rondas.
+  - Asteroides: 20.
+  - Descarga y subida de datos: unos 8 s, con la estimación de tiempo absurda.
+  - Desviar energía: 8 palancas.
+- Cables con los cuatro colores del original y las franjas de peligro.
+
 ## Novedades 5.3 · The Skeld a su tamaño
 - **Mapa a la escala del original**: antes medía el doble y las salas se veían enormes. Ahora todo se escribe en las coordenadas de The Skeld (las rejillas están en sus posiciones reales) y se pasa a metros con 1 unidad = 2,2 m, así que salas, pasillos y distancias guardan la proporción del juego.
 - Distribución revisada: cafetería octogonal con sus 3 salidas, pasillo de arriba hasta el motor superior con la enfermería debajo, pasillo oeste con el reactor a un lado y seguridad al otro, eléctrica y almacén abajo, pasillo de administración, pasillo derecho de armería a escudos con oxígeno y las dos puertas de Navegación, y comunicaciones bajo el pasillo de escudos.

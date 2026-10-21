@@ -737,7 +737,7 @@ body.ready #splash{opacity:0;visibility:hidden}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.3</span></footer>
+    <footer class="foot"><span>Impostor 3D · v5.4</span></footer>
   </div>
 </div>
 
@@ -1705,7 +1705,7 @@ function openTask(st) {
   mgOpen = true; releaseLock(); stick.x = stick.y = 0; $('knob').style.transform = '';
   mgTok++; $('mgTitle').textContent = st.name; $('mgTitle').append(el('span', 'mgRoom', roomName(st.room))); $('mgBody').innerHTML = ''; ov('mg', true);
   let fin = false;
-  const nx = tNext(st.id), opts = { room: roomName(st.room), target: nx != null ? roomName(S.STATIONS[nx].room) : null };
+  const nx = tNext(st.id), opts = { id: st.id, room: roomName(st.room), target: nx != null ? roomName(S.STATIONS[nx].room) : null };
   if (S.VISUAL_TASKS.includes(st.type) && G.role === 'crew' && G.alive && G.cfg.visual !== false) { G.fxTask = st.id; socket.emit('taskfx', { id: st.id, on: true }); }
   MG[st.type]($('mgBody'), () => {
     if (fin) return; fin = true; $('mgTitle').textContent = '✔ Tarea completada'; completeTask(st.id);   // se envía ya: aunque cierres enseguida, cuenta
