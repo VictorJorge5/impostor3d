@@ -626,6 +626,35 @@
       S.cv._solve = async () => { const x0 = tx, y0 = ty; await S.drag([[x0, y0], [(x0 + cx) / 2, (y0 + cy) / 2], [cx, cy]], 30); };
     };
 
+    /* 19 · Limpiar rejilla: abre la rejilla y saca toda la porquería que hay dentro, como en el original */
+    T.ventclean = (body) => {
+      const S = mk(body, 1.5), { g, W } = S, Hh = S.H, box = { x: W * .12, y: Hh * .1, w: W * .76, h: Hh * .8 };
+      const KIND = ['#7a6a4a', '#5f7a3a', '#9a9a9a', '#6b4a3a', '#c9b38a'];
+      let open = 0, opening = false, junk = Array.from({ length: 6 }, () => ({ x: rand(box.x + 30, box.x + box.w - 30), y: rand(box.y + 30, box.y + box.h - 30), r: rand(12, 20), a: rand(0, TAU), c: KIND[Math.floor(Math.random() * KIND.length)], out: 0 }));
+      S.hint('Toca la rejilla para abrirla.');
+      S.on({ down: p => {
+        if (open < 1) { if (hit(p, box)) { opening = true; snd('click'); S.hint('Toca la suciedad para sacarla.'); } return; }
+        const j = junk.find(q => !q.out && Math.hypot(p.x - q.x, p.y - q.y) < q.r + 12); if (!j) return;
+        j.out = .001; snd('whoosh'); buzz(8);
+      } });
+      S.loop((dt, t) => {
+        if (opening) open = Math.min(1, open + dt * 2.5);
+        bg(g, W, Hh);
+        g.fillStyle = '#0b0f19'; rr(g, box.x, box.y, box.w, box.h, 12); g.fill();
+        junk.forEach(j => { if (j.out) { j.out = Math.min(1, j.out + dt * 3); } if (j.out >= 1) return; const s2 = 1 - j.out;
+          g.save(); g.translate(j.x, j.y - j.out * 40); g.rotate(j.a); g.scale(s2, s2); g.fillStyle = j.c; g.beginPath(); for (let k = 0; k < 7; k++) { const a = k / 7 * TAU, rr2 = j.r * (.75 + (k % 3) * .15); g.lineTo(Math.cos(a) * rr2, Math.sin(a) * rr2); } g.closePath(); g.fill(); g.strokeStyle = 'rgba(0,0,0,.4)'; g.lineWidth = 2; g.stroke(); g.restore(); });
+        // la tapa de la rejilla se levanta hacia arriba
+        g.save(); g.translate(box.x, box.y); g.scale(1, 1 - open * .92);
+        metal(g, 0, 0, box.w, box.h, 12, '#7d879c', '#5c667f');
+        g.fillStyle = '#2a3144'; for (let k = 1; k < 7; k++) g.fillRect(box.w * k / 7 - 4, box.h * .1, 8, box.h * .8);
+        g.restore();
+        const left = junk.filter(j => !j.out).length;
+        if (open >= 1) txt(g, `${left} restos`, W / 2, Hh * .96, 12, left ? '#a9b8dc' : '#4ef0b8');
+        if (open >= 1 && !junk.some(j => j.out < 1) && !S.finished) { snd('fixed'); S.hint('Rejilla limpia.', 'ok'); S.win(); }
+      });
+      S.cv._solve = async () => { S.tap(W / 2, Hh / 2); for (let k = 0; k < 100 && open < 1; k++) await wait(10); for (const j of junk.slice()) { S.tap(j.x, j.y); await wait(60); } };
+    };
+
     /* Sabotaje de comunicaciones: gira la rueda hasta que la señal quede limpia, como en el original */
     T.dial = (body) => {
       const S = mk(body, 1.7), { g, W } = S, Hh = S.H, kx = W * .76, ky = Hh * .52, kr = Math.min(Hh * .3, W * .16);

@@ -27,7 +27,7 @@
     if (!look || !look.f) return null;
     const im = imgFor(look.f); if (!im.complete || !im.naturalWidth) return null;
     const W = im.naturalWidth, H = im.naturalHeight;
-    const sh = look.am ? H * .5 : H * .52, cy = look.am ? H * .46 : H * .5, sw = Math.min(W, sh * aspect);   // encuadre cerrado: ojos, nariz y boca llenan el visor
+    let sh = look.am ? H * .58 : H * .64, sw = sh * aspect; const cy = look.am ? H * .46 : H * .5; if (sw > W * .98) { sw = W * .98; sh = sw / aspect; }   // la cara entera, de la frente a la barbilla, sin deformarla
     return { im, sx: W / 2 - sw / 2, sy: cy - sh / 2, sw, sh };
   }
   W2.faceCrop = faceCrop;
@@ -89,7 +89,8 @@
       if (look.ac === 5) { g.fillStyle = cc; g.beginPath(); g.moveTo(dir * bw * .3, ny); g.lineTo(dir * bw * .3 + h * .07, ny - h * .05); g.lineTo(dir * bw * .3 + h * .07, ny + h * .05); g.closePath(); g.moveTo(dir * bw * .3, ny); g.lineTo(dir * bw * .3 - h * .07, ny - h * .05); g.lineTo(dir * bw * .3 - h * .07, ny + h * .05); g.closePath(); g.fill(); g.stroke(); }
     }
     // visor con la cara
-    visor(g, dir * bw * .09, top + h * .37, bw * .57, h * .27, look, lw);   // visor muy grande: la gracia del juego es ver la cara de cada uno
+    if (look.f) visor(g, dir * bw * .07, top + h * .37, bw * .41, h * .285, look, lw);   // con foto: el visor toma la forma de la cara y la cara se amolda a él
+    else visor(g, dir * bw * .12, top + h * .32, bw * .52, h * .24, look, lw);   // sin foto: el visor ancho del original
     // sombrero
     hat(g, look, dir * bw * .05, top, bw, h, lw);
     g.restore();
@@ -102,7 +103,7 @@
     if (fc) {
       g.save(); g.clip(); g.fillStyle = '#222'; g.fill(); if ('filter' in g) g.filter = 'brightness(1.08) contrast(1.1) saturate(1.1)';
       g.drawImage(fc.im, fc.sx, fc.sy, fc.sw, fc.sh, cx - rx, cy - ry, rx * 2, ry * 2); if ('filter' in g) g.filter = 'none';
-      const sh = g.createRadialGradient(cx, cy, Math.min(rx, ry) * .7, cx, cy, Math.max(rx, ry) * 1.05); sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(10,20,30,.35)'); g.fillStyle = sh; g.fill(); g.restore();
+      const sh = g.createRadialGradient(cx - rx * .15, cy - ry * .2, Math.min(rx, ry) * .35, cx, cy, Math.max(rx, ry) * 1.02); sh.addColorStop(0, 'rgba(255,255,255,.06)'); sh.addColorStop(.6, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(10,20,30,.45)'); g.fillStyle = sh; g.fill(); g.restore();   // sombreado de esfera: la cara se ve curvada, como sobre una cabeza
     } else {
       const gr = g.createLinearGradient(0, cy - ry, 0, cy + ry); gr.addColorStop(0, '#c6ecf5'); gr.addColorStop(.55, '#86c3d7'); gr.addColorStop(1, '#4b8aa3'); g.fillStyle = gr; g.fill();
     }
@@ -384,7 +385,7 @@
     // consolas de tareas
     S.STATIONS.forEach(st => {
       const p = S.stationPos(st); if (!vis(p.x, p.z, 3)) return; const x = X(p.x), y = Y(p.z), hl = o.hl && o.hl.has(st.id), near = o.use === st.id;
-      station(g, st.type, x, y, sc, t, lw);
+      if (st.type !== 'ventclean') station(g, st.type, x, y, sc, t, lw);
       if (hl) { g.save(); g.strokeStyle = near ? '#ffe14d' : 'rgba(255,225,77,.55)'; g.lineWidth = lw * (near ? 2.4 : 1.4); g.setLineDash(near ? [] : [sc * .3, sc * .25]); rrect(g, x - sc * .95, y - sc * 1.55, sc * 1.9, sc * 1.85, sc * .25); g.stroke(); g.restore(); }
     });
     // paneles de sabotaje

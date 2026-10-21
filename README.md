@@ -4,6 +4,15 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.6 · la cara se amolda y todas las tareas de The Skeld
+- **La cara se amolda al visor**: con foto, el visor toma la forma de la cara (un poco más alto que ancho) y se ve la cara entera, de la frente a la barbilla, sin deformarla y con un sombreado de esfera, como si estuviera sobre la cabeza. Sin foto se queda el visor ancho del original.
+- **Eléctrica como en el original**: al entrar (abajo a la derecha) está el panel de las luces en un gran tabique que separa la entrada de la parte de atrás, donde están los cables, el distribuidor, desviar energía y la rejilla.
+- **Todas las tareas de The Skeld**:
+  - Descargar datos también en Eléctrica.
+  - Aceptar energía en los dos motores, Navegación, Oxígeno, Seguridad, Escudos, Armería y Comunicaciones.
+  - Cables también en Seguridad (6 sitios, como en el juego).
+  - Nueva tarea **Limpiar rejilla**: abres la rejilla y quitas la suciedad. Sale en la cafetería, administración, enfermería, navegación o escudos.
+
 ## Novedades 5.5 · caras bien visibles
 - **Visor mucho más grande** en los crewmates: la cara ocupa casi todo el frente del casco, con un encuadre cerrado (ojos, nariz y boca) y un poco más de brillo y contraste.
 - El reflejo del cristal se queda en una esquina y ya no cruza la cara.
