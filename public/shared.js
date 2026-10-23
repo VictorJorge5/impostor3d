@@ -23,7 +23,7 @@
     { id: 'administracion', name: 'Administración', poly: P([[354, 174], [422, 174], [422, 221], [410, 234], [354, 234]]) },
     { id: 'almacen',        name: 'Almacén',        poly: P([[284, 207], [344, 207], [344, 327], [291, 327], [264, 298], [264, 227]]) },
     // con el gran tabique del panel de luces: la puerta da a la parte de delante y los cables están detrás
-    { id: 'electrica',      name: 'Eléctrica',      poly: P([[196, 189], [264, 189], [264, 205], [248, 222], [248, 249], [235, 262], [217, 262], [217, 271], [196, 271], [196, 228], [234, 228], [234, 223], [196, 223]]) },
+    { id: 'electrica',      name: 'Eléctrica',      poly: P([[196, 189], [264, 189], [264, 205], [248, 222], [248, 249], [235, 262], [217, 262], [217, 271], [196, 271], [196, 228], [231, 228], [231, 223], [196, 223]]) },
     { id: 'enfermeria',     name: 'Enfermería',     poly: P([[185, 102], [241, 102], [241, 136], [264, 158], [264, 176], [196, 176], [185, 162]]) },
     { id: 'seguridad',      name: 'Seguridad',      poly: P([[141, 135], [150, 126], [169, 126], [178, 135], [178, 195], [141, 195]]) },
     { id: 'reactor',        name: 'Reactor',        poly: P([[26, 127], [44, 112], [63, 112], [63, 133], [84, 133], [84, 196], [63, 196], [63, 218], [44, 218], [26, 204]]) },
@@ -97,13 +97,13 @@
     ['Escáner médico',         'enfermeria',     206, 160, 'scan'],
     ['Analizar muestra',       'enfermeria',     236, 166, 'samples'],
     ['Repostar motor inferior', 'motorinf',      86, 218,  'fuel', 'combustible', 3],
-    ['Alinear motor superior', 'motores',        128, 106, 'align', 'alinear', 0],
+    ['Alinear motor superior', 'motores',        133, 58,  'align', 'alinear', 0],
     ['Pasar tarjeta',          'administracion', 414, 204, 'card'],
     ['Vaciar basura',          'almacen',        334, 318, 'trash', 'basura', 1],
     ['Limpiar filtro',         'oxigeno',        396, 159, 'leaves'],
     ['Destruir asteroides',    'armeria',        440, 80,  'asteroids'],
     ['Activar escudos',        'escudos',        472, 252, 'shields'],
-    ['Subir datos',            'administracion', 364, 178, 'upload', 'datos', 1],
+    ['Subir datos',            'administracion', 368, 178, 'upload', 'datos', 1],
     ['Descargar datos',        'cafeteria',      340, 16,  'download', 'datos', 0],
     ['Descargar datos',        'armeria',        430, 48,  'download', 'datos', 0],
     ['Descargar datos',        'navegacion',     537, 130, 'download', 'datos', 0],
@@ -117,20 +117,20 @@
     // como en The Skeld: los cables se arreglan en tres cuadros seguidos, el combustible se llena dos veces,
     // los dos motores se alinean y la basura de la cafetería o el conducto de oxígeno se vacían luego en el almacén
     ['Conectar cables',        'almacen',        300, 212, 'wires', 'cables', 0],
-    ['Conectar cables',        'administracion', 358, 186, 'wires', 'cables', 1],
+    ['Conectar cables',        'administracion', 385, 178, 'wires', 'cables', 1],
     ['Conectar cables',        'cafeteria',      284, 16,  'wires', 'cables', 1],
     ['Conectar cables',        'navegacion',     537, 182, 'wires', 'cables', 2],
-    ['Alinear motor inferior', 'motorinf',       130, 222, 'align', 'alinear', 1],
+    ['Alinear motor inferior', 'motorinf',       132, 276, 'align', 'alinear', 1],
     ['Llenar bidón',           'almacen',        314, 320, 'fillcan', 'combustible', 2],
     ['Vaciar basura',          'cafeteria',      388, 102, 'trash', 'basura', 0],
     ['Vaciar conducto',        'oxigeno',        424, 161, 'trash', 'basura', 0],
     ['Estabilizar dirección',  'navegacion',     567, 154, 'steering'],
     // el resto de las tareas de The Skeld
     ['Descargar datos',        'electrica',      220, 193, 'download', 'datos', 0],
-    ['Aceptar energía',        'motores',        128, 57,  'accept', 'energia', 1],
-    ['Aceptar energía',        'motorinf',       100, 277, 'accept', 'energia', 1],
+    ['Aceptar energía',        'motores',        112, 56,  'accept', 'energia', 1],
+    ['Aceptar energía',        'motorinf',       116, 278, 'accept', 'energia', 1],
     ['Aceptar energía',        'armeria',        474, 104, 'accept', 'energia', 1],
-    ['Aceptar energía',        'comunicaciones', 411, 300, 'accept', 'energia', 1],
+    ['Aceptar energía',        'comunicaciones', 411, 304, 'accept', 'energia', 1],
     ['Conectar cables',        'seguridad',      146, 147, 'wires', 'cables', 2],
     // limpiar una rejilla: se hace encima de la rejilla y no estorba el paso
     ['Limpiar rejilla',        'cafeteria',      380, 128, 'ventclean', 'rejilla', 0],
@@ -156,7 +156,7 @@
   const at = (o, x, y) => { const [mx, mz] = U(x, y); o.x = mx; o.z = mz; return o; };
   const PANELS = [
     at({ id: 'luces',    name: 'Panel de luces',          room: 'electrica' },      206, 231),   // nada más entrar, en el tabique
-    at({ id: 'coms',     name: 'Panel de comunicaciones', room: 'comunicaciones' }, 396, 281),
+    at({ id: 'coms',     name: 'Panel de comunicaciones', room: 'comunicaciones' }, 411, 285),
     at({ id: 'reactorA', name: 'Control del reactor',     room: 'reactor' },        74, 137),
     at({ id: 'reactorB', name: 'Control del reactor',     room: 'reactor' },        74, 191),
     at({ id: 'o2a',      name: 'Depurador de oxígeno',    room: 'oxigeno' },        420, 125),
@@ -168,7 +168,7 @@
     at({ id: 'cams',    name: 'Cámaras de seguridad',    short: 'Cámaras', room: 'seguridad' },      160, 130),
     at({ id: 'admin',   name: 'Panel de administración', short: 'Admin',   room: 'administracion' }, 388, 224),
     at({ id: 'vitals',  name: 'Signos vitales',          short: 'Vitales', room: 'enfermeria' },     256, 169),
-    at({ id: 'doorlog', name: 'Registro de puertas',     short: 'Puertas', room: 'electrica' },      224, 231)
+    at({ id: 'doorlog', name: 'Registro de puertas',     short: 'Puertas', room: 'electrica' },      237, 252)
   ];
   // Cámaras de seguridad: posición en la pared (x, altura, z) y centro de lo que se ve
   const cam = (id, name, px, py, lx, ly) => { const p = U(px, py), l = U(lx, ly); return { id, name, pos: [p[0], 2.6, p[1]], look: [l[0], 1, l[1]] }; };
@@ -183,10 +183,10 @@
     at({ id: 0,  room: 'reactor',        links: [1] },    56, 123),
     at({ id: 1,  room: 'motores',        links: [0] },    110, 113),
     at({ id: 2,  room: 'reactor',        links: [3] },    56, 205),
-    at({ id: 3,  room: 'motorinf',       links: [2] },    125, 276),
+    at({ id: 3,  room: 'motorinf',       links: [2] },    102, 275),
     at({ id: 4,  room: 'enfermeria',     links: [5, 6] }, 194, 148),
     at({ id: 5,  room: 'seguridad',      links: [4, 6] }, 152, 186),
-    at({ id: 6,  room: 'electrica',      links: [4, 5] }, 238, 247),
+    at({ id: 6,  room: 'electrica',      links: [4, 5] }, 207, 250),
     at({ id: 7,  room: 'cafeteria',      links: [8, 9] }, 380, 128),
     at({ id: 8,  room: 'administracion', links: [7, 9] }, 362, 226),
     at({ id: 9,  room: null,             links: [7, 8] }, 484, 182),
@@ -256,11 +256,18 @@
     if (closedDoors.length && (isClosedCell(x - r, z - r) || isClosedCell(x + r, z - r) || isClosedCell(x - r, z + r) || isClosedCell(x + r, z + r) || isClosedCell(x, z))) return true;
     return false;
   };
-  const spawnPos = (i, n) => {
-    const a = (i / n) * Math.PI * 2;
-    const x = BUTTON.x + Math.cos(a) * 3.5, z = BUTTON.z + Math.sin(a) * 3.5;
-    return { x, z, ry: Math.atan2(BUTTON.x - x, BUTTON.z - z) };
+  // el punto libre más cercano (por si algo deja a alguien dentro de una mesa o de una pared)
+  const freeNear = (x, z) => {
+    if (!blocked(x, z)) return { x, z };
+    for (let d = .25; d < 12; d += .25) for (let k = 0; k < 24; k++) { const a = k / 24 * Math.PI * 2, px = x + Math.cos(a) * d, pz = z + Math.sin(a) * d; if (!blocked(px, pz)) return { x: px, z: pz }; }
+    return { x: BUTTON.x, z: BUTTON.z + TABLE_R + 1.2 };
   };
+  const spawnPos = (i, n) => {
+    const a = (i / n) * Math.PI * 2 + .3, p = freeNear(BUTTON.x + Math.cos(a) * 4.8, BUTTON.z + Math.sin(a) * 4.2);   // en corro alrededor de la mesa, sin pisar los bancos
+    return { x: p.x, z: p.z, ry: Math.atan2(BUTTON.x - p.x, BUTTON.z - p.z) };
+  };
+  // huella del mapa: la web y el servidor de juego tienen que tener el mismo, o las mesas y paredes no coinciden
+  const MAP_VER = (() => { const str = JSON.stringify([ROOMS.map(r => r.poly), CORRIDORS, STATIONS.map(s => [s.x, s.z]), DECOR.map(d => [d.x, d.z]), BUTTON, TABLE_R]); let h = 5381; for (let i = 0; i < str.length; i++) h = (h * 33 + str.charCodeAt(i)) >>> 0; return h.toString(36); })();
 
   // ---- apariencia de los personajes ----
   const SKINS = ['#f6d7b8', '#efc29b', '#e0a97d', '#c68863', '#a86b44', '#7d4a2b', '#5a3520', '#3b2416'];
@@ -371,6 +378,6 @@
   };
 
   const VISUAL_TASKS = ['scan', 'asteroids', 'trash', 'shields'];   // tareas que se ven desde fuera
-  const api = { WEAPON_GUN, TRASH_OUT, SHIELD_OUT, VISUAL_TASKS, CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, WALLS, POLYS, inPoly, roomAtPos, segDist, MAPW, MAPH, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
+  const api = { MAP_VER, freeNear, WEAPON_GUN, TRASH_OUT, SHIELD_OUT, VISUAL_TASKS, CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, WALLS, POLYS, inPoly, roomAtPos, segDist, MAPW, MAPH, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Shared = api;
 })(this);

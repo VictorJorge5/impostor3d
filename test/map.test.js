@@ -64,6 +64,23 @@ test('la decoración está dentro de su sala y lejos de los objetos interactivos
   });
 });
 
+test('nadie empieza encajado: la salida y el punto libre más cercano', () => {
+  for (const n of [1, 4, 8, 10, 15]) for (let k = 0; k < n; k++) { const sp = S.spawnPos(k, n); assert.ok(!S.blocked(sp.x, sp.z), `salida ${k}/${n}`); }
+  // aunque te pongan encima de cualquier mesa, aparato o decoración, siempre hay un hueco libre cerca y accesible
+  S.DECOR.concat(S.STATIONS, [S.BUTTON]).forEach(o => { const p = S.freeNear(o.x, o.z); assert.ok(!S.blocked(p.x, p.z)); assert.ok(Math.hypot(p.x - o.x, p.z - o.z) < 8, 'hueco cerca de ' + (o.kind || o.name || 'botón')); });
+});
+
+test('los bots pueden andar por todo el mapa: ningún aparato tapa una puerta', () => {
+  const props = S.STATIONS.concat(S.PANELS, S.INFO), walk = new Set();
+  for (let j = 0; j < S.H; j++) for (let i = 0; i < S.W; i++) { if (S.grid[j][i]) continue; const x = i + .5, z = j + .5;
+    if (props.some(p => Math.hypot(p.x - x, p.z - z) < 2.2) || Math.hypot(S.BUTTON.x - x, S.BUTTON.z - z) < 3.4 || S.blocked(x, z, 1)) continue; walk.add(i + ',' + j); }
+  const start = [...walk].find(k => { const [i, j] = k.split(',').map(Number); const r = S.roomAt(i, j); return r && r.id === 'cafeteria'; }), seen = new Set([start]), q = [start], rooms = new Set();
+  while (q.length) { const [i, j] = q.pop().split(',').map(Number); const r = S.roomAt(i, j); if (r) rooms.add(r.id);
+    for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const k = (i + a) + ',' + (j + b); if (walk.has(k) && !seen.has(k)) { seen.add(k); q.push(k); } } }
+  S.ROOMS.forEach(r => assert.ok(rooms.has(r.id), 'los bots llegan a ' + r.name));
+  assert.ok(seen.size > walk.size * .95, `zona conectada ${seen.size}/${walk.size}`);
+});
+
 test('las equipaciones y el dorsal se guardan y se validan', () => {
   const l = S.cleanLook({ kit: 2, num: 10, tp: 1, t: 8, ac: 4, nn: 1 });
   assert.equal(l.kit, 2); assert.equal(l.num, 10); assert.equal(l.tp, 1); assert.equal(l.t, 8); assert.equal(l.ac, 4); assert.equal(l.nn, 1);

@@ -39,7 +39,7 @@ app.set('trust proxy', 1);
 app.disable('x-powered-by');
 app.get('/health', (req, res) => {   // también sirve para "despertar" el servidor desde la página de Vercel
   res.set({ 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' });
-  res.json({ ok: true, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0), uptime: Math.round((Date.now() - STARTED) / 1000) });
+  res.json({ ok: true, mapVer: S.MAP_VER, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0), uptime: Math.round((Date.now() - STARTED) / 1000) });
 });
 // el cliente de Socket.IO con la misma versión que el servidor (la página de Vercel lleva su propia copia, generada en el build)
 app.get('/vendor/socket.io.min.js', (req, res) => res.sendFile(SIO_CLIENT));
@@ -55,7 +55,7 @@ const io = new Server(server, {
   pingInterval: 20000, pingTimeout: 25000, maxHttpBufferSize: 1e6
 });
 
-const REPORT_RANGE = 7, TASK_RANGE = 5.5, BUTTON_RANGE = 5.5;
+const REPORT_RANGE = 7, TASK_RANGE = 5.5, BUTTON_RANGE = 6.5;
 const RESULT_MS = ms(8), MAX_PLAYERS = 10, MIN_PLAYERS = 3, GRACE_MS = 60000, MAX_ROOMS = 300;
 
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
@@ -332,6 +332,7 @@ io.on('connection', sock => {
     if (room) return cb({ error: 'Ya estás en una sala' });
     const name = String((data && data.name) || '').trim().slice(0, 12) || 'Jugador';
     let r;
+    if (!data || data.mapVer !== S.MAP_VER) return cb({ error: 'Tu página es de otra versión del juego. Recarga la página para jugar.', reload: true });
     if (data && data.code) {
       r = rooms.get(String(data.code).toUpperCase().trim());
       if (!r) return cb({ error: 'No existe esa sala' });
@@ -345,11 +346,12 @@ io.on('connection', sock => {
     }
     const used = new Set(list(r).map(p => p.color)), look = S.cleanLook(data && data.look);
     let color = used.has(look.col) ? 0 : look.col; while (used.has(color)) color++;   // el color que eligió, si está libre (como en Among Us)
-    me = { id: sock.id, name, color, look, x: S.BUTTON.x, z: S.BUTTON.z + 5, ry: 0, alive: true, role: null, tasks: [], done: [], vote: null, emergencies: 1, killReadyAt: 0, vent: null, token: crypto.randomBytes(12).toString('hex'), offline: false, lastChat: 0 };
+    const sp = S.freeNear(S.BUTTON.x, S.BUTTON.z + 5);
+    me = { id: sock.id, name, color, look, x: sp.x, z: sp.z, ry: 0, alive: true, role: null, tasks: [], done: [], vote: null, emergencies: 1, killReadyAt: 0, vent: null, token: crypto.randomBytes(12).toString('hex'), offline: false, lastChat: 0 };
     r.players.set(sock.id, me);
     room = r;
     sock.join(r.code);
-    cb({ ok: true, id: sock.id, code: r.code, token: me.token });
+    cb({ ok: true, id: sock.id, code: r.code, token: me.token, mapVer: S.MAP_VER });
     syncBots(r); emitLobby(r);
   });
 
@@ -588,7 +590,7 @@ io.on('connection', sock => {
       if (oldSock) oldSock.disconnect(true);
     }
     sock.join(r.code); room = r; me = p;
-    cb({ ok: true, id: p.id, code: r.code, token: p.token, state: r.state });
+    cb({ ok: true, id: p.id, code: r.code, token: p.token, state: r.state, mapVer: S.MAP_VER });
     if (r.state === 'lobby') emitLobby(r); else sock.emit('resync', snapshot(r, p));
     io.to(r.code).emit('presence', { id: p.id, offline: false, name: p.name });
   });
@@ -606,6 +608,12 @@ const WALK = []; const walkSet = new Set();
     if (S.blocked(x, z, 1)) continue;   // decoración y bordes: los bots no se quedan pegados
     WALK.push([i, j]); walkSet.add(i + ',' + j);
   }
+  // solo la zona conectada más grande: un bot nunca elige un rincón al que no puede llegar
+  const comp = new Map(); let best = null;
+  for (const [i, j] of WALK) { const k0 = i + ',' + j; if (comp.has(k0)) continue; const q = [[i, j]], cells = []; comp.set(k0, cells);
+    while (q.length) { const c = q.pop(); cells.push(c); for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const n = [c[0] + dx, c[1] + dz], k = n[0] + ',' + n[1]; if (walkSet.has(k) && !comp.has(k)) { comp.set(k, cells); q.push(n); } } }
+    if (!best || cells.length > best.length) best = cells; }
+  WALK.length = 0; walkSet.clear(); best.forEach(c => { WALK.push(c); walkSet.add(c[0] + ',' + c[1]); });
 })();
 const cellOf = p => [Math.floor(p.x / S.CELL), Math.floor(p.z / S.CELL)];
 function bfsPath(a, b) {
