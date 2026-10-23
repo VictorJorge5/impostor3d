@@ -4,6 +4,7 @@ const assert = require('node:assert');
 const { spawn } = require('node:child_process');
 const path = require('node:path');
 const { io } = require('socket.io-client');
+const MAP_VER = require('../public/shared.js').MAP_VER;
 
 const PORT = 3900 + Math.floor(Math.random() * 90);
 const URL = `http://127.0.0.1:${PORT}`;
@@ -47,6 +48,17 @@ test('CORS: acepta *.vercel.app y rechaza otros dominios', async () => {
   assert.notEqual(bad.headers.get('access-control-allow-origin'), 'https://malo.example.com');
 });
 
+test('la web y el servidor tienen que llevar el mismo mapa', async () => {
+  const c = await connect();
+  const old = await ack(c, 'join', { name: 'Viejo', look: {}, code: '' });
+  assert.ok(old.error && old.reload, 'una página sin la huella del mapa no puede entrar');
+  const bad = await ack(c, 'join', { mapVer: 'otro', name: 'Viejo', look: {}, code: '' });
+  assert.ok(bad.error && bad.reload);
+  const ok = await ack(c, 'join', { mapVer: MAP_VER, name: 'Nuevo', look: {}, code: '' });
+  assert.ok(ok.ok); assert.equal(ok.mapVer, MAP_VER);
+  const h = await (await fetch(URL + '/health')).json(); assert.equal(h.mapVer, MAP_VER);
+});
+
 test('latencia: el servidor contesta al ping', async () => {
   const c = await connect('https://impostor3d.vercel.app');
   const t = await new Promise(res => c.emit('lat', res));
@@ -56,14 +68,14 @@ test('latencia: el servidor contesta al ping', async () => {
 test('crear sala, unirse con el código y empezar la partida', async () => {
   const [a, b, c] = await Promise.all([1, 2, 3].map(() => connect('https://impostor3d.vercel.app')));
   const lobbyA = once(a, 'lobby');
-  const ra = await ack(a, 'join', { name: 'Ana', look: {}, code: '' });
+  const ra = await ack(a, 'join', { mapVer: MAP_VER, name: 'Ana', look: {}, code: '' });
   assert.ok(ra.ok && /^[A-Z]{4}$/.test(ra.code));
   await lobbyA;
-  const bad = await ack(b, 'join', { name: 'X', code: 'ZZZZ' === ra.code ? 'YYYY' : 'ZZZZ' });
+  const bad = await ack(b, 'join', { mapVer: MAP_VER, name: 'X', code: 'ZZZZ' === ra.code ? 'YYYY' : 'ZZZZ' });
   assert.equal(bad.error, 'No existe esa sala');
-  assert.ok((await ack(b, 'join', { name: 'Bea', code: ra.code.toLowerCase() })).ok);
+  assert.ok((await ack(b, 'join', { mapVer: MAP_VER, name: 'Bea', code: ra.code.toLowerCase() })).ok);
   const lob = new Promise(res => a.on('lobby', L => { if (L.players.length === 3) res(L); }));
-  assert.ok((await ack(c, 'join', { name: 'Carlos', code: ra.code })).ok);
+  assert.ok((await ack(c, 'join', { mapVer: MAP_VER, name: 'Carlos', code: ra.code })).ok);
   const L = await lob;
   assert.equal(L.players.length, 3);
   assert.equal(L.hostId, ra.id);
@@ -93,8 +105,8 @@ test('reglas del original: sin botón durante un sabotaje, las luces siguen tras
   const S = require('../public/shared.js');
   const socks = await Promise.all([1, 2, 3, 4].map(() => connect()));
   const [h] = socks;
-  const r0 = await ack(h, 'join', { name: 'H', look: {}, code: '' });
-  for (const [i, s] of socks.slice(1).entries()) assert.ok((await ack(s, 'join', { name: 'P' + i, look: {}, code: r0.code })).ok);
+  const r0 = await ack(h, 'join', { mapVer: MAP_VER, name: 'H', look: {}, code: '' });
+  for (const [i, s] of socks.slice(1).entries()) assert.ok((await ack(s, 'join', { mapVer: MAP_VER, name: 'P' + i, look: {}, code: r0.code })).ok);
   const starts = socks.map(s => once(s, 'start')); h.emit('start'); const st = await Promise.all(starts);
   const imp = socks[st.findIndex(s => s.role === 'impostor')], crew = socks.filter(s => s !== imp);
   const at = (s, p) => s.emit('move', { x: p.x, z: p.z, ry: 0, mv: 0 });

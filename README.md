@@ -4,6 +4,12 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.7.1 · nadie aparece encajado
+- **La web y el servidor de juego comprueban que tienen el mismo mapa.** Si la página es antigua, se recarga sola; si el servidor aún se está actualizando (Render tarda unos minutos tras cada cambio), te avisa en vez de meterte en una partida con las mesas y paredes descolocadas.
+- **Nunca te quedas encajado**: si por lo que sea apareces dentro de una mesa, un aparato o una pared, el juego te saca al hueco libre más cercano. Al empezar, todos aparecen en corro alrededor de la mesa, sin pisar los bancos.
+- **Ningún aparato tapa una puerta** (Admin, Comunicaciones, motores y Eléctrica) y los bots recorren todo el mapa.
+- El botón de emergencia se puede pulsar desde un poco más lejos.
+
 ## Novedades 5.7 · el mapa de The Skeld calcado del plano
 - **El mapa es el del original**: cada sala, pasillo y tabique está calcado del plano oficial de The Skeld, con sus formas (esquinas en diagonal, el reactor en cruz, la Eléctrica con su tabique...), sus tamaños y sus puertas. Navegación tiene una sola entrada, como en el juego.
 - **Cada tarea, rejilla, cámara y terminal está donde en el original**: los cables del pasillo de Seguridad y Admin, el lector de tarjetas junto a la mesa de Admin, los bidones al fondo del Almacén, las cuatro camas de Enfermería...

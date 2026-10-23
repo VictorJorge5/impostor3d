@@ -755,7 +755,7 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.7</span></footer>
+    <footer class="foot"><span>Impostor 3D · v5.7.1</span></footer>
   </div>
 </div>
 
@@ -996,9 +996,11 @@ function join(code) {
   const a = activeChar(); joining = true;
   ['btnCreate', 'btnJoin'].forEach(i => { $(i).disabled = true; });
   if (!socket.connected) toast(NET.everOk ? 'Reconectando con el servidor…' : 'Conectando con el servidor… la primera vez puede tardar hasta un minuto', 5000);
-  socket.timeout(75000).emit('join', { name: a.name, look: a.look, code }, (err, res) => {
+  socket.timeout(75000).emit('join', { name: a.name, look: a.look, code, mapVer: S.MAP_VER }, (err, res) => {
     joining = false; ['btnCreate', 'btnJoin'].forEach(i => { $(i).disabled = false; });
     if (err) return toast('El servidor no responde. Inténtalo de nuevo en un momento.');
+    if (res && res.reload) return versionMismatch(true);
+    if (res && res.ok && res.mapVer !== S.MAP_VER) { socket.emit('leave'); return versionMismatch(false); }
     if (!res || res.error) return toast((res && res.error) || 'No se pudo entrar');
     myId = res.id; saveSess(res); buzz(25);
   });
@@ -1083,11 +1085,19 @@ function renderSettings(L, host) {
   $('setSum').textContent = diff ? `· ${diff} distinto${diff > 1 ? 's' : ''} del clásico` : '· valores clásicos';
   $('minHint').textContent = L.settings.testMode ? 'Modo pruebas: puedes empezar con 1 jugador y la partida no termina sola.' : 'Mínimo 3 jugadores. Lo ideal son 6 o 7.';
 }
+// La web y el servidor de juego deben tener el mismo mapa: si no, se colocaría a la gente dentro de mesas y paredes.
+// Si la página es la vieja se recarga sola (una vez); si el servidor aún no se ha actualizado, se avisa.
+function versionMismatch(pageIsOld) {
+  if (pageIsOld) { let n = 0; try { n = +sessionStorage.getItem('i3d_reload') || 0; sessionStorage.setItem('i3d_reload', n + 1); } catch (e) { /* sin almacenamiento */ }
+    if (n < 1) { toast('Hay una versión nueva del juego. Actualizando…', 3000); setTimeout(() => location.reload(), 900); return; } }
+  toast(pageIsOld ? 'Tu página es de otra versión del juego. Cierra la pestaña y vuelve a abrirla.' : 'El servidor de juego se está actualizando a la versión nueva. Espera un par de minutos y vuelve a intentarlo.', 7000);
+}
 // Si se cae la conexión o se recarga la página, se vuelve a la misma partida con el mismo personaje
 socket.on('connect', () => {
   const s = loadSess(); if (!s) { clearSess(); if (G.state !== 'menu') backToMenu('Has perdido la conexión con la partida'); return; }
   if (G.state === 'menu') toast('Reconectando a tu partida…', 3000);
   socket.emit('rejoin', { code: s.code, token: s.token }, res => {
+    if (res && res.ok && res.mapVer !== S.MAP_VER) { clearSess(); if (G.state !== 'menu') backToMenu('Ha cambiado la versión del juego'); return versionMismatch(false); }
     if (res && res.ok) { myId = res.id; saveSess(res); if (G.state !== 'menu') toast('Conectado de nuevo'); }
     else { clearSess(); if (G.state !== 'menu') backToMenu((res && res.error) || 'Has salido de la partida'); }
   });
@@ -1540,7 +1550,7 @@ socket.on('start', d => {
   clearWorld(); d.players.forEach(addPlayer);
   const me = G.players.get(myId);
   G.sc = (me.look && me.look.ht ? me.look.ht : 175) / (me.look && me.look.f ? 220 : 190);
-  G.x = me.x; G.z = me.z; G.ry = me.ry; G.heading = Math.atan2(S.BUTTON.x - G.x, S.BUTTON.z - G.z);
+  G.x = me.x; G.z = me.z; G.ry = me.ry; G.heading = Math.atan2(S.BUTTON.x - G.x, S.BUTTON.z - G.z); unstick();
   G.killReadyAt = performance.now() + d.killCd; G.vent = null; G.holding = null; G.sab = null; G.sabReadyAt = performance.now() + (d.sabCd || 0);
   G.state = 'play'; mgOpen = false;
   screen('game'); ov('endOv', false); ov('meeting', false); ov('mg', false);
@@ -1676,6 +1686,7 @@ socket.on('resume', d => {
     p.x = p.tx = s.x; p.z = p.tz = s.z; p.ry = p.try = s.ry; p.alive = s.alive;
     if (s.id === myId) { G.x = s.x; G.z = s.z; G.alive = s.alive; G.ry = s.ry; G.heading = Math.atan2(S.BUTTON.x - s.x, S.BUTTON.z - s.z); }
   });
+  unstick();
   stopEject(); touchSess(); G.killReadyAt = performance.now() + d.killCd; if ('sab' in d) setSab(d.sab); G.sabReadyAt = d.sabCd < 0 ? Infinity : performance.now() + (d.sabCd || 0); G.emReadyAt = performance.now() + (d.emCd || 0); G.vent = null; G.state = 'play'; ov('meeting', false); updateGhost(); renderVentUI(); updateSabVisuals();
 });
 function showEnd(d) {
@@ -2105,7 +2116,7 @@ function updateActions(now) {
       const p = S.stationPos(S.STATIONS[id]), d = Math.hypot(G.x - p.x, G.z - p.z);
       if (d < bd) { bd = d; act.use = { type: 'task', st: S.STATIONS[id] }; }
     }
-    if (!act.use && G.alive && G.emerg > 0 && !(G.sab && G.sab.type !== 'puertas') && Math.hypot(G.x - S.BUTTON.x, G.z - S.BUTTON.z) < 4.4) act.use = { type: 'button', cd: Math.max(0, G.emReadyAt - now) };
+    if (!act.use && G.alive && G.emerg > 0 && !(G.sab && G.sab.type !== 'puertas') && Math.hypot(G.x - S.BUTTON.x, G.z - S.BUTTON.z) < 5.8) act.use = { type: 'button', cd: Math.max(0, G.emReadyAt - now) };
     if (G.alive) for (const b of G.bodies.values()) if (b.seen && Math.hypot(G.x - b.x, G.z - b.z) < 6.2) { act.report = true; break; }
     if (G.role === 'impostor' && G.alive) {
       let best = null, bk = G.cfg.killRange - 0.4;
@@ -2234,10 +2245,17 @@ function canSee(x, z, was) {
   return d < FOW.R * (was ? .93 : .86) && losClear(FOW.x, FOW.z, x, z);
 }
 
+// nadie se queda encajado en una mesa, un aparato o una pared: se le saca al hueco libre más cercano
+function unstick() {
+  if (!G.alive || G.vent != null || !S.blocked(G.x, G.z)) return;
+  const p = S.freeNear(G.x, G.z); G.x = p.x; G.z = p.z; G.camX = null;
+  if (G.state === 'play') socket.emit('move', { x: G.x, z: G.z, ry: G.ry, mv: 0 });
+}
 let lastSend = 0, frame = 0, last = performance.now();
 const dirOf = (ry, d) => { const s = Math.sin(ry); return s > .15 ? 1 : s < -.15 ? -1 : d; };
 function update(dt, now) {
   if (G.state === 'play' && !mgOpen && now > G.frozenUntil && G.vent == null) {
+    unstick();
     let f = 0, r = 0;
     if (keys.KeyW || keys.ArrowUp) f += 1; if (keys.KeyS || keys.ArrowDown) f -= 1;
     if (keys.KeyD || keys.ArrowRight) r += 1; if (keys.KeyA || keys.ArrowLeft) r -= 1;
