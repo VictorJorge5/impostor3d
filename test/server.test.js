@@ -178,3 +178,19 @@ test('si el impostor se va, gana la tripulación (como en el original)', async (
   const end = once(other, 'end'); socks[ii].emit('leave'); const e = await end;
   assert.equal(e.winner, 'crew'); assert.equal(e.reason, 'disconnect:impostor');
 });
+
+test('modo pruebas con 3 jugadores: si quedan un impostor y un tripulante, gana el impostor', async () => {
+  const S = require('../public/shared.js');
+  const socks = await Promise.all([1, 2, 3].map(() => connect()));
+  const [h] = socks;
+  const r0 = await ack(h, 'join', { mapVer: MAP_VER, name: 'H', look: {}, code: '' });
+  for (const [i, s] of socks.slice(1).entries()) assert.ok((await ack(s, 'join', { mapVer: MAP_VER, name: 'P' + i, look: {}, code: r0.code })).ok);
+  const lob = once(h, 'lobby'); h.emit('settings', { all: { testMode: true, impostors: 1 } }); await lob;
+  const starts = socks.map(s => once(s, 'start')); h.emit('start'); const st = await Promise.all(starts);
+  const imp = socks[st.findIndex(s => s.role === 'impostor')], victim = socks.find(s => s !== imp);
+  const at = (s, p) => s.emit('move', { x: p.x, z: p.z, ry: 0, mv: 0 });
+  const vPos = { x: S.BUTTON.x + 6, z: S.BUTTON.z + 2 };
+  at(victim, vPos); at(imp, { x: vPos.x + 1, z: vPos.z }); await new Promise(r => setTimeout(r, 1500));
+  const end = once(h, 'end'); imp.emit('kill', victim.id); const e = await end;
+  assert.equal(e.winner, 'impostor');
+});

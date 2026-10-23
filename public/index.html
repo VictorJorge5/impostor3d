@@ -914,8 +914,9 @@ body.nokeys #keys{display:none!important}
 #btnUse{width:clamp(72px,23vh,100px);height:clamp(72px,23vh,100px)}
 #btnUse,#btnReport,#btnKill,#btnUse.on,#btnReport.on,#btnKill.on:not(.cd){background:none;border:0;border-radius:0;box-shadow:none;animation:none}
 #btnKill{width:clamp(66px,21vh,92px);height:clamp(66px,21vh,92px)}
-/* arriba a la derecha: ajustes y mapa en botones cuadrados, sin minimapa (como el original) */
-#topRight #minimap{display:none}
+/* arriba a la derecha: ajustes y mapa en botones cuadrados y, debajo, el minimapa (al tocarlo se abre el mapa grande) */
+#topRight .tools{order:-1}
+#topRight #minimap{display:block;width:clamp(120px,22vw,170px);border-radius:6px;border:3px solid #1d2128;box-shadow:inset 0 0 0 2px #59616b,0 4px 0 #0007;background:#0b1015d9}
 .tools{gap:6px}
 .tools .ibtn{width:clamp(38px,11vh,50px);height:clamp(38px,11vh,50px);border-radius:8px;border:3px solid #1d2128;background:linear-gradient(#8d949e,#5c636d);box-shadow:inset 0 0 0 2px #c9ced6,0 3px 0 #0007;-webkit-backdrop-filter:none;backdrop-filter:none}
 .tools .ibtn .au{width:78%;height:78%}
@@ -1055,7 +1056,7 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v6.3</span></footer>
+    <footer class="foot"><span>Impostor 3D · v6.3.1</span></footer>
   </div>
 </div>
 
@@ -1539,7 +1540,7 @@ function renderSettings(L, host) {
   let grp = ''; S.SETTINGS.forEach(d => { if (d.g !== grp) { grp = d.g; list.append(el('div', 'sgrp', grp)); } list.append(settingRow(d, L.settings[d.k], host)); });
   const diff = S.SETTINGS.filter(d => L.settings[d.k] !== d.def).length;
   $('setSum').textContent = diff ? `· ${diff} distinto${diff > 1 ? 's' : ''} del clásico` : '· valores clásicos';
-  $('minHint').textContent = L.settings.testMode ? 'Modo pruebas: puedes empezar con 1 jugador y la partida no termina sola.' : 'Mínimo 3 jugadores. Lo ideal son 6 o 7.';
+  $('minHint').textContent = L.settings.testMode ? 'Modo pruebas: puedes empezar con 1 jugador. Con 3 o más (bots incluidos) la partida termina como una normal.' : 'Mínimo 3 jugadores. Lo ideal son 6 o 7.';
 }
 // La web y el servidor de juego deben tener el mismo mapa: si no, se colocaría a la gente dentro de mesas y paredes.
 // Si la página es la vieja se recarga sola (una vez); si el servidor aún no se ha actualizado, se avisa.

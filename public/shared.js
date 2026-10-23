@@ -363,7 +363,7 @@
     bool('Sabotajes', 'sabReactor', 'Permitir sabotaje del reactor', true),
     bool('Sabotajes', 'sabO2', 'Permitir sabotaje de oxígeno', true),
     bool('Sabotajes', 'vents', 'Ventilaciones del impostor', true),
-    bool('Pruebas', 'testMode', 'Modo pruebas', false, 'Permite empezar con 1 jugador y la partida no termina sola (salvo por una crisis). El anfitrión puede terminar la prueba.'),
+    bool('Pruebas', 'testMode', 'Modo pruebas', false, 'Permite empezar con 1 jugador. Con 1 o 2 jugadores la partida no termina sola (salvo por una crisis); con 3 o más (bots incluidos) termina como una normal. El anfitrión puede terminar la prueba.'),
     num('Pruebas', 'bots', 'Jugadores de prueba (bots)', 0, 9, 1, 0, '', 'Solo con el modo pruebas. Caminan, hacen tareas, votan y los impostores matan'),
     sel('Pruebas', 'hostRole', 'Mi rol en el modo pruebas', [['azar', 'Al azar'], ['impostor', 'Impostor'], ['tripulante', 'Tripulante']], 'azar')
   ];
