@@ -1055,7 +1055,7 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v6.3</span></footer>
+    <footer class="foot"><span>Impostor 3D · v6.3.1</span></footer>
   </div>
 </div>
 
@@ -1539,7 +1539,7 @@ function renderSettings(L, host) {
   let grp = ''; S.SETTINGS.forEach(d => { if (d.g !== grp) { grp = d.g; list.append(el('div', 'sgrp', grp)); } list.append(settingRow(d, L.settings[d.k], host)); });
   const diff = S.SETTINGS.filter(d => L.settings[d.k] !== d.def).length;
   $('setSum').textContent = diff ? `· ${diff} distinto${diff > 1 ? 's' : ''} del clásico` : '· valores clásicos';
-  $('minHint').textContent = L.settings.testMode ? 'Modo pruebas: puedes empezar con 1 jugador y la partida no termina sola.' : 'Mínimo 3 jugadores. Lo ideal son 6 o 7.';
+  $('minHint').textContent = L.settings.testMode ? 'Modo pruebas: puedes empezar con 1 jugador. Con 3 o más (bots incluidos) la partida termina como una normal.' : 'Mínimo 3 jugadores. Lo ideal son 6 o 7.';
 }
 // La web y el servidor de juego deben tener el mismo mapa: si no, se colocaría a la gente dentro de mesas y paredes.
 // Si la página es la vieja se recarga sola (una vez); si el servidor aún no se ha actualizado, se avisa.

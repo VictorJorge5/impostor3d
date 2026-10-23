@@ -4,6 +4,9 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 6.3.1
+- **El modo pruebas termina como una partida normal si hay 3 jugadores o más (bots incluidos)**: si solo quedan un impostor y un tripulante, gana el impostor; y si se expulsa al impostor o se terminan las tareas, gana la tripulación. Con 1 o 2 jugadores sigue sin terminar sola, para poder probar.
+
 ## Novedades 6.3 · personalizar y ajustes de la sala como en el original
 - **Pantalla de personalizar** con el estilo del original: botón VOLVER turquesa, pestañas con borde blanco (la elegida en turquesa), cuadros de color con marco y "JUGAR CON ESTE PERSONAJE" con franjas.
 - **Ajustes de la partida como la ventana del original**: grupos en barras grises, nombre del ajuste a la derecha y, para el anfitrión, botones **−** y **+** con el valor en una caja blanca (y casillas para sí/no).
@@ -358,7 +361,7 @@ No se pueden cambiar con la partida en marcha. Los últimos ajustes del anfitri�
 | Jugadores de prueba (bots) | 0 | 0 a 9 |
 | Mi rol en el modo pruebas | Al azar | Al azar / Impostor / Tripulante |
 
-**Modo pruebas** (grupo "Pruebas"): permite empezar con **1 jugador**, la partida no termina sola (salvo si una crisis no se arregla) y el anfitrión tiene los botones "Herramientas" y "Terminar prueba". Con "Mi rol" eliges ser impostor o tripulante.
+**Modo pruebas** (grupo "Pruebas"): permite empezar con **1 jugador**; con 1 o 2 jugadores la partida no termina sola (salvo si una crisis no se arregla), y con 3 o más (bots incluidos) termina como una normal y el anfitrión tiene los botones "Herramientas" y "Terminar prueba". Con "Mi rol" eliges ser impostor o tripulante.
 
 **Jugadores de prueba (bots):** con el modo pruebas activo puedes añadir hasta 9 bots que rellenan la sala (aparecen marcados con "· prueba"). Caminan por el mapa, los tripulantes hacen tareas, reportan cuerpos que ven cerca y votan; los impostores matan. Así se prueba una partida entera con un solo móvil. Si entra una persona y la sala está llena, se quita un bot.
 

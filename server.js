@@ -83,7 +83,7 @@ function placeSpawns(r) {
 }
 
 function winner(r) {
-  if (r.set.testMode) return null;                  // en modo pruebas la partida no termina sola
+  if (r.set.testMode && (r.startN || 0) < MIN_PLAYERS) return null;   // en pruebas con 1 o 2 jugadores no termina sola; con 3 o más, como una partida normal
   const ps = list(r);
   const imp = ps.filter(p => p.role === 'impostor' && p.alive).length;
   const crew = ps.filter(p => p.role === 'crew' && p.alive).length;
@@ -143,7 +143,7 @@ function startGame(r) {
   const set = r.set, now = Date.now();
   r.state = 'play'; r.roundDead = []; r.bodies = []; r.bodySeq = 0; r.doneTasks = 0; r.shownDone = 0; r.sab = null; openDoors(r, true); r.doorReady = {}; r.doorLog = []; r.camViewers = new Set(); r.camN = 0;
   r.sabReadyAt = now + sabFirstMs(r); r.emReadyAt = now + ms(set.emergencyCd);
-  const ps = shuffle(list(r));
+  const ps = shuffle(list(r)); r.startN = ps.length;
   let nImp = Math.min(set.impostors, Math.floor((ps.length - 1) / 2));
   if (set.testMode) {                                // en pruebas vale cualquier reparto
     nImp = Math.min(set.impostors, ps.length);
