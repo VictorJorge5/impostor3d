@@ -819,6 +819,24 @@ body.nokeys #keys{display:none!important}
 #mapOv #mapBox{pointer-events:auto}
 @media (orientation:landscape){#mapOv{justify-content:flex-start;padding-left:max(24vw,170px)}body.lefty #mapOv{justify-content:flex-end;padding-left:0;padding-right:max(24vw,170px)}#mapBox{width:min(46vw,calc(80vh * 188 / 122))}}   /* entre el joystick y los botones: se puede seguir andando y pulsar sabotaje
 #mapOv.sab #mapBox{border-color:#ff8a8a;background:#3a0a10;box-shadow:0 0 0 4px #3a0a10,0 0 40px #ff2e4d66,0 20px 60px #000}
+
+/* ===== v5.9 · rejillas, barra de tareas y fantasmas como en el original ===== */
+#ventUI{left:0;top:0;right:0;bottom:0;transform:none;padding:0;border:none;background:none;border-radius:0;pointer-events:none;--vr:min(26vh,20vw)}
+#ventUI.on{display:block}
+#ventUI .varrow{position:absolute;width:clamp(48px,15vh,84px);height:clamp(40px,12.6vh,72px);margin:calc(clamp(40px,12.6vh,72px) / -2) 0 0 calc(clamp(48px,15vh,84px) / -2);padding:0;border:none;background:none;transform:rotate(var(--a));pointer-events:auto;cursor:pointer;filter:drop-shadow(0 3px 4px #000a);animation:varrow 1s ease-in-out infinite}
+#ventUI .varrow svg{width:100%;height:100%;display:block}
+@keyframes varrow{50%{translate:calc(cos(var(--a)) * 6px) calc(sin(var(--a)) * 6px)}}
+#ventUI .vhint{position:absolute;left:50%;top:calc(46% + var(--vr) * .55);transform:translateX(-50%);font:800 13px/1 var(--fd),sans-serif;color:#fff;text-shadow:0 1px 3px #000;opacity:.8}
+#game.invent #actions2{display:flex}#game.invent #actions2 #btnSab{visibility:hidden}
+/* barra de tareas: arriba del todo, gris con relleno verde y "TAREAS TOTALES COMPLETADAS" */
+#topLeft>#barWrap{position:relative;width:min(300px,38vw);height:clamp(18px,5.6vh,26px);margin:0 0 6px;border-radius:2px;background:#2f4a33;border:3px solid #c8ced6;box-shadow:0 0 0 2px #2a2f38,inset 0 2px 0 #0004;pointer-events:none}
+#topLeft>#barWrap #bar{height:100%;background:#44d62c;box-shadow:inset 0 3px 0 #ffffff55,inset 0 -3px 0 #2a9a18;border-radius:0}
+#topLeft>#barWrap::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(20% - 2px),#1d2b1f calc(20% - 2px) 20%)}
+#topLeft>#barWrap span{position:absolute;inset:0;display:flex;align-items:center;padding-left:8px;z-index:1;font:800 clamp(9px,2.6vh,12px)/1 "Arial Black","Inter",sans-serif;color:#fff;letter-spacing:.3px;text-shadow:-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000;white-space:nowrap;overflow:hidden}
+#topLeft>#barWrap.coms #bar{width:100%!important;background:#1f5a2a;box-shadow:none}
+/* la tableta de votación, rajada para los fantasmas */
+#mtgMain.ghost::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60' preserveAspectRatio='none'><g fill='none' stroke='%23ffffff' stroke-width='.45' stroke-linejoin='round' opacity='.85'><path d='M62 0 L58 14 L66 22 L55 33 L60 45 L52 60'/><path d='M58 14 L46 12 L38 20'/><path d='M66 22 L80 18 L92 26 L100 24'/><path d='M55 33 L44 38 L30 36 L18 44'/><path d='M60 45 L74 50 L84 60'/></g><g fill='none' stroke='%2333404f' stroke-width='.2' opacity='.6'><path d='M62.4 0 L58.4 14 L66.4 22 L55.4 33 L60.4 45 L52.4 60'/></g></svg>") center/100% 100% no-repeat}
+#taskBox.comsOff #taskList>*{display:none}#taskBox.comsOff #taskList::before{content:"Comunicaciones saboteadas";display:block;padding:6px 12px 10px;color:#ff4b5c;font-weight:800;animation:flash 1s steps(2) infinite}
 </style>
 <link rel="preload" href="fonts/chakra-petch-latin-700-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -853,7 +871,7 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.8</span></footer>
+    <footer class="foot"><span>Impostor 3D · v5.9</span></footer>
   </div>
 </div>
 
@@ -900,7 +918,7 @@ body.nokeys #keys{display:none!important}
 <div id="game" class="screen">
   <canvas id="cv"></canvas>
   <div id="vignette"></div>
-  <div id="topLeft" class="hud"><div id="taskBox" class="hglass"><div id="taskHead" role="button" aria-label="Mostrar u ocultar tareas"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tareas</span><b id="taskCount"></b><i class="chev"></i></div><div id="barWrap"><div id="bar"></div><span>TAREAS COMPLETADAS</span></div><div id="taskList"></div></div><div id="testTag" style="display:none">MODO PRUEBAS</div></div>
+  <div id="topLeft" class="hud"><div id="barWrap"><div id="bar"></div><span>TAREAS TOTALES COMPLETADAS</span></div><div id="taskBox" class="hglass"><div id="taskHead" role="button" aria-label="Mostrar u ocultar tareas"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tareas</span><b id="taskCount"></b><i class="chev"></i></div><div id="taskList"></div></div><div id="testTag" style="display:none">MODO PRUEBAS</div></div>
   <div id="topRight" class="hud"><canvas id="minimap" width="300" height="205"></canvas><div class="tools"><button id="btnSound" class="ibtn sndBtn" aria-label="Sonido"></button><button id="btnCfg" class="ibtn" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button><button id="btnFull" class="ibtn" aria-label="Pantalla completa"><svg class="i" aria-hidden="true"><use href="#i-max"/></svg></button><button id="btnTest" class="ibtn" style="display:none" aria-label="Herramientas de prueba"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg></button><button id="btnEndTest" class="ibtn" style="display:none" aria-label="Terminar prueba"><svg class="i" aria-hidden="true"><use href="#i-flag"/></svg></button><button id="btnQuit" class="ibtn" aria-label="Salir de la partida"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button></div></div>
   <div id="ghost" class="hud">Eres un fantasma: sigue con las tareas y observa</div>
   <div id="keys" class="hud">WASD / flechas mover · E usar · R reportar · Q matar · G sabotaje · F ventilación</div>
@@ -1707,7 +1725,7 @@ socket.on('killed', ({ victim, body, by }) => {
   spawnBlood(body.x, body.z); snd('kill', { dist: near });
   if (near < 14 && G.state === 'play') { G.shakeUntil = now + 380; G.shakeAmp = Math.max(.12, .5 - near * .03); }
   if (victim === myId) { G.alive = false; updateGhost(); updateSabVisuals(); closeMG(); closeSabMenu(); killCam(by); buzz([300, 80, 400]); }
-  else if (by === myId) { flashHit(); buzz(70); }
+  else if (by === myId) { flashHit(); buzz(70); G.x = body.x; G.z = body.z; }   // el impostor salta hasta la víctima
 });
 socket.on('killCd', cd => { G.killReadyAt = performance.now() + cd; });
 socket.on('taskDone', id => { buzz(30); taskDoneLocal(id); });
@@ -1732,7 +1750,7 @@ function onMeeting(d, resync) {
   G.mtg = { caller: d.caller, kind: d.kind, victim: d.victim || null, victimName: d.victimName };
   $('chatLog').innerHTML = ''; $('mtgResult').textContent = ''; updateChatBadge(); closeChat();
   $('chatIn').disabled = false; $('chatSend').disabled = false; $('chatIn').placeholder = G.alive ? 'Escribe…' : 'Chat de fantasmas (solo os leéis entre vosotros)';
-  ov('meeting', true); renderMeeting(); if (!resync) playDiscuss(d);
+  $('mtgMain').classList.toggle('ghost', !G.alive); ov('meeting', true); renderMeeting(); if (!resync) playDiscuss(d);
 }
 socket.on('meeting', onMeeting);
 // "¡A DEBATIR!": el círculo verde con dos tripulantes cara a cara al empezar la reunión, como en el original
@@ -1998,7 +2016,7 @@ function updateSabVisuals() {
   const dark = !!(s && s.type === 'luces' && crew);      // la tripulación viva casi no ve con las luces apagadas
   const vm = G.alive ? (G.role === 'impostor' ? G.cfg.visImp : G.cfg.visCrew) : 1.5;   // visión según los ajustes de la partida
   const blind = !!(s && s.type === 'coms' && crew);      // sin comunicaciones no se ve la lista de tareas ni el minimapa
-  $('topLeft').style.visibility = blind ? 'hidden' : ''; $('minimap').style.visibility = blind ? 'hidden' : '';
+  $('barWrap').classList.toggle('coms', !!(s && s.type === 'coms')); $('taskBox').classList.toggle('comsOff', blind); $('minimap').style.visibility = blind ? 'hidden' : '';   // como en el original: barra verde oscuro y la lista dice "Comunicaciones saboteadas"
   $('redFlash').classList.toggle('on', !!(s && s.crisis));
   updateSabBanner(performance.now());
 }
@@ -2035,19 +2053,26 @@ socket.on('sabotageEnd', d => {
   updateSabVisuals(); if (G.state === 'play') toast(d.type === 'puertas' ? 'Las puertas se han abierto' : d.fixed ? '¡Sabotaje resuelto!' : 'Sabotaje cancelado', 2400);
 });
 socket.on('sabState', d => { if (!G.sab) return; G.sab.holds = d.holds; G.sab.done = d.done; updateSabVisuals(); });
-socket.on('ventState', d => { G.vent = d.id; G.x = d.x; G.z = d.z; renderVentUI(); });
+socket.on('ventState', d => { if (d.id != null && G.vent == null) G.killReadyAt = performance.now() + 1e9; G.vent = d.id; G.x = d.x; G.z = d.z; renderVentUI(); });   // en la rejilla la recarga se para (al salir llega la que queda)
 socket.on('ventfx', d => {   // anillo en la ventilación: se ve quién entra o sale
   snd('vent', { dist: Math.hypot(G.x - d.x, G.z - d.z) });
   const now0 = performance.now(), vp2 = d.id && G.players.get(d.id); if (vp2) vp2.ventAnim = { t0: now0, out: !!d.out, x: d.x, z: d.z };
   let best = null, bd = 3; S.VENTS.forEach(v => { const c = S.cellPos(v), dd = Math.hypot(c.x - d.x, c.z - d.z); if (dd < bd) { bd = dd; best = v.id; } }); if (best != null) G.ventOpen[best] = now0;
   G.fx.push({ kind: 'ring', x: d.x, z: d.z, t0: now0, life: 700, color: '#aee9ff', size: 2 });
 });
+// dentro de la rejilla: flechas que apuntan a las rejillas conectadas, como en el original
+const VENT_ARROW = '<svg viewBox="0 0 116 98" aria-hidden="true"><path d="M8 6 L110 49 L8 92 L34 49 Z" fill="#c9d0da" stroke="#2b313b" stroke-width="7" stroke-linejoin="round"/><path d="M34 49 L110 49 L8 92 Z" fill="#9aa3b1"/><path d="M40 49 L104 49" stroke="#d8262f" stroke-width="5" stroke-linecap="round"/></svg>';
 function renderVentUI() {
   const box = $('ventUI'), inV = G.vent != null; $('game').classList.toggle('invent', inV); box.className = inV ? 'on' : ''; box.innerHTML = '';
   if (!inV) return;
-  const v = S.VENTS[G.vent]; box.append(el('b', '', 'En la ventilación: ' + roomName(v.room)));
-  v.links.forEach(id => { const b = el('button', 'btn', 'Ir a ' + roomName(S.VENTS[id].room)); b.onclick = () => socket.emit('vent', { action: 'move', id }); box.append(b); });
-  const x = el('button', 'btn amber', 'Salir aquí'); x.onclick = () => socket.emit('vent', { action: 'exit' }); box.append(x);
+  const v = S.VENTS[G.vent], c = S.cellPos(v);
+  v.links.forEach(id => {
+    const t = S.cellPos(S.VENTS[id]), a = Math.atan2(t.z - c.z, t.x - c.x), b = el('button', 'varrow');
+    b.innerHTML = VENT_ARROW; b.setAttribute('aria-label', 'Ir a ' + roomName(S.VENTS[id].room)); b.style.setProperty('--a', a + 'rad');
+    b.style.left = `calc(50% + ${Math.cos(a)} * var(--vr))`; b.style.top = `calc(46% + ${Math.sin(a)} * var(--vr))`;
+    b.onclick = () => { socket.emit('vent', { action: 'move', id }); snd('vent'); }; box.append(b);
+  });
+  box.append(el('div', 'vhint', roomName(v.room)));
 }
 function closeSabMenu() { if (G.sabMenuOpen && G.mapSab) closeMap(); G.sabMenuOpen = false; }
 function openSabMenu() {
@@ -2160,8 +2185,9 @@ function killCam(byId) {
   const cv = document.createElement('canvas'); cv.className = 'killCv'; o.append(cv, el('span', '', kp ? `${kp.name} era el impostor` : 'Te han eliminado'));
   o.className = 'ov'; void o.offsetWidth; o.classList.add('on');
   const t0 = performance.now(), A = kp ? { color: colHex(kp.color), look: kp.look } : null, B = me ? { color: colHex(me.color), look: me.look } : null;
-  const tick = now => { if (!o.classList.contains('on')) return; const { g, w, h } = fitCanvas(cv); W2.killScene(g, w, h, A, B, Math.min(1.2, (now - t0) / 1600)); requestAnimationFrame(tick); };
-  requestAnimationFrame(tick); setTimeout(() => ov('deathOv', false), 2600);
+  const kind = W2.KILLS[Math.floor(Math.random() * W2.KILLS.length)];   // como en el original: una animación al azar, que solo ve la víctima
+  const tick = now => { if (!o.classList.contains('on')) return; const { g, w, h } = fitCanvas(cv); W2.killScene(g, w, h, A, B, Math.min(1, (now - t0) / 2300), kind); requestAnimationFrame(tick); };
+  requestAnimationFrame(tick); setTimeout(() => ov('deathOv', false), 3000);
 }
 function showBanner(d) {
   $('bannerTxt').textContent = d.kind === 'body' ? '¡Cadáver encontrado!' : '¡Reunión de emergencia!';
@@ -2267,7 +2293,7 @@ function updateActions(now) {
     if (G.role === 'impostor' && G.alive) {
       let best = null, bk = G.cfg.killRange - 0.4;
       for (const p of G.players.values()) {
-        if (p.id === myId || !p.alive || G.mates.includes(p.id) || !p.seen) continue;
+        if (p.id === myId || !p.alive || G.mates.includes(p.id) || !p.seen || S.wallBetween(G.x, G.z, p.x, p.z)) continue;   // las paredes impiden matar
         const d = Math.hypot(G.x - p.x, G.z - p.z); if (d < bk) { bk = d; best = p; }
       }
       const cd = Math.max(0, G.killReadyAt - now);
@@ -2280,7 +2306,7 @@ function updateActions(now) {
   const impAny = G.role === 'impostor' && playing, imp = impAny && G.alive, anySab = Object.values(G.cfg.sabs).some(Boolean);
   const scd = G.sab ? -1 : Math.max(0, G.sabReadyAt - now);
   setAct($('btnSab'), impAny && anySab, true, 'zap', G.sabMenuOpen ? 'Cerrar' : 'Sabotaje', scd > 0 ? Math.ceil(scd / 1000) : '');   // como en el original: el mapa se abre aunque esté recargando
-  setAct($('btnVent'), imp && !!act.vent && G.cfg.vents, true, 'vent', 'Rejilla', '');
+  setAct($('btnVent'), (G.vent != null && G.role === 'impostor') || (imp && !!act.vent && G.cfg.vents), true, 'vent', G.vent != null ? 'Salir' : 'Rejilla', '');   // dentro de la rejilla, el mismo botón te saca
   const u = act.use, ucd = u && u.cd > 0 ? Math.ceil(u.cd / 1000) : '';
   setAct($('btnUse'), playing, !!u && !ucd, !u ? 'hand' : u.type === 'panel' ? 'wrench' : u.type === 'info' ? 'eye' : u.type === 'button' ? 'alert' : 'hand',
     !u ? 'Usar' : u.type === 'task' ? 'Usar' : u.type === 'panel' ? 'Arreglar' : u.type === 'info' ? u.tool.short : 'Reunión', ucd, !!ucd);
@@ -2410,7 +2436,7 @@ function update(dt, now) {
     if (len > 1) { vx /= len; vz /= len; }
     const moving = len > 0.05;
     if (moving) {
-      const sp = 6.5 * G.cfg.speed * dt, nx = G.x + vx * sp, nz = G.z + vz * sp;
+      const sp = 6.5 * G.cfg.speed * (G.alive ? 1 : 1.2) * dt, nx = G.x + vx * sp, nz = G.z + vz * sp;   // los fantasmas van 1,2 veces más rápido
       // los fantasmas atraviesan las paredes, como en Among Us; solo se quedan dentro del mapa
       const free = (x, z) => G.alive ? !S.blocked(x, z) : (x > 3 && z > 3 && x < S.MAPW - 3 && z < S.MAPH - 3);
       if (free(nx, G.z)) G.x = nx;

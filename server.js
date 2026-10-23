@@ -120,6 +120,7 @@ function checkWin(r) {
 
 function doKill(r, killer, t) {
   t.alive = false; clearHolds(r, t.id); killer.st = killer.st || {}; killer.st.kills = (killer.st.kills || 0) + 1;
+  killer.x = t.x; killer.z = t.z;   // como en el original, el impostor salta hasta la víctima
   killer.killReadyAt = Date.now() + killCdMs(r);
   const body = { id: ++r.bodySeq, pid: t.id, color: t.color, look: t.look, x: t.x, z: t.z };
   r.bodies.push(body);
@@ -150,7 +151,7 @@ function startGame(r) {
   const common = units.slice(0, nCommon).flatMap(k => S.pickUnit(S.TASK_UNITS[k])); r.common = common;
   ps.forEach((p, i) => {
     p.role = i < nImp ? 'impostor' : 'crew';
-    p.alive = true; p.done = []; p.vote = null; p.emergencies = set.emergencies; p.vent = null; p.st = {}; p.fx = null;
+    p.alive = true; p.done = []; p.vote = null; p.emergencies = set.emergencies; p.vent = null; p.killLeft = null; p.st = {}; p.fx = null;
     p.killReadyAt = now + firstKillMs(r);
     p.tasks = common.concat(shuffle(units.slice(nCommon)).slice(0, set.tasksPer - nCommon).flatMap(k => S.pickUnit(S.TASK_UNITS[k])));
   });
@@ -222,7 +223,7 @@ function resolveMeeting(r) {
     r.state = 'play';
     placeSpawns(r); settleRooms(r);
     const now = Date.now();
-    list(r).forEach(p => { p.killReadyAt = now + killCdMs(r); p.vent = null; p.path = []; });
+    list(r).forEach(p => { p.killReadyAt = now + killCdMs(r); p.vent = null; p.killLeft = null; p.path = []; });
     if (!r.sab) r.sabReadyAt = now + sabFirstMs(r); r.emReadyAt = now + ms(r.set.emergencyCd);
     io.to(r.code).emit('resume', { players: pub(r), killCd: killCdMs(r), sabCd: r.sab ? -1 : sabFirstMs(r), emCd: ms(r.set.emergencyCd), sab: sabInfo(r) });
   }, RESULT_MS);
@@ -396,7 +397,7 @@ io.on('connection', sock => {
     if (now < me.killReadyAt) return;
     const t = room.players.get(tid);
     if (!t || !t.alive || t.role === 'impostor') return;
-    if (dist(me, t) > KILL_RANGES[room.set.killRange]) return;
+    if (dist(me, t) > KILL_RANGES[room.set.killRange] || S.wallBetween(me.x, me.z, t.x, t.z)) return;   // no se mata a través de las paredes
     doKill(room, me, t);
   });
 
@@ -496,6 +497,7 @@ io.on('connection', sock => {
       const v = S.VENTS[+d.id]; if (!v || me.vent != null) return;
       const vp = S.cellPos(v); if (dist(me, vp) > 4.8) return;
       me.vent = v.id; me.x = vp.x; me.z = vp.z; me.mv = 0; clearHolds(room, me.id);
+      me.killLeft = Math.max(0, me.killReadyAt - Date.now());   // dentro de la rejilla la recarga de matar se para
       io.to(room.code).emit('ventfx', { id: me.id, x: vp.x, z: vp.z, out: false });
     } else if (d.action === 'move') {
       const cur = me.vent == null ? null : S.VENTS[me.vent], nx = S.VENTS[+d.id];
@@ -504,6 +506,7 @@ io.on('connection', sock => {
     } else if (d.action === 'exit') {
       if (me.vent == null) return;
       const v = S.VENTS[me.vent], vp = S.cellPos(v); me.vent = null;
+      if (me.killLeft != null) { me.killReadyAt = Date.now() + me.killLeft; sock.emit('killCd', me.killLeft); me.killLeft = null; }
       io.to(room.code).emit('ventfx', { id: me.id, x: vp.x, z: vp.z, out: true });
     } else return;
     me.roomNow = roomIdAt(me); me.roomCand = me.roomNow;
