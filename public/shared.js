@@ -2,52 +2,55 @@
 (function (root) {
   // El mapa se define con polígonos en metros (como The Skeld, con paredes en diagonal). CELL es la rejilla gruesa
   // que usan los bots para buscar caminos; las colisiones y la vista usan una rejilla fina de 25 cm.
-  const MAPW = 102, MAPH = 55, CELL = 1, W = MAPW / CELL, H = Math.ceil(MAPH / CELL), WALL_H = 3, TASKS_PER = 4, TABLE_R = 1.8;
+  const MAPW = 114, MAPH = 66, CELL = 1, W = MAPW / CELL, H = Math.ceil(MAPH / CELL), WALL_H = 3, TASKS_PER = 4, TABLE_R = 2.3;
 
   const COLORS = [   // los colores de Among Us
     ['Rojo', '#c51111'], ['Azul', '#132ed1'], ['Verde', '#117f2d'], ['Rosa', '#ed54ba'], ['Naranja', '#ef7d0d'], ['Amarillo', '#f5f557'],
     ['Negro', '#3f474e'], ['Blanco', '#d6e0f0'], ['Morado', '#6b2fbb'], ['Marrón', '#71491e'], ['Cian', '#38fedc'], ['Lima', '#50ef39']
   ];
 
-  // The Skeld visto desde arriba. Todo se escribe en las unidades del juego original (x a la derecha, y hacia arriba, con
-  // las rejillas en sus coordenadas reales) y U() lo pasa a metros de este juego: 1 unidad = 2,2 m (un crewmate mide ~0,9).
-  const K = 2.2, U = (x, y) => [+((x + 25.6) * K).toFixed(2), +((6.7 - y) * K).toFixed(2)];
+  // The Skeld visto desde arriba, calcado del plano oficial: cada punto se escribe en píxeles del plano (604 × 340) y
+  // U() lo pasa a metros de este juego (1 px = 0,2 m; un pasillo mide ~5 m y un crewmate 2,2).
+  const K = 0.2, U = (x, y) => [+((x - 15) * K).toFixed(2), +((y - 5) * K).toFixed(2)];
   const P = pts => pts.map(q => U(q[0], q[1]));
   const ROOMS = [
-    { id: 'cafeteria',      name: 'Cafetería',      poly: P([[-3.8, 5.7], [4.2, 5.7], [6, 3.9], [6, 0], [4.2, -1.8], [-3.8, -1.8], [-5.6, 0], [-5.6, 3.9]]) },
-    { id: 'armeria',        name: 'Armería',        poly: P([[7.6, 5.2], [11, 5.2], [12.2, 4], [12.2, -0.6], [7.6, -0.6]]) },
-    { id: 'oxigeno',        name: 'Oxígeno',        poly: P([[4.4, -2.4], [8.8, -2.4], [8.8, -4.7], [4.4, -4.7]]) },
-    { id: 'navegacion',     name: 'Navegación',     poly: P([[14.2, -1.6], [17.2, -1.6], [19.6, -4], [19.6, -5.6], [17.2, -8], [14.2, -8]]) },
-    { id: 'escudos',        name: 'Escudos',        poly: P([[7.4, -10.4], [12.4, -10.4], [12.4, -14.6], [10.8, -16.2], [7.4, -16.2]]) },
-    { id: 'comunicaciones', name: 'Comunicaciones', poly: P([[1.8, -14.6], [6.8, -14.6], [6.8, -18], [1.8, -18]]) },
-    { id: 'administracion', name: 'Administración', poly: P([[1.8, -6], [6.2, -6], [7.2, -7], [7.2, -10.4], [1.8, -10.4]]) },
-    { id: 'almacen',        name: 'Almacén',        poly: P([[-6.2, -6.6], [0.8, -6.6], [0.8, -14.2], [-1.2, -16.2], [-6.2, -16.2]]) },
-    { id: 'electrica',      name: 'Eléctrica',      poly: P([[-11.6, -6.4], [-7, -6.4], [-7, -8.6], [-10, -8.6], [-10, -9.6], [-7, -9.6], [-7, -11.4], [-11.6, -11.4]]) },   // con el tabique en medio, como en el original
-    { id: 'enfermeria',     name: 'Enfermería',     poly: P([[-11.2, -1.6], [-6.8, -1.6], [-6.8, -4.6], [-7.8, -5.6], [-11.2, -5.6]]) },
-    { id: 'seguridad',      name: 'Seguridad',      poly: P([[-15.2, -4.8], [-11.9, -4.8], [-11.9, -8.9], [-15.2, -8.9]]) },
-    { id: 'reactor',        name: 'Reactor',        poly: P([[-23.4, -0.8], [-20.2, -0.8], [-20.2, -9], [-23.4, -9], [-24.6, -7.6], [-24.6, -2.2]]) },
-    { id: 'motores',        name: 'Motor superior', poly: P([[-19.6, 3.4], [-13.2, 3.4], [-13.2, -3.6], [-18.2, -3.6], [-19.6, -2.2]]) },
-    { id: 'motorinf',       name: 'Motor inferior', poly: P([[-18.2, -9.6], [-13.2, -9.6], [-13.2, -16.2], [-19.6, -16.2], [-19.6, -11]]) }
+    { id: 'cafeteria',      name: 'Cafetería',      poly: P([[249, 38], [275, 12], [357, 12], [395, 50], [395, 126], [358, 159], [281, 159], [249, 126]]) },
+    { id: 'armeria',        name: 'Armería',        poly: P([[421, 43], [455, 43], [481, 70], [481, 112], [435, 112], [421, 98]]) },
+    { id: 'oxigeno',        name: 'Oxígeno',        poly: P([[383, 146], [403, 121], [431, 121], [431, 167], [383, 167]]) },
+    { id: 'navegacion',     name: 'Navegación',     poly: P([[531, 126], [558, 126], [574, 141], [574, 165], [559, 186], [531, 186]]) },
+    { id: 'escudos',        name: 'Escudos',        poly: P([[434, 225], [482, 225], [482, 266], [454, 294], [420, 294], [420, 241]]) },
+    { id: 'comunicaciones', name: 'Comunicaciones', poly: P([[349, 277], [416, 277], [416, 314], [404, 327], [362, 327], [349, 314]]) },
+    { id: 'administracion', name: 'Administración', poly: P([[354, 174], [422, 174], [422, 221], [410, 234], [354, 234]]) },
+    { id: 'almacen',        name: 'Almacén',        poly: P([[284, 207], [344, 207], [344, 327], [291, 327], [264, 298], [264, 227]]) },
+    // con el gran tabique del panel de luces: la puerta da a la parte de delante y los cables están detrás
+    { id: 'electrica',      name: 'Eléctrica',      poly: P([[196, 189], [264, 189], [264, 205], [248, 222], [248, 249], [235, 262], [217, 262], [217, 271], [196, 271], [196, 228], [234, 228], [234, 223], [196, 223]]) },
+    { id: 'enfermeria',     name: 'Enfermería',     poly: P([[185, 102], [241, 102], [241, 136], [264, 158], [264, 176], [196, 176], [185, 162]]) },
+    { id: 'seguridad',      name: 'Seguridad',      poly: P([[141, 135], [150, 126], [169, 126], [178, 135], [178, 195], [141, 195]]) },
+    { id: 'reactor',        name: 'Reactor',        poly: P([[26, 127], [44, 112], [63, 112], [63, 133], [84, 133], [84, 196], [63, 196], [63, 218], [44, 218], [26, 204]]) },
+    { id: 'motores',        name: 'Motor superior', poly: P([[77, 66], [95, 52], [140, 52], [140, 121], [77, 121]]) },
+    { id: 'motorinf',       name: 'Motor inferior', poly: P([[77, 212], [140, 212], [140, 282], [95, 282], [77, 270]]) }
   ];
-  const rect = (x0, y0, x1, y1) => P([[x0, y0], [x1, y0], [x1, y1], [x0, y1]]);   // en unidades: esquina de arriba a la izquierda y de abajo a la derecha
+  const rect = (x0, y0, x1, y1) => P([[x0, y0], [x1, y0], [x1, y1], [x0, y1]]);   // en píxeles del plano: esquina de arriba a la izquierda y de abajo a la derecha
   const CORRIDORS = [
-    [-13.2, 2.8, -5.6, 1],      // motor superior → cafetería (pasa por encima de la enfermería)
-    [-9.6, 1, -8, -1.6],        // entrada de la enfermería
-    [-17.6, -3.6, -15.6, -9.6], // pasillo oeste: motor superior → motor inferior
-    [-20.2, -4.4, -17.6, -6],   // entrada del reactor
-    [-15.6, -5.6, -15.2, -7],   // entrada de seguridad
-    [-13.2, -12.6, -6.2, -14.4],// pasillo sur: motor inferior → almacén
-    [-8.6, -11.4, -7.2, -12.6],  // entrada de eléctrica (abajo a la derecha)
-    [-1.4, -1.8, 0.4, -6.6],    // cafetería → almacén
-    [0.4, -4.4, 3.2, -6],       // pasillo de administración
-    [6, 3.4, 7.6, 1.6],         // cafetería → armería
-    [9.4, -0.6, 11.2, -10.4],   // pasillo derecho: armería → escudos
-    [8.8, -3, 9.4, -4.2],       // entrada de oxígeno
-    [11.2, -2.6, 14.2, -4.4],   // a Navegación (puerta de arriba)
-    [11.2, -6.2, 14.2, -8],     // a Navegación (puerta de abajo)
-    [0.8, -12.2, 7.4, -14],     // almacén → escudos
-    [3.8, -14, 5.6, -14.6]      // entrada de comunicaciones
-  ].map(r => rect(r[0], r[1], r[2], r[3]));
+    [140, 68, 249, 96],    // motor superior → cafetería (pasa por encima de la enfermería)
+    [200, 96, 222, 102],   // entrada de la enfermería
+    [100, 121, 122, 212],  // pasillo de los motores
+    [84, 146, 100, 178],   // entrada del reactor
+    [122, 153, 141, 178],  // entrada de seguridad
+    [140, 233, 185, 261],  // motor inferior → eléctrica
+    [163, 261, 185, 271],
+    [163, 271, 264, 297],  // pasillo de eléctrica → almacén
+    [311, 159, 331, 207],  // cafetería → almacén
+    [331, 175, 354, 201],  // pasillo de administración
+    [395, 69, 421, 95],    // cafetería → armería
+    [444, 112, 463, 124],  // armería → pasillo derecho
+    [495, 144, 531, 169],  // entrada de navegación
+    [344, 241, 420, 267],  // almacén → escudos
+    [388, 267, 408, 277]   // entrada de comunicaciones
+  ].map(r => rect(r[0], r[1], r[2], r[3])).concat([
+    // el pasillo derecho: de oxígeno y armería baja hacia navegación y escudos
+    P([[431, 124], [495, 124], [495, 191], [464, 191], [464, 225], [442, 225], [442, 166], [474, 166], [474, 151], [431, 151]])
+  ]);
   const POLYS = ROOMS.map(r => ({ room: r.id, pts: r.poly })).concat(CORRIDORS.map(pts => ({ room: null, pts })));
   const inPoly = (x, z, pts) => { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, zi] = pts[i], [xj, zj] = pts[j]; if ((zi > z) !== (zj > z) && x < (xj - xi) * (z - zi) / (zj - zi) + xi) c = !c; } return c; };
   POLYS.forEach(p => { const xs = p.pts.map(q => q[0]), zs = p.pts.map(q => q[1]); p.box = [Math.min(...xs), Math.min(...zs), Math.max(...xs), Math.max(...zs)]; });
@@ -85,56 +88,56 @@
   // [nombre, sala, x, z (metros), minijuego (public/tasks.js), cadena, paso]. Las tareas con cadena van por pasos, como en el
   // original: primero descargas los datos y luego los subes. Si un paso tiene varias consolas, a cada uno le toca una.
   const STATIONS = [
-    ['Conectar cables',        'electrica',      -7.7, -6.85, 'wires', 'cables', 0],
-    ['Calibrar distribuidor',  'electrica',      -10.9, -6.85, 'calibrate'],
-    ['Descargar datos',        'comunicaciones', 6.3, -16.4,    'download', 'datos', 0],
-    ['Trazar rumbo',           'navegacion',     18.8, -4.8,  'course'],
-    ['Iniciar reactor',        'reactor',        -22.6, -8.3, 'simon'],
-    ['Desbloquear colectores', 'reactor',        -22.6, -1.5, 'manifolds'],
-    ['Escáner médico',         'enfermeria',     -9, -4.6,    'scan'],
-    ['Analizar muestra',       'enfermeria',     -7.4, -2.2,  'samples'],
-    ['Repostar motor inferior', 'motorinf',      -18.6, -11.2, 'fuel', 'combustible', 3],
-    ['Alinear motor superior', 'motores',        -13.8, -0.4, 'align', 'alinear', 0],
-    ['Pasar tarjeta',          'administracion', 6.6, -8.2,   'card'],
-    ['Vaciar basura',          'almacen',        -1, -15.2,   'trash', 'basura', 1],
-    ['Limpiar filtro',         'oxigeno',        5, -2.9,     'leaves'],
-    ['Destruir asteroides',    'armeria',        10, 2.2,     'asteroids'],
-    ['Activar escudos',        'escudos',        11.8, -12.4, 'shields'],
-    ['Subir datos',            'administracion', 2.4, -7.4,   'upload', 'datos', 1],
-    ['Descargar datos',        'cafeteria',      0.2, 5.1,    'download', 'datos', 0],
-    ['Descargar datos',        'armeria',        8.2, 0,      'download', 'datos', 0],
-    ['Descargar datos',        'navegacion',     14.8, -2.2,  'download', 'datos', 0],
-    ['Llenar bidón',           'almacen',        -5.6, -15.6, 'fillcan', 'combustible', 0],
-    ['Repostar motor superior', 'motores',       -18.6, -2.4, 'fuel', 'combustible', 1],
-    ['Desviar energía',        'electrica',      -7.5, -7.9,  'divert', 'energia', 0],
-    ['Aceptar energía',        'navegacion',     17.2, -7.2,  'accept', 'energia', 1],
-    ['Aceptar energía',        'escudos',        8, -15.6,    'accept', 'energia', 1],
-    ['Aceptar energía',        'oxigeno',        5.2, -4.25,     'accept', 'energia', 1],
-    ['Aceptar energía',        'seguridad',      -14.6, -8.4, 'accept', 'energia', 1],
+    ['Conectar cables',        'electrica',      236, 193, 'wires', 'cables', 0],
+    ['Calibrar distribuidor',  'electrica',      204, 193, 'calibrate'],
+    ['Descargar datos',        'comunicaciones', 362, 282, 'download', 'datos', 0],
+    ['Trazar rumbo',           'navegacion',     553, 130, 'course'],
+    ['Iniciar reactor',        'reactor',        52, 212,  'simon'],
+    ['Desbloquear colectores', 'reactor',        52, 117,  'manifolds'],
+    ['Escáner médico',         'enfermeria',     206, 160, 'scan'],
+    ['Analizar muestra',       'enfermeria',     236, 166, 'samples'],
+    ['Repostar motor inferior', 'motorinf',      86, 218,  'fuel', 'combustible', 3],
+    ['Alinear motor superior', 'motores',        128, 106, 'align', 'alinear', 0],
+    ['Pasar tarjeta',          'administracion', 414, 204, 'card'],
+    ['Vaciar basura',          'almacen',        334, 318, 'trash', 'basura', 1],
+    ['Limpiar filtro',         'oxigeno',        396, 159, 'leaves'],
+    ['Destruir asteroides',    'armeria',        440, 80,  'asteroids'],
+    ['Activar escudos',        'escudos',        472, 252, 'shields'],
+    ['Subir datos',            'administracion', 364, 178, 'upload', 'datos', 1],
+    ['Descargar datos',        'cafeteria',      340, 16,  'download', 'datos', 0],
+    ['Descargar datos',        'armeria',        430, 48,  'download', 'datos', 0],
+    ['Descargar datos',        'navegacion',     537, 130, 'download', 'datos', 0],
+    ['Llenar bidón',           'almacen',        300, 320, 'fillcan', 'combustible', 0],
+    ['Repostar motor superior', 'motores',       86, 115,  'fuel', 'combustible', 1],
+    ['Desviar energía',        'electrica',      252, 193, 'divert', 'energia', 0],
+    ['Aceptar energía',        'navegacion',     553, 182, 'accept', 'energia', 1],
+    ['Aceptar energía',        'escudos',        430, 288, 'accept', 'energia', 1],
+    ['Aceptar energía',        'oxigeno',        402, 125, 'accept', 'energia', 1],
+    ['Aceptar energía',        'seguridad',      172, 190, 'accept', 'energia', 1],
     // como en The Skeld: los cables se arreglan en tres cuadros seguidos, el combustible se llena dos veces,
     // los dos motores se alinean y la basura de la cafetería o el conducto de oxígeno se vacían luego en el almacén
-    ['Conectar cables',        'almacen',        -4, -6.95,   'wires', 'cables', 0],
-    ['Conectar cables',        'administracion', 5, -6.4,     'wires', 'cables', 1],
-    ['Conectar cables',        'cafeteria',      -1.6, 5.2,   'wires', 'cables', 1],
-    ['Conectar cables',        'navegacion',     16, -7.6,    'wires', 'cables', 2],
-    ['Alinear motor inferior', 'motorinf',       -13.8, -11,  'align', 'alinear', 1],
-    ['Llenar bidón',           'almacen',        -4.4, -15.6, 'fillcan', 'combustible', 2],
-    ['Vaciar basura',          'cafeteria',      1.6, -1.2,   'trash', 'basura', 0],
-    ['Vaciar conducto',        'oxigeno',        7.2, -4.3,   'trash', 'basura', 0],
-    ['Estabilizar dirección',  'navegacion',     18.2, -3.4,  'steering'],
+    ['Conectar cables',        'almacen',        300, 212, 'wires', 'cables', 0],
+    ['Conectar cables',        'administracion', 358, 186, 'wires', 'cables', 1],
+    ['Conectar cables',        'cafeteria',      284, 16,  'wires', 'cables', 1],
+    ['Conectar cables',        'navegacion',     537, 182, 'wires', 'cables', 2],
+    ['Alinear motor inferior', 'motorinf',       130, 222, 'align', 'alinear', 1],
+    ['Llenar bidón',           'almacen',        314, 320, 'fillcan', 'combustible', 2],
+    ['Vaciar basura',          'cafeteria',      388, 102, 'trash', 'basura', 0],
+    ['Vaciar conducto',        'oxigeno',        424, 161, 'trash', 'basura', 0],
+    ['Estabilizar dirección',  'navegacion',     567, 154, 'steering'],
     // el resto de las tareas de The Skeld
-    ['Descargar datos',        'electrica',      -7.5, -10.05, 'download', 'datos', 0],
-    ['Aceptar energía',        'motores',        -14, -2.8,   'accept', 'energia', 1],
-    ['Aceptar energía',        'motorinf',       -14, -15.5,  'accept', 'energia', 1],
-    ['Aceptar energía',        'armeria',        11.6, -0.1,  'accept', 'energia', 1],
-    ['Aceptar energía',        'comunicaciones', 2.7, -15.1,  'accept', 'energia', 1],
-    ['Conectar cables',        'seguridad',      -12.4, -8.4, 'wires', 'cables', 2],
+    ['Descargar datos',        'electrica',      220, 193, 'download', 'datos', 0],
+    ['Aceptar energía',        'motores',        128, 57,  'accept', 'energia', 1],
+    ['Aceptar energía',        'motorinf',       100, 277, 'accept', 'energia', 1],
+    ['Aceptar energía',        'armeria',        474, 104, 'accept', 'energia', 1],
+    ['Aceptar energía',        'comunicaciones', 411, 300, 'accept', 'energia', 1],
+    ['Conectar cables',        'seguridad',      146, 147, 'wires', 'cables', 2],
     // limpiar una rejilla: se hace encima de la rejilla y no estorba el paso
-    ['Limpiar rejilla',        'cafeteria',      4.26, -0.28, 'ventclean', 'rejilla', 0],
-    ['Limpiar rejilla',        'administracion', 2.54, -9.59, 'ventclean', 'rejilla', 0],
-    ['Limpiar rejilla',        'enfermeria',     -10.61, -4.18, 'ventclean', 'rejilla', 0],
-    ['Limpiar rejilla',        'navegacion',     16.01, -3.17, 'ventclean', 'rejilla', 0],
-    ['Limpiar rejilla',        'escudos',        9.5, -14.3,  'ventclean', 'rejilla', 0]
+    ['Limpiar rejilla',        'cafeteria',      380, 128, 'ventclean', 'rejilla', 0],
+    ['Limpiar rejilla',        'administracion', 362, 226, 'ventclean', 'rejilla', 0],
+    ['Limpiar rejilla',        'enfermeria',     194, 148, 'ventclean', 'rejilla', 0],
+    ['Limpiar rejilla',        'navegacion',     562, 139, 'ventclean', 'rejilla', 0],
+    ['Limpiar rejilla',        'escudos',        446, 250, 'ventclean', 'rejilla', 0]
   ].map((s, id) => ({ id, name: s[0], room: s[1], x: U(s[2], s[3])[0], z: U(s[2], s[3])[1], type: s[4], chain: s[5] || null, step: s[6] || 0, noBlock: s[4] === 'ventclean' }));
   // Tareas que se reparten: cada una es una lista de pasos y cada paso una lista de consolas posibles
   const CHAINS = {};
@@ -152,45 +155,45 @@
   // Paneles donde la tripulación arregla los sabotajes
   const at = (o, x, y) => { const [mx, mz] = U(x, y); o.x = mx; o.z = mz; return o; };
   const PANELS = [
-    at({ id: 'luces',    name: 'Panel de luces',          room: 'electrica' },      -9.3, -10),   // nada más entrar, en el tabique
-    at({ id: 'coms',     name: 'Panel de comunicaciones', room: 'comunicaciones' }, 2.7, -16.4),
-    at({ id: 'reactorA', name: 'Control del reactor',     room: 'reactor' },        -20.9, -1.5),
-    at({ id: 'reactorB', name: 'Control del reactor',     room: 'reactor' },        -20.9, -8.3),
-    at({ id: 'o2a',      name: 'Depurador de oxígeno',    room: 'oxigeno' },        7.5, -2.85),
-    at({ id: 'o2b',      name: 'Depurador de oxígeno',    room: 'administracion' }, 6.6, -9.8)
+    at({ id: 'luces',    name: 'Panel de luces',          room: 'electrica' },      206, 231),   // nada más entrar, en el tabique
+    at({ id: 'coms',     name: 'Panel de comunicaciones', room: 'comunicaciones' }, 396, 281),
+    at({ id: 'reactorA', name: 'Control del reactor',     room: 'reactor' },        74, 137),
+    at({ id: 'reactorB', name: 'Control del reactor',     room: 'reactor' },        74, 191),
+    at({ id: 'o2a',      name: 'Depurador de oxígeno',    room: 'oxigeno' },        420, 125),
+    at({ id: 'o2b',      name: 'Depurador de oxígeno',    room: 'administracion' }, 414, 180)
   ];
   PANELS.forEach(p => { p.type = p.id === 'luces' ? 'switches' : p.id === 'coms' ? 'dial' : p.id.startsWith('reactor') ? 'holdPanel' : 'code'; });
   // Terminales de información (las puede usar cualquier jugador vivo; las desactiva el sabotaje de comunicaciones salvo los signos vitales)
   const INFO = [
-    at({ id: 'cams',    name: 'Cámaras de seguridad',    short: 'Cámaras', room: 'seguridad' },      -12.7, -5.3),
-    at({ id: 'admin',   name: 'Panel de administración', short: 'Admin',   room: 'administracion' }, 4.5, -9.4),
-    at({ id: 'vitals',  name: 'Signos vitales',          short: 'Vitales', room: 'enfermeria' },     -7.3, -3.6),
-    at({ id: 'doorlog', name: 'Registro de puertas',     short: 'Puertas', room: 'electrica' },      -11.1, -10.7)
+    at({ id: 'cams',    name: 'Cámaras de seguridad',    short: 'Cámaras', room: 'seguridad' },      160, 130),
+    at({ id: 'admin',   name: 'Panel de administración', short: 'Admin',   room: 'administracion' }, 388, 224),
+    at({ id: 'vitals',  name: 'Signos vitales',          short: 'Vitales', room: 'enfermeria' },     256, 169),
+    at({ id: 'doorlog', name: 'Registro de puertas',     short: 'Puertas', room: 'electrica' },      224, 231)
   ];
   // Cámaras de seguridad: posición en la pared (x, altura, z) y centro de lo que se ve
   const cam = (id, name, px, py, lx, ly) => { const p = U(px, py), l = U(lx, ly); return { id, name, pos: [p[0], 2.6, p[1]], look: [l[0], 1, l[1]] }; };
   const CAMERAS = [
-    cam(0, 'Pasillo de motores',    -16.6, -3.75, -16.6, -6.4),
-    cam(1, 'Pasillo de Enfermería', -9.4, 2.65,   -9.4, 1.4),
-    cam(2, 'Pasillo de Admin',      -0.5, -1.95,  -0.2, -4.6),
-    cam(3, 'Pasillo de Navegación', 10.3, -0.75,  11.4, -4.8)
+    cam(0, 'Pasillo de motores',    111, 140, 111, 162),
+    cam(1, 'Pasillo de Enfermería', 190, 70,  190, 82),
+    cam(2, 'Pasillo de Admin',      321, 163, 330, 188),
+    cam(3, 'Pasillo de Navegación', 480, 126, 476, 150)
   ];
-  // Red de ventilaciones (solo las usa el impostor), en las coordenadas de The Skeld
+  // Red de ventilaciones (solo las usa el impostor), donde están en The Skeld
   const VENTS = [
-    at({ id: 0,  room: 'reactor',        links: [1] },    -21.88, -3.06),
-    at({ id: 1,  room: 'motores',        links: [0] },    -15.29, 2.52),
-    at({ id: 2,  room: 'reactor',        links: [3] },    -20.8, -6.9),
-    at({ id: 3,  room: 'motorinf',       links: [2] },    -15.25, -13.73),
-    at({ id: 4,  room: 'enfermeria',     links: [5, 6] }, -10.61, -4.18),
-    at({ id: 5,  room: 'seguridad',      links: [4, 6] }, -12.53, -6.9),
-    at({ id: 6,  room: 'electrica',      links: [4, 5] }, -9.77, -8.03),
-    at({ id: 7,  room: 'cafeteria',      links: [8, 9] }, 4.26, -0.28),
-    at({ id: 8,  room: 'administracion', links: [7, 9] }, 2.54, -9.59),
-    at({ id: 9,  room: null,             links: [7, 8] }, 10.3, -6.44),
-    at({ id: 10, room: 'armeria',        links: [11] },   8.82, 3.32),
-    at({ id: 11, room: 'navegacion',     links: [10] },   16.01, -3.17),
-    at({ id: 12, room: 'navegacion',     links: [13] },   16.01, -6.38),
-    at({ id: 13, room: 'escudos',        links: [12] },   9.5, -14.3)
+    at({ id: 0,  room: 'reactor',        links: [1] },    56, 123),
+    at({ id: 1,  room: 'motores',        links: [0] },    110, 113),
+    at({ id: 2,  room: 'reactor',        links: [3] },    56, 205),
+    at({ id: 3,  room: 'motorinf',       links: [2] },    125, 276),
+    at({ id: 4,  room: 'enfermeria',     links: [5, 6] }, 194, 148),
+    at({ id: 5,  room: 'seguridad',      links: [4, 6] }, 152, 186),
+    at({ id: 6,  room: 'electrica',      links: [4, 5] }, 238, 247),
+    at({ id: 7,  room: 'cafeteria',      links: [8, 9] }, 380, 128),
+    at({ id: 8,  room: 'administracion', links: [7, 9] }, 362, 226),
+    at({ id: 9,  room: null,             links: [7, 8] }, 484, 182),
+    at({ id: 10, room: 'armeria',        links: [11] },   462, 100),
+    at({ id: 11, room: 'navegacion',     links: [10] },   562, 139),
+    at({ id: 12, room: 'navegacion',     links: [13] },   556, 177),
+    at({ id: 13, room: 'escudos',        links: [12] },   446, 250)
   ];
   // puertas cerradas por sabotaje: tramos de puerta de la sala elegida
   let closedDoors = [];
@@ -203,29 +206,30 @@
   // El cliente dibuja cada tipo. Las salas van llenas como en The Skeld: mesas, motores, reactor, camas, cajas, plantas...
   const D = (o, x, y) => at(o, x, y);
   const DECOR = [
-    D({ kind: 'table',     room: 'cafeteria',      r: 1.6 },  -2.6, 3.9),
-    D({ kind: 'table',     room: 'cafeteria',      r: 1.6 },  2.8, 3.9),
-    D({ kind: 'table',     room: 'cafeteria',      r: 1.6 },  -2.6, 0.2),
-    D({ kind: 'table',     room: 'cafeteria',      r: 1.6 },  2.6, 0.4),
-    D({ kind: 'engine',    room: 'motores',        r: 2.8, len: 7.4 },  -17.9, 0.4),
-    D({ kind: 'engine',    room: 'motorinf',       r: 2.8, len: 7.4 },  -17.9, -13.3),
-    D({ kind: 'cans',      room: 'motorinf',       r: .9 },   -16.6, -15.6),
-    D({ kind: 'core',      room: 'reactor',        r: 2.7 },  -22.9, -4.9),
-    D({ kind: 'desk',      room: 'seguridad',      w: 2.6, h: 1.2 }, -14.2, -5.25),
-    D({ kind: 'bed',       room: 'enfermeria',     w: 3, h: 1.4 },   -10.4, -2.4),
-    D({ kind: 'cratepile', room: 'almacen',        w: 5.6, h: 4 },   -2.8, -10.4),
-    D({ kind: 'crates',    room: 'almacen',        r: 1.3 },  -5.3, -7.6),
-    D({ kind: 'barrel',    room: 'almacen',        r: .9 },   0, -7.5),
-    D({ kind: 'cans',      room: 'almacen',        r: .8 },   -2.7, -15.7),
-    D({ kind: 'admintable', room: 'administracion', w: 4.2, h: 2 }, 4.5, -8.1),   // la gran mesa del mapa, en el centro
-    D({ kind: 'plant',     room: 'administracion', r: .7 },   6.6, -6.9),
-    D({ kind: 'desk',      room: 'comunicaciones', w: 2.4, h: 1.1 }, 4.4, -17.65),
-    D({ kind: 'shieldgen', room: 'escudos',        r: 1.2 },  8.3, -11.3),
-    D({ kind: 'chair',     room: 'navegacion',     r: 1, rot: -Math.PI / 2 }, 17.3, -5.2),
-    D({ kind: 'turret',    room: 'armeria',        r: 1.6 },  10.8, 3.9),
-    D({ kind: 'crates',    room: 'armeria',        r: 1 },    8.2, 4.5)
+    D({ kind: 'table',     room: 'cafeteria',      r: 2.3 },  278, 48),
+    D({ kind: 'table',     room: 'cafeteria',      r: 2.3 },  343, 48),
+    D({ kind: 'table',     room: 'cafeteria',      r: 2.3 },  278, 116),
+    D({ kind: 'table',     room: 'cafeteria',      r: 2.3 },  343, 116),
+    D({ kind: 'engine',    room: 'motores',        r: 2.8, len: 7.4 },  101, 86),
+    D({ kind: 'engine',    room: 'motorinf',       r: 2.8, len: 7.4 },  101, 247),
+    D({ kind: 'core',      room: 'reactor',        r: 2.4 },  42, 165),
+    D({ kind: 'bed',       room: 'enfermeria',     w: 2.4, h: 1.2 }, 194, 111),
+    D({ kind: 'bed',       room: 'enfermeria',     w: 2.4, h: 1.2 }, 194, 127),
+    D({ kind: 'bed',       room: 'enfermeria',     w: 2.4, h: 1.2 }, 232, 111),
+    D({ kind: 'bed',       room: 'enfermeria',     w: 2.4, h: 1.2 }, 232, 127),
+    D({ kind: 'cratepile', room: 'almacen',        w: 6.4, h: 5.6 }, 302, 265),
+    D({ kind: 'barrel',    room: 'almacen',        r: 1.2 },  277, 236),
+    D({ kind: 'crates',    room: 'almacen',        r: 1.2 },  280, 296),
+    D({ kind: 'admintable', room: 'administracion', w: 5, h: 2.4 }, 388, 208),   // la gran mesa del mapa, en el centro
+    D({ kind: 'desk',      room: 'comunicaciones', w: 4, h: 1.1 }, 382, 319),
+    D({ kind: 'shieldgen', room: 'escudos',        r: 1.2 },  474, 235),
+    D({ kind: 'chair',     room: 'navegacion',     r: 1, rot: -Math.PI / 2 }, 553, 156),
+    D({ kind: 'turret',    room: 'armeria',        r: 1.6 },  456, 62)
   ];
-  const BUTTON = (([x, z]) => ({ x, z }))(U(0.1, 2.05)); // mesa de la cafetería
+  const BUTTON = (([x, z]) => ({ x, z }))(U(310, 82)); // mesa de la cafetería
+  // por dónde se ven desde fuera las tareas visuales: el cañón de Armería, la escotilla de la basura del Almacén y los escudos
+  const pt = (x, y, o) => { const [mx, mz] = U(x, y); return Object.assign({ x: mx, z: mz }, o); };
+  const WEAPON_GUN = pt(480, 44, { dx: .75, dz: -.66 }), TRASH_OUT = pt(334, 331), SHIELD_OUT = pt(470, 262);
 
   const isSolid = (x, z) => !isFloor(x, z);
   const blocked = (x, z, r) => {
@@ -367,6 +371,6 @@
   };
 
   const VISUAL_TASKS = ['scan', 'asteroids', 'trash', 'shields'];   // tareas que se ven desde fuera
-  const api = { VISUAL_TASKS, CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, WALLS, POLYS, inPoly, roomAtPos, segDist, MAPW, MAPH, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
+  const api = { WEAPON_GUN, TRASH_OUT, SHIELD_OUT, VISUAL_TASKS, CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, WALLS, POLYS, inPoly, roomAtPos, segDist, MAPW, MAPH, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Shared = api;
 })(this);

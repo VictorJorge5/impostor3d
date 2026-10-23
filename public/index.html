@@ -755,7 +755,7 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.6</span></footer>
+    <footer class="foot"><span>Impostor 3D · v5.7</span></footer>
   </div>
 </div>
 
@@ -2041,7 +2041,7 @@ function playEject(d) {
 }
 function stopEject() { if (G.eject && G.eject.raf) cancelAnimationFrame(G.eject.raf); G.eject = null; clearTimeout(G.ejectTimer); ov('ejectOv', false); }
 if (location.search.includes('debug=1')) window.__i3d_anim = { drawEject, makeEject, ejectText, playEject, spawnBlood, killCam, showBanner, showEnd };
-if (location.search.includes('debug=1')) window.__i3d_tasks = { open: i => openTask(S.STATIONS[i]), panel: id => openPanel(S.PANELS.find(p => p.id === id)), isOpen: () => mgOpen, tp: (x, z, h) => { G.x = x; G.z = z; G.ry = h || 0; G.camX = null; }, state: () => ({ role: G.role, tasks: G.tasks, done: [...G.done], list: $('taskList').innerText }), vis: k => { G.cfg.visCrew = G.cfg.visImp = k; }, fow: () => ({ role: G.role, on: FOW.on, R: FOW.R, seen: [...G.players.values()].filter(p => p.id !== myId && p.base && p.seen).map(p => p.name) }), floor: () => floorCanvas && floorCanvas.toDataURL('image/png') };
+if (location.search.includes('debug=1')) window.__i3d_tasks = { open: i => openTask(S.STATIONS[i]), panel: id => openPanel(S.PANELS.find(p => p.id === id)), isOpen: () => mgOpen, tp: (x, z, h) => { G.x = x; G.z = z; G.ry = h || 0; G.camX = null; }, state: () => ({ role: G.role, tasks: G.tasks, done: [...G.done], list: $('taskList').innerText }), vis: k => { G.cfg.visCrew = G.cfg.visImp = k; }, fow: () => ({ role: G.role, on: FOW.on, R: FOW.R, seen: [...G.players.values()].filter(p => p.id !== myId && p.base && p.seen).map(p => p.name) }), floor: () => floorCanvas && floorCanvas.toDataURL('image/png'), fx: id => taskFx.set('dbg' + id, { st: id, type: S.STATIONS[id].type, t0: performance.now() }) };
 
 /* ---------- entrada ---------- */
 const cv = $('cv');
@@ -2145,24 +2145,50 @@ const taskFx = new Map();   // id del jugador -> { st, type, t0 }
 function dropTaskFx(pid) { taskFx.delete(pid); }
 function clearTaskFx() { taskFx.clear(); }
 socket.on('taskfx', ({ pid, st, on }) => { taskFx.delete(pid); const s = S.STATIONS[st]; if (on && s) taskFx.set(pid, { st, type: s.type, t0: performance.now() }); });
-function drawTaskFx(g, v, now) {
+function drawTaskFx(g, v, now, out) {   // out: lo que pasa fuera de la nave (se ve por encima de la penumbra, como en el original)
   const X = x => (x - v.cx) * v.sc + v.w / 2, Y = y => (y - v.cy) * v.sc + v.h / 2;
   taskFx.forEach((f, pid) => {
     const st = S.STATIONS[f.st], sp = S.stationPos(st), p = G.players.get(pid), t = (now - f.t0) / 1000;
     const ax = f.type === 'scan' && p ? p.x : sp.x, az = f.type === 'scan' && p ? p.z : sp.z; if (!canSee(ax, az, true)) return;
     const x = X(ax), y = Y(az), sc = v.sc; g.save();
-    if (f.type === 'scan') {   // columna verde que te recorre de pies a cabeza
-      g.fillStyle = 'rgba(78,240,184,.22)'; g.fillRect(x - sc * .9, y - sc * 2.4, sc * 1.8, sc * 2.4);
-      g.strokeStyle = 'rgba(157,255,216,.95)'; g.lineWidth = sc * .12; const yy = y - (Math.sin(t * 2.2) * .5 + .5) * sc * 2.2; g.beginPath(); g.ellipse(x, yy, sc * .9, sc * .25, 0, 0, TAU); g.stroke();
-    } else if (f.type === 'asteroids') {   // el cañón dispara rayos hacia el espacio
-      g.strokeStyle = '#7dffcf'; g.lineWidth = sc * .12; g.shadowColor = '#7dffcf'; g.shadowBlur = 8;
-      for (let k = 0; k < 3; k++) { const q = ((t * 1.6 + k / 3) % 1); g.globalAlpha = 1 - q; const a = -Math.PI / 2 + Math.sin(k * 2.1 + Math.floor(t * 1.6 + k / 3)) * .5; g.beginPath(); g.moveTo(x + Math.cos(a) * q * sc * 9, y - sc * 1.2 + Math.sin(a) * q * sc * 9); g.lineTo(x + Math.cos(a) * (q * 9 + 1.4) * sc, y - sc * 1.2 + Math.sin(a) * (q * 9 + 1.4) * sc); g.stroke(); }
-    } else if (f.type === 'trash') {   // la basura cae por el conducto
-      for (let k = 0; k < 8; k++) { const q = (t * .9 + k / 8) % 1; g.fillStyle = ['#8a6a44', '#6b7f5a', '#9aa3bb'][k % 3]; g.save(); g.translate(x + Math.sin(k * 7) * sc * .4, y - sc * 1.6 + q * sc * 1.8); g.rotate(t * 3 + k); g.fillRect(-sc * .15, -sc * .12, sc * .3, sc * .24); g.restore(); }
-      g.fillStyle = Math.sin(t * 9) > 0 ? '#ffb547' : '#7a4f10'; g.beginPath(); g.arc(x, y - sc * 1.9, sc * .18, 0, TAU); g.fill();
-    } else if (f.type === 'shields') {   // la cúpula del escudo se enciende
+    if (f.type === 'scan') { if (out) { g.restore(); return; }   // como en el original: la plataforma se enciende y los anillos verdes te recorren de pies a cabeza
+      g.fillStyle = 'rgba(78,240,184,.18)'; g.fillRect(x - sc * .9, y - sc * 2.5, sc * 1.8, sc * 2.5);
+      g.fillStyle = 'rgba(78,240,184,.35)'; g.beginPath(); g.ellipse(x, y, sc * 1.1, sc * .35, 0, 0, TAU); g.fill();
+      g.strokeStyle = 'rgba(157,255,216,.95)'; g.lineWidth = sc * .12;
+      for (let k = 0; k < 2; k++) { const q = (t * .7 + k / 2) % 1, yy = y - q * sc * 2.4; g.globalAlpha = 1 - q * .6; g.beginPath(); g.ellipse(x, yy, sc * .95, sc * .26, 0, 0, TAU); g.stroke(); }
+      g.globalAlpha = 1;
+    } else if (f.type === 'asteroids') {   // como en el original: los cañones de fuera de Armería disparan a los asteroides
+      if (!out) { g.restore(); return; }
+      const gx = X(S.WEAPON_GUN.x), gy = Y(S.WEAPON_GUN.z), ux = S.WEAPON_GUN.dx, uy = S.WEAPON_GUN.dz;
+      g.fillStyle = '#4b5573'; g.strokeStyle = '#0d0f17'; g.lineWidth = Math.max(1.5, sc * .09);
+      g.save(); g.translate(gx, gy); g.rotate(Math.atan2(uy, ux) + Math.sin(t * 2.3) * .35); g.fillRect(0, -sc * .3, sc * 2.2, sc * .6); g.strokeRect(0, -sc * .3, sc * 2.2, sc * .6); g.restore();
+      g.beginPath(); g.arc(gx, gy, sc * .9, 0, TAU); g.fill(); g.stroke();
+      for (let k = 0; k < 4; k++) {
+        const ph = t * 1.4 + k / 4, n = Math.floor(ph), q = ph - n, a = Math.atan2(uy, ux) + Math.sin(n * 2.7 + k) * .55, dist = sc * (6 + (n * 37 + k * 11) % 9);
+        const tx = gx + Math.cos(a) * dist, ty = gy + Math.sin(a) * dist;
+        if (q < .25) { g.save(); g.strokeStyle = '#7dffcf'; g.shadowColor = '#7dffcf'; g.shadowBlur = 10; g.lineWidth = sc * .14; g.globalAlpha = 1 - q * 4; g.beginPath(); g.moveTo(gx, gy); g.lineTo(tx, ty); g.stroke(); g.restore(); }
+        if (q < .2) { g.fillStyle = '#7a6a58'; g.beginPath(); g.arc(tx, ty, sc * .7, 0, TAU); g.fill(); }
+        else if (q < .7) { const e = (q - .2) / .5; g.globalAlpha = 1 - e; g.fillStyle = '#ffd27a'; for (let i = 0; i < 8; i++) { const b = i / 8 * TAU; g.beginPath(); g.arc(tx + Math.cos(b) * e * sc * 1.6, ty + Math.sin(b) * e * sc * 1.6, sc * .2, 0, TAU); g.fill(); } g.globalAlpha = 1; }
+      }
+    } else if (f.type === 'trash') {   // la basura: en el Almacén sale despedida al espacio, en las demás salas cae por el conducto
+      if (st.room === 'almacen') {
+        if (!out) { g.fillStyle = Math.sin(t * 9) > 0 ? '#ffb547' : '#7a4f10'; g.beginPath(); g.arc(x, y - sc * 1.9, sc * .18, 0, TAU); g.fill(); g.restore(); return; }
+        const ox = X(S.TRASH_OUT.x), oy = Y(S.TRASH_OUT.z);
+        for (let k = 0; k < 14; k++) { const q = (t * .35 + k / 14) % 1; g.save(); g.globalAlpha = Math.min(1, (1 - q) * 2); g.fillStyle = ['#8a6a44', '#6b7f5a', '#9aa3bb', '#c9a36b'][k % 4];
+          g.translate(ox + Math.sin(k * 3.1) * sc * (1 + q * 5), oy + q * sc * 9); g.rotate(t * 2 + k); g.fillRect(-sc * .22, -sc * .16, sc * .44, sc * .32); g.restore(); }
+      } else if (!out) {
+        for (let k = 0; k < 8; k++) { const q = (t * .9 + k / 8) % 1; g.fillStyle = ['#8a6a44', '#6b7f5a', '#9aa3bb'][k % 3]; g.save(); g.translate(x + Math.sin(k * 7) * sc * .4, y - sc * 1.6 + q * sc * 1.8); g.rotate(t * 3 + k); g.fillRect(-sc * .15, -sc * .12, sc * .3, sc * .24); g.restore(); }
+        g.fillStyle = Math.sin(t * 9) > 0 ? '#ffb547' : '#7a4f10'; g.beginPath(); g.arc(x, y - sc * 1.9, sc * .18, 0, TAU); g.fill();
+      }
+    } else if (f.type === 'shields') {   // los escudos de fuera de la nave se encienden por sectores
+      const cx = X(S.SHIELD_OUT.x), cy = Y(S.SHIELD_OUT.z), on = Math.min(7, Math.floor(t * 1.5) + 1);
+      if (out) {
+      g.save(); g.shadowColor = '#5aa9ff'; g.shadowBlur = 14; g.lineWidth = sc * .16;
+      for (let k = 0; k < 7; k++) { const a = (k - 3) * .3;   // por fuera de la pared de la derecha g.strokeStyle = k < on ? `rgba(140,200,255,${.55 + Math.sin(t * 5 + k) * .2})` : 'rgba(90,120,170,.25)';
+        g.beginPath(); g.arc(cx, cy, sc * 7, a - .13, a + .13); g.stroke(); }
+      g.restore(); g.restore(); return; }
       g.strokeStyle = '#5aa9ff'; g.globalAlpha = .45 + Math.sin(t * 5) * .2; g.lineWidth = sc * .1; g.fillStyle = 'rgba(90,169,255,.12)';
-      g.beginPath(); for (let k = 0; k < 6; k++) { const a = k / 6 * TAU + t * .4; const px = x + Math.cos(a) * sc * 2.4, py = y - sc * 1 + Math.sin(a) * sc * 1.8; k ? g.lineTo(px, py) : g.moveTo(px, py); } g.closePath(); g.fill(); g.stroke();
+      g.beginPath(); for (let k = 0; k < 6; k++) { const a = k / 6 * TAU + t * .4; const px = x + Math.cos(a) * sc * 1.6, py = y - sc * 1 + Math.sin(a) * sc * 1.2; k ? g.lineTo(px, py) : g.moveTo(px, py); } g.closePath(); g.fill(); g.stroke();
     }
     g.restore();
   });
@@ -2171,7 +2197,7 @@ function drawTaskFx(g, v, now) {
 /* ---------- visión real: lo que ves depende del radio y de las paredes ----------
    Unas 15 veces por segundo se lanza un abanico de rayos desde tu posición contra la cuadrícula del mapa (las paredes
    y las puertas cerradas cortan la vista). Fuera de ese polígono todo queda en penumbra y no se dibuja a nadie. */
-const FOW_BASE = 7.5;   // metros de radio con visión 1×
+const FOW_BASE = 8.8;   // metros de radio con visión 1× (el mapa está a escala del original)
 const FOW = { on: false, R: 0, Rn: FOW_BASE, x: 0, z: 0, t: 0, key: '', poly: [] };
 const sightBlocked = (x, z) => S.isSolid(x, z) || S.isClosedCell(x, z);
 function losClear(x0, z0, x1, z1) {
@@ -2297,6 +2323,7 @@ function drawWorld(g, v, now, cam) {
     else if (f.kind === 'ring') { g.strokeStyle = f.color; g.globalAlpha = .9 * (1 - k); g.lineWidth = v.sc * .15; g.beginPath(); g.ellipse(X(f.x), Y(f.z), v.sc * (.6 + k * f.size), v.sc * (.6 + k * f.size) * .6, 0, 0, TAU); g.stroke(); g.globalAlpha = 1; }
   });
   if (!cam && FOW.on && FOW.poly.length) W2.drawFog(g, v, FOW.poly, [FOW.x, FOW.z], FOW.R, G.sab && G.sab.type === 'luces' && G.role === 'crew' ? 'rgba(2,3,8,.93)' : null);
+  drawTaskFx(g, v, now, true);
   ents.forEach(e => e.name && e.name());
 }
 function render2D(now) {
