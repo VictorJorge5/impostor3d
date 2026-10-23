@@ -4,6 +4,24 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.9 · muertes, cuerpos, rejillas y fantasmas como en el original
+Hecho con las imágenes y los datos de la wiki de Among Us:
+- **Cuatro animaciones de muerte al azar**, las del original:
+  - Cuchillo: un brazo sale de la cabeza del impostor.
+  - Cuello: le gira el casco.
+  - Lengua: con pincho.
+  - Pistola: te tira al suelo y dispara.
+  - Todas sobre el fondo rosa con llamaradas rojas. Solo las ve la víctima.
+- **El cadáver del original**: la mitad de abajo tumbada, con el corte a la vista y el hueso asomando.
+- **Matar como en el juego**:
+  - Las paredes lo impiden (las puertas no).
+  - El impostor salta hasta la víctima.
+  - Al empezar la recarga es de 10 s y dentro de la rejilla se para.
+- **Rejillas**: dentro salen flechas hacia las rejillas conectadas y se sale con el mismo botón.
+- **Fantasmas**: van 1,2 veces más rápido y en la reunión ven la tableta rajada.
+- **Barra de tareas** arriba del todo, gris y verde, con "TAREAS TOTALES COMPLETADAS".
+- **Comunicaciones saboteadas**: la barra se pone verde oscuro y la lista lo dice.
+
 ## Novedades 5.8 · votación, sabotaje y cámaras como en el original
 - **La votación es la tableta del original**:
   - Marco gris con botón, pantalla azul y el título "¿Quién es el impostor?".

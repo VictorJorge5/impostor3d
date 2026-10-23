@@ -138,18 +138,27 @@
   W2.rrect = rrect;
 
   // cuerpo: la mitad de abajo del crewmate con el hueso, como en el original
+  // cadáver del original: la mitad de abajo tumbada hacia delante, con el corte a la vista y el hueso asomando
   W2.body = (g, x, y, h, color, dir) => {
-    const col = color || '#c51111', bw = h * .64, lw = Math.max(1.2, h * .045); dir = dir < 0 ? -1 : 1;
-    g.save(); g.translate(x, y); g.lineJoin = 'round'; g.strokeStyle = OUT; g.lineWidth = lw;
-    g.fillStyle = col; rrect(g, -bw * .45, -h * .2, bw * .38, h * .22, h * .07); g.fill(); g.stroke(); rrect(g, bw * .07, -h * .2, bw * .38, h * .22, h * .07); g.fill(); g.stroke();
-    const top = -h * .5;
-    g.beginPath(); g.moveTo(-bw / 2, top); g.lineTo(-bw / 2, -h * .16); g.quadraticCurveTo(-bw / 2, -h * .1, -bw / 2 + h * .06, -h * .1); g.lineTo(bw / 2 - h * .06, -h * .1); g.quadraticCurveTo(bw / 2, -h * .1, bw / 2, -h * .16); g.lineTo(bw / 2, top); g.closePath();
-    g.fillStyle = col; g.fill(); g.stroke();
-    g.fillStyle = '#d9e2f2'; g.beginPath(); g.ellipse(0, top, bw / 2, h * .07, 0, 0, TAU); g.fill(); g.stroke();
-    g.fillStyle = '#b3001b'; g.beginPath(); g.ellipse(0, top, bw * .38, h * .045, 0, 0, TAU); g.fill();
+    const col = color || '#c51111', lw = Math.max(1.2, h * .045), d = dir < 0 ? -1 : 1;
+    g.save(); g.translate(x, y); g.scale(d, 1); g.lineJoin = 'round'; g.strokeStyle = OUT; g.lineWidth = lw;
+    g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.ellipse(h * .02, 0, h * .5, h * .09, 0, 0, TAU); g.fill();
+    // piernas (hacia abajo a la derecha)
+    g.fillStyle = shade(col, -.25); rrect(g, h * .02, -h * .2, h * .2, h * .2, h * .07); g.fill(); g.stroke(); rrect(g, h * .2, -h * .2, h * .2, h * .2, h * .07); g.fill(); g.stroke();
+    // cuerpo
+    g.fillStyle = col; rrect(g, -h * .34, -h * .52, h * .74, h * .42, h * .19); g.fill(); g.stroke();
+    g.fillStyle = shade(col, -.3); rrect(g, -h * .3, -h * .2, h * .66, h * .08, h * .04); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.22)'; rrect(g, -h * .08, -h * .48, h * .36, h * .07, h * .035); g.fill();
+    // mochila
+    g.fillStyle = shade(col, -.15); rrect(g, h * .02, -h * .62, h * .28, h * .16, h * .06); g.fill(); g.stroke();
+    // el corte: anillos del mismo color, cada vez más oscuros
+    g.fillStyle = shade(col, -.35); g.beginPath(); g.ellipse(-h * .34, -h * .31, h * .13, h * .21, 0, 0, TAU); g.fill(); g.stroke();
+    g.fillStyle = shade(col, -.55); g.beginPath(); g.ellipse(-h * .34, -h * .31, h * .085, h * .14, 0, 0, TAU); g.fill();
+    g.fillStyle = shade(col, -.72); g.beginPath(); g.ellipse(-h * .34, -h * .31, h * .04, h * .065, 0, 0, TAU); g.fill();
     // hueso
-    g.fillStyle = '#f3ead8'; g.save(); g.translate(dir * bw * .08, top - h * .02); g.rotate(-dir * .25); rrect(g, -h * .035, -h * .2, h * .07, h * .2, h * .03); g.fill(); g.stroke();
-    g.beginPath(); g.arc(-h * .035, -h * .2, h * .045, 0, TAU); g.arc(h * .035, -h * .2, h * .045, 0, TAU); g.fill(); g.stroke(); g.restore();
+    g.fillStyle = '#f1ead9'; rrect(g, -h * .62, -h * .34, h * .28, h * .065, h * .03); g.fill(); g.stroke();
+    g.beginPath(); g.arc(-h * .63, -h * .35, h * .045, 0, TAU); g.fill(); g.stroke(); g.beginPath(); g.arc(-h * .63, -h * .28, h * .045, 0, TAU); g.fill(); g.stroke();
+    g.fillStyle = '#f1ead9'; rrect(g, -h * .6, -h * .34, h * .2, h * .065, h * .03); g.fill();
     g.restore();
   };
 
@@ -214,13 +223,82 @@
     g.strokeText(txt, 0, 0); g.fillStyle = '#ff2e4d'; g.fillText(txt, 0, 0); g.restore();
   };
   // escena de tu muerte: el impostor te ataca sobre fondo rojo, como en el original
-  W2.killScene = (g, w, h, killer, victim, k) => {
-    g.fillStyle = '#7a0012'; g.fillRect(0, 0, w, h); g.save(); g.globalAlpha = .35; g.fillStyle = '#3a0008'; for (let i = -h; i < w; i += h * .18) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + h * .09, 0); g.lineTo(i + h * .09 + h * .5, h); g.lineTo(i + h * .5, h); g.fill(); } g.restore();
-    const band = h * .62, by = (h - band) / 2; g.fillStyle = '#c4001f'; g.fillRect(0, by, w, band); g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(0, by + band - h * .04, w, h * .04);
-    const sz = Math.min(band * .8, w * .3), y = by + band * .9, lunge = k < .55 ? Math.sin(Math.min(1, k / .55) * Math.PI) * w * .06 : 0;
-    if (killer) crew(g, w * .32 + lunge, y, sz, { color: killer.color, look: killer.look, dir: 1, t: k * 3 });
-    if (victim) { if (k < .45) crew(g, w * .66, y, sz, { color: victim.color, look: victim.look, dir: -1, t: k * 3 }); else { W2.body(g, w * .66, y, sz * .8, victim.color, -1); g.fillStyle = '#b50018'; for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI - Math.PI, rr = sz * .2 * Math.min(1, (k - .45) * 4); g.beginPath(); g.arc(w * .66 + Math.cos(a) * rr * 1.6, y - sz * .45 + Math.sin(a) * rr, sz * .03, 0, TAU); g.fill(); } } }
+  // escena de tu muerte, como en el original: fondo rosa con llamaradas rojas y una de las animaciones (cuchillo, cuello,
+  // lengua o pistola). k va de 0 a 1.
+  W2.KILLS = ['knife', 'neck', 'tongue', 'gun'];
+  W2.killScene = (g, w, h, killer, victim, k, kind) => {
+    const rnd = i => { const v = Math.sin(i * 91.7 + 3.1) * 43758.5453; return v - Math.floor(v); }, t = k * 2.4;
+    g.fillStyle = '#f3c6ca'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 10; i++) {   // llamaradas rojas que pasan a toda velocidad
+      const y = h * (.06 + i * .1) + (rnd(i) - .5) * h * .05, len = w * (.55 + rnd(i + 9) * .6), sp = w * (1.1 + rnd(i + 3)), span = w * 2.2;
+      const x0 = ((rnd(i + 5) * span - t * sp) % span + span) % span - w * .6, th = h * (.025 + rnd(i + 7) * .05);
+      g.fillStyle = i % 3 ? '#c4121f' : '#8f0a16'; g.beginPath(); g.moveTo(x0, y);
+      for (let q = 0; q <= 12; q++) g.lineTo(x0 + len * q / 12, y - th * (1 - q / 14) * (q % 2 ? 1.7 : .6));
+      for (let q = 12; q >= 0; q--) g.lineTo(x0 + len * q / 12, y + th * (1 - q / 14) * (q % 2 ? .7 : 1.6));
+      g.closePath(); g.fill();
+    }
+    g.strokeStyle = 'rgba(255,255,255,.9)'; g.lineWidth = Math.max(1.5, h * .007);
+    for (let i = 0; i < 16; i++) { const y = h * rnd(i + 20), len = w * (.08 + rnd(i + 30) * .25), span = w * 1.6, x = ((rnd(i + 40) * span - t * w * 2.4) % span + span) % span - w * .3; g.beginPath(); g.moveTo(x, y); g.lineTo(x + len, y); g.stroke(); }
+    if (!killer || !victim) return;
+    kind = kind || 'knife';
+    const sz = Math.min(h * .42, w * .22), base = h * .72, kx = w * .42, vx = kx + sz * .62, lw = Math.max(1.5, sz * .045);
+    const seg = (a, b) => Math.max(0, Math.min(1, (k - a) / (b - a)));
+    const dieAt = { knife: .6, neck: .62, tongue: .55, gun: .74 }[kind], dead = k >= dieAt, kd = seg(dieAt, dieAt + .12);
+    const half = (x, y, top, rot, dx, dy) => {   // la mitad de arriba o de abajo del tripulante (para partirlo)
+      g.save(); g.beginPath(); top ? g.rect(x - sz, y - sz * 2, sz * 2, sz * 1.48) : g.rect(x - sz, y - sz * .52, sz * 2, sz); g.clip();
+      g.translate(x + (dx || 0), y - sz * .52 + (dy || 0)); g.rotate(rot || 0); g.translate(-x, -(y - sz * .52));
+      crew(g, x, y, sz, { color: victim.color, look: victim.look, dir: 1, t }); g.restore();
+    };
+    const blood = (x, y, n, sp) => { g.fillStyle = shade(victim.color, -.2); for (let i = 0; i < n; i++) { const a = -Math.PI * (.15 + rnd(i + 60) * .7), r = sz * (.15 + rnd(i + 70) * .5) * sp; g.beginPath(); g.ellipse(x + Math.cos(a) * r, y + Math.sin(a) * r, sz * .04, sz * .03, a, 0, TAU); g.fill(); } };
+    // el impostor (tiembla un poco al principio, como en el original)
+    const shake = k < .25 ? Math.sin(t * 60) * sz * .01 : 0;
+    if (kind !== 'tongue' || k < .14 || k > .62) crew(g, kx + shake, base, sz, { color: killer.color, look: killer.look, dir: 1, t });
+    else {   // la cabeza del impostor se abre en una boca enorme con dientes
+      crew(g, kx, base, sz, { color: killer.color, look: killer.look, dir: 1, t });
+      const mx = kx + sz * .18, my = base - sz * .72, op = seg(.14, .24) * (1 - seg(.55, .62));
+      g.save(); g.strokeStyle = OUT; g.lineWidth = lw; g.fillStyle = '#5b0b14'; g.beginPath(); g.ellipse(mx, my, sz * .22, sz * .2 * op + 1, 0, 0, TAU); g.fill(); g.stroke();
+      g.fillStyle = '#fff'; for (let i = 0; i < 6; i++) { const tx = mx - sz * .18 + i * sz * .072; g.beginPath(); g.moveTo(tx, my - sz * .2 * op); g.lineTo(tx + sz * .035, my - sz * .2 * op + sz * .07); g.lineTo(tx + sz * .07, my - sz * .2 * op); g.fill(); g.beginPath(); g.moveTo(tx, my + sz * .2 * op); g.lineTo(tx + sz * .035, my + sz * .2 * op - sz * .07); g.lineTo(tx + sz * .07, my + sz * .2 * op); g.fill(); }
+      g.restore();
+    }
+    // la víctima
+    if (!dead) {
+      if (kind === 'neck' && k > .3) { half(vx, base, false); half(vx, base, true, -seg(.3, .58) * 2.2, 0, 0); }   // le gira la cabeza
+      else if (kind === 'gun' && k > .2) { g.save(); g.translate(vx + sz * .1, base); g.rotate(seg(.2, .3) * Math.PI / 2); crew(g, 0, 0, sz, { color: victim.color, look: victim.look, dir: 1, t }); g.restore(); }   // la tira al suelo
+      else crew(g, vx, base, sz, { color: victim.color, look: victim.look, dir: 1, t });
+    } else {
+      W2.body(g, vx + sz * .25, base, sz, victim.color, 1);
+      if (kd < 1) blood(vx, base - sz * .45, 14, kd * 2);
+      if (kind === 'knife' || kind === 'gun') { const f = seg(dieAt, dieAt + .35); half(vx + f * sz * 1.4, base, true, f * 3, 0, -Math.sin(f * Math.PI) * sz * .7 + f * sz * .4); }   // la parte de arriba sale volando
+      if (kind === 'knife') { g.save(); g.translate(vx + sz * .2, base - sz * .55); g.fillStyle = '#d8dee8'; g.strokeStyle = OUT; g.lineWidth = lw; g.beginPath(); g.moveTo(0, -sz * .3); g.lineTo(sz * .05, -sz * .05); g.lineTo(-sz * .05, -sz * .05); g.closePath(); g.fill(); g.stroke(); g.fillStyle = '#3b6b3b'; rrect(g, -sz * .07, -sz * .05, sz * .14, sz * .05, sz * .02); g.fill(); g.stroke(); rrect(g, -sz * .03, 0, sz * .06, sz * .12, sz * .02); g.fill(); g.stroke(); g.restore(); }
+    }
+    // los ataques
+    g.save(); g.lineCap = 'round'; g.lineJoin = 'round';
+    if (kind === 'knife' && k > .22 && k < dieAt) {   // un brazo sale de su cabeza y apuñala
+      const r = seg(.22, .34), st = Math.abs(Math.sin((k - .34) * 60)) * sz * .12 * (k > .34 ? 1 : 0);
+      const hx = kx + (vx - kx) * r * .95, hy = base - sz * (1.05 + .25 * Math.sin(r * Math.PI)) + st;
+      g.strokeStyle = OUT; g.lineWidth = sz * .17; g.beginPath(); g.moveTo(kx, base - sz * .95); g.quadraticCurveTo(kx + sz * .2, base - sz * 1.45, hx, hy); g.stroke();
+      g.strokeStyle = killer.color; g.lineWidth = sz * .12; g.stroke();
+      g.fillStyle = '#e5ebf3'; g.strokeStyle = OUT; g.lineWidth = lw; g.beginPath(); g.moveTo(hx + sz * .02, hy); g.lineTo(hx + sz * .08, hy + sz * .3); g.lineTo(hx - sz * .04, hy + sz * .05); g.closePath(); g.fill(); g.stroke();
+    }
+    if (kind === 'neck' && k > .2 && k < dieAt) {   // la mano le agarra el casco
+      const r = seg(.2, .3), hx = kx + (vx - kx) * r, hy = base - sz * .78;
+      g.strokeStyle = OUT; g.lineWidth = sz * .16; g.beginPath(); g.moveTo(kx + sz * .1, base - sz * .5); g.quadraticCurveTo(kx + sz * .3, base - sz * 1.1, hx, hy); g.stroke(); g.strokeStyle = killer.color; g.lineWidth = sz * .11; g.stroke();
+      g.fillStyle = killer.color; g.strokeStyle = OUT; g.lineWidth = lw; for (let i = 0; i < 4; i++) { g.beginPath(); g.ellipse(hx - sz * .05 + i * sz * .055, hy - sz * .06 + Math.abs(i - 1.5) * sz * .03, sz * .035, sz * .09, -.3 + i * .2, 0, TAU); g.fill(); g.stroke(); }
+    }
+    if (kind === 'tongue' && k > .26 && k < .56) {   // la lengua con pincho atraviesa el casco
+      const r = seg(.26, .34) * (1 - seg(.5, .56)), mx = kx + sz * .3, my = base - sz * .72, tx = mx + (vx + sz * .1 - mx) * r, ty = my + (base - sz * .7 - my) * r;
+      g.strokeStyle = OUT; g.lineWidth = sz * .07; g.beginPath(); g.moveTo(mx, my); g.lineTo(tx, ty); g.stroke(); g.strokeStyle = '#e88aa8'; g.lineWidth = sz * .045; g.stroke();
+      g.fillStyle = '#f2f2f2'; g.strokeStyle = OUT; g.lineWidth = lw; g.beginPath(); g.moveTo(tx + sz * .12, ty); g.lineTo(tx - sz * .02, ty - sz * .05); g.lineTo(tx - sz * .02, ty + sz * .05); g.closePath(); g.fill(); g.stroke();
+    }
+    if (kind === 'gun' && k > .38) {   // saca la pistola y dispara
+      const r = seg(.38, .5), gx = kx + sz * .3 + r * sz * .2, gy = base - sz * .45 + (1 - r) * sz * .2;
+      g.save(); g.translate(gx, gy); g.rotate(.5 * r); g.fillStyle = '#8d96a5'; g.strokeStyle = OUT; g.lineWidth = lw; rrect(g, 0, -sz * .05, sz * .3, sz * .09, sz * .02); g.fill(); g.stroke(); rrect(g, 0, 0, sz * .08, sz * .16, sz * .02); g.fill(); g.stroke();
+      if (k > .7 && k < .8) { g.fillStyle = '#fff3a0'; g.beginPath(); for (let i = 0; i < 10; i++) { const a = i / 10 * TAU, rr = i % 2 ? sz * .08 : sz * .2; g.lineTo(sz * .34 + Math.cos(a) * rr, Math.sin(a) * rr); } g.closePath(); g.fill(); }
+      g.restore();
+    }
+    g.restore();
   };
+
 
   // mesa de la cafetería: banco azul partido en cuatro tramos y tablero redondo (con el botón de emergencia en la del centro)
   W2.roundTable = (g, x, y, r, sc, lw, button) => {

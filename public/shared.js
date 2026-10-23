@@ -234,6 +234,8 @@
   const WEAPON_GUN = pt(480, 44, { dx: .75, dz: -.66 }), TRASH_OUT = pt(334, 331), SHIELD_OUT = pt(470, 262);
 
   const isSolid = (x, z) => !isFloor(x, z);
+  // ¿hay una pared entre dos puntos? (para matar: las paredes lo impiden, las puertas no, como en el original)
+  const wallBetween = (x0, z0, x1, z1) => { const n = Math.ceil(Math.hypot(x1 - x0, z1 - z0) / .25); for (let k = 1; k < n; k++) if (isSolid(x0 + (x1 - x0) * k / n, z0 + (z1 - z0) * k / n)) return true; return false; };
   const blocked = (x, z, r) => {
     r = r || 0.45;
     if (isSolid(x - r, z - r) || isSolid(x + r, z - r) || isSolid(x - r, z + r) || isSolid(x + r, z + r) || isSolid(x, z - r) || isSolid(x, z + r) || isSolid(x - r, z) || isSolid(x + r, z)) return true;
@@ -380,6 +382,6 @@
   };
 
   const VISUAL_TASKS = ['scan', 'asteroids', 'trash', 'shields'];   // tareas que se ven desde fuera
-  const api = { MAP_VER, freeNear, WEAPON_GUN, TRASH_OUT, SHIELD_OUT, VISUAL_TASKS, CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, WALLS, POLYS, inPoly, roomAtPos, segDist, MAPW, MAPH, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
+  const api = { wallBetween, MAP_VER, freeNear, WEAPON_GUN, TRASH_OUT, SHIELD_OUT, VISUAL_TASKS, CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, WALLS, POLYS, inPoly, roomAtPos, segDist, MAPW, MAPH, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Shared = api;
 })(this);
