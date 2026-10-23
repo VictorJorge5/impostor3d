@@ -155,10 +155,26 @@ test('reglas del original: sin botón durante un sabotaje, las luces siguen tras
   const killed = once(crew[0], 'killed'); imp.emit('kill', victim.id); await killed;
   // chat de fantasmas: lo recibe el fantasma, no los vivos
   at(crew[0], { x: vPos.x, z: vPos.z + 1 }); await new Promise(r => setTimeout(r, 100));
-  const mtg = once(crew[0], 'meeting'); crew[0].emit('report'); await mtg;
+  const mtg = once(crew[0], 'meeting'); crew[0].emit('report'); const md = await mtg;
+  assert.deepEqual(md.dead, [victim.id], 'el resumen de la reunión trae a quien ha muerto en la ronda');
+  // los fantasmas pueden usar los terminales (solo les frena la distancia)
+  const dl = await ack(victim, 'infoDoorlog', {}); assert.ok(dl.error && !/fantasma/i.test(dl.error), dl.error);
   let leaked = false; crew[0].on('chat', m => { if (m.ghost) leaked = true; });
   const gch = once(victim, 'chat'); victim.emit('chat', 'soy un fantasma'); const gm = await gch; assert.equal(gm.ghost, true);
   await new Promise(r => setTimeout(r, 200)); assert.equal(leaked, false);
   const resumed = once(crew[0], 'resume'); socks.forEach(s => s.emit('vote', 'skip'));
   const rs = await resumed; assert.ok(rs.sab && rs.sab.type === 'luces', 'las luces siguen apagadas tras la reunión');
+  // la mascota del muerto se queda donde murió
+  const vp = rs.players.find(q => q.id === victim.id); assert.ok(vp.pet && Math.hypot(vp.pet.x - vPos.x, vp.pet.z - vPos.z) < 1.5, 'la mascota se queda junto al sitio de la muerte');
+});
+
+test('si el impostor se va, gana la tripulación (como en el original)', async () => {
+  const socks = await Promise.all([1, 2, 3, 4].map(() => connect()));
+  const [h] = socks;
+  const r0 = await ack(h, 'join', { mapVer: MAP_VER, name: 'H', look: {}, code: '' });
+  for (const [i, s] of socks.slice(1).entries()) assert.ok((await ack(s, 'join', { mapVer: MAP_VER, name: 'P' + i, look: {}, code: r0.code })).ok);
+  const starts = socks.map(s => once(s, 'start')); h.emit('start'); const st = await Promise.all(starts);
+  const ii = st.findIndex(s => s.role === 'impostor'), other = socks[(ii + 1) % socks.length];
+  const end = once(other, 'end'); socks[ii].emit('leave'); const e = await end;
+  assert.equal(e.winner, 'crew'); assert.equal(e.reason, 'disconnect:impostor');
 });
