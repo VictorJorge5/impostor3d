@@ -4,6 +4,10 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 6.3 · personalizar y ajustes de la sala como en el original
+- **Pantalla de personalizar** con el estilo del original: botón VOLVER turquesa, pestañas con borde blanco (la elegida en turquesa), cuadros de color con marco y "JUGAR CON ESTE PERSONAJE" con franjas.
+- **Ajustes de la partida como la ventana del original**: grupos en barras grises, nombre del ajuste a la derecha y, para el anfitrión, botones **−** y **+** con el valor en una caja blanca (y casillas para sí/no).
+
 ## Novedades 6.2 · interfaz y sala de espera como en el original
 - **Botones de partida dibujados como los del original**: USAR (triángulo), REPORTAR (megáfono), MATAR (calavera), SABOTAJE, REJILLA, y los de las cámaras, el Admin, los signos vitales y el registro de puertas. Sin círculos; el número de la recarga aparece encima.
 - **Lista de tareas como la del original**: panel gris translúcido, "Sala: Tarea (0/2)" en blanco, las empezadas en amarillo y las hechas en verde, con la pestaña "Tareas" en vertical para plegarla.

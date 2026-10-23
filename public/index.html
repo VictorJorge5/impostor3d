@@ -982,6 +982,45 @@ body.nokeys #keys{display:none!important}
   #menu .card{position:relative}
   #menu .card::before{content:"";position:absolute;z-index:-1;left:max(8px,env(safe-area-inset-left));top:max(6px,env(safe-area-inset-top));bottom:max(6px,env(safe-area-inset-bottom));width:calc(47% - 14px);border-radius:14px;border:4px solid #1d2128;background:linear-gradient(#29393c,#1d2a2c);box-shadow:inset 0 0 0 3px #3f5659}
 }
+
+/* ===== v6.3 · personalizar y ajustes de la sala como en el original ===== */
+#chars{background:#000}
+#chars .card,#lobby.lpanel>.card{border-radius:12px}
+#chars #edBack,#lobby.lpanel #shipPanelX{display:inline-flex;align-items:center;gap:6px;padding:4px 14px 4px 8px;border:0;border-radius:3px;background:repeating-linear-gradient(115deg,#2ee6d0 0 50%,#86f5e9 50% 58%,#2ee6d0 58%);color:#1d2128;font:400 clamp(18px,5.6vh,24px)/1 "Bebas Neue",sans-serif;letter-spacing:2px;text-transform:uppercase;box-shadow:inset 0 -3px 0 #18a594,0 0 0 2px #1d2128}
+#chars #edBack .i{color:#1d2128;stroke-width:3}
+#chars #prev{background:radial-gradient(circle at 50% 60%,#1c2a2d,#05080a 75%);border:3px solid #1d2128;box-shadow:inset 0 0 0 3px #3f5659;border-radius:10px}
+#chars .field,#lobby .field{background:#000;border:2px solid #e8eaee;border-radius:4px;color:#fff}
+.edTabs{gap:6px}
+.edTab{border:3px solid #e8eaee;border-radius:10px;background:#000;color:#fff;font:400 clamp(16px,4.8vh,22px)/1 "Bebas Neue",sans-serif;letter-spacing:1.5px;padding:7px 14px;text-transform:uppercase}
+.edTab.on{background:#2ee6d0;border-color:#2ee6d0;color:#1d2128}
+#chars .edlab,#chars .ed-sec{font:400 clamp(14px,4.2vh,18px)/1 "Bebas Neue",sans-serif;letter-spacing:1.5px;color:#9fc7c2;text-transform:uppercase}
+#chars .chip{border-radius:4px;border:2px solid #4b5560;background:#15191d;color:#e8eaee}
+#chars .chip.sel{border-color:#2ee6d0;box-shadow:0 0 0 2px #2ee6d0;background:#123c38}
+#chars .chip.sw{width:38px;height:38px;border-radius:4px;border:3px solid #1d2128;box-shadow:inset 0 0 0 2px #ffffff40}
+#chars .chip.sw.sel{box-shadow:0 0 0 3px #2ee6d0,inset 0 0 0 2px #ffffff60}
+#chars .btn,#lobby.lpanel .btn{border:0;border-radius:3px;background:repeating-linear-gradient(115deg,#5d7c80 0 40%,#6f9196 40% 46%,#5d7c80 46%);color:#e8f4f2;font:400 clamp(16px,4.8vh,21px)/1 "Bebas Neue",sans-serif;letter-spacing:1.5px;text-transform:uppercase;box-shadow:inset 0 -3px 0 #3f5a5d,0 0 0 2px #1d2128}
+#chars #edUse,#lobby.lpanel .btn.amber{background:repeating-linear-gradient(115deg,#2ee6d0 0 30%,#86f5e9 30% 38%,#2ee6d0 38% 64%,#86f5e9 64% 69%,#2ee6d0 69%);color:#1d2128;font-size:clamp(20px,6vh,28px);box-shadow:inset 0 -4px 0 #18a594,0 0 0 3px #1d2128}
+#chars #edList .citem,#chars #edList>*{border-radius:6px}
+/* panel de la sala = ventana "AJUSTES DE LA PARTIDA" del original */
+#lobby.lpanel>.card{background:#2b3138!important;border:4px solid #1d2128!important;box-shadow:inset 0 0 0 3px #59616b,0 20px 60px #000!important}
+#lobby.lpanel .tb-title{font:400 clamp(24px,7vh,34px)/1 "Bebas Neue",sans-serif;letter-spacing:2px;color:#fff}
+#lobby.lpanel .ticket{background:#1d2128;border:2px solid #59616b;border-radius:6px;box-shadow:none}
+#lobby.lpanel .ticket .code{background:none;-webkit-text-fill-color:#2ee6d0;color:#2ee6d0;font-family:"Bebas Neue",sans-serif;filter:none}
+#lobby.lpanel .setBox,#lobby.lpanel .glass{background:#1d2128;border:2px solid #59616b;border-radius:6px;box-shadow:none}
+#lobby.lpanel .setBox summary{font:400 clamp(18px,5.4vh,24px)/1 "Bebas Neue",sans-serif;letter-spacing:1.5px}
+#lobby .sgrp{margin:14px 0 4px;padding:3px 8px;background:#3d444c;color:#c3c9cf;font:italic 700 12px/1.4 Arial,sans-serif;letter-spacing:.5px;text-transform:uppercase;border-radius:2px}
+#lobby .srow{border-top:0;padding:4px 0;gap:10px}
+#lobby .slab{text-align:right;font:700 clamp(12px,3.6vh,14px)/1.2 Arial,sans-serif;color:#fff}
+#lobby .slab small{font-weight:400;color:#9aa1a8}
+#lobby .sctl{min-width:auto;gap:4px;flex:none}
+#lobby .sval{min-width:76px;padding:4px 6px;background:#fff;color:#1d2128;border:2px solid #1d2128;border-radius:2px;text-align:center;font:700 13px/1.1 Arial,sans-serif}
+#lobby .sval.chg{color:#0a7f72}
+.stp{width:26px;height:26px;padding:0;border:2px solid #1d2128;border-radius:2px;background:#e8eaee;color:#1d2128;font:900 17px/1 Arial,sans-serif}
+.stp:disabled{opacity:.35}
+.stp:active:not(:disabled){transform:scale(.9)}
+#lobby .tog{width:28px;height:28px;padding:0;border:2px solid #1d2128;border-radius:2px;background:#fff;color:#0a7f72;font:900 17px/1 Arial,sans-serif}
+#lobby .tog.on{background:#fff;color:#0a7f72;border-color:#1d2128}
+#lobby .chip{border-radius:3px;border:2px solid #1d2128;background:repeating-linear-gradient(115deg,#2ee6d0 0 50%,#86f5e9 50% 58%,#2ee6d0 58%);color:#1d2128;font:400 17px/1 "Bebas Neue",sans-serif;letter-spacing:1px}
 </style>
 <link rel="preload" href="fonts/chakra-petch-latin-700-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -1016,7 +1055,7 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v6.2</span></footer>
+    <footer class="foot"><span>Impostor 3D · v6.3</span></footer>
   </div>
 </div>
 
@@ -1478,14 +1517,16 @@ function settingRow(d, v, host) {
   const row = el('div', 'srow'), lab = el('div', 'slab', d.label); if (d.hint) lab.append(el('small', '', d.hint)); row.append(lab);
   const ctl = el('div', 'sctl'), out = el('span', 'sval' + (v !== d.def ? ' chg' : ''), fmtSet(d, v));
   const send = val => socket.emit('settings', { k: d.k, v: val });
+  // como en el original: "−" [valor] "+" para los números y las opciones, y una casilla para sí/no
+  const step = (dir, can, go) => { const b = el('button', 'stp', dir < 0 ? '−' : '+'); b.disabled = !can; b.setAttribute('aria-label', (dir < 0 ? 'Menos ' : 'Más ') + d.label); b.onclick = go; return b; };
   if (host && d.t === 'num') {
-    const inp = document.createElement('input'); inp.type = 'range'; inp.className = 'rng'; inp.min = d.min; inp.max = d.max; inp.step = d.step; inp.value = v;
-    inp.oninput = () => { out.textContent = inp.value + d.unit; }; inp.onchange = () => send(+inp.value); ctl.append(inp, out);
+    const r2 = x => Math.round(x * 100) / 100;
+    ctl.append(step(-1, v > d.min, () => send(r2(Math.max(d.min, v - d.step)))), out, step(1, v < d.max, () => send(r2(Math.min(d.max, v + d.step)))));
   } else if (host && d.t === 'bool') {
-    const b = el('button', 'tog' + (v ? ' on' : ''), v ? 'Sí' : 'No'); b.onclick = () => send(!v); ctl.append(b);
+    const b = el('button', 'tog' + (v ? ' on' : ''), v ? '✔' : ''); b.setAttribute('aria-label', d.label + (v ? ': sí' : ': no')); b.onclick = () => send(!v); ctl.append(b);
   } else if (host && d.t === 'sel') {
-    const sl = document.createElement('select'); d.opts.forEach(o => { const op = el('option', '', o[1]); op.value = o[0]; if (o[0] === v) op.selected = true; sl.append(op); });
-    sl.onchange = () => send(sl.value); ctl.append(sl);
+    const i = d.opts.findIndex(o => o[0] === v);
+    ctl.append(step(-1, i > 0, () => send(d.opts[i - 1][0])), out, step(1, i < d.opts.length - 1, () => send(d.opts[i + 1][0])));
   } else ctl.append(out);
   row.append(ctl); return row;
 }
