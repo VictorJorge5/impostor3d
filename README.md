@@ -4,6 +4,17 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 6.2 · interfaz y sala de espera como en el original
+- **Botones de partida dibujados como los del original**: USAR (triángulo), REPORTAR (megáfono), MATAR (calavera), SABOTAJE, REJILLA, y los de las cámaras, el Admin, los signos vitales y el registro de puertas. Sin círculos; el número de la recarga aparece encima.
+- **Lista de tareas como la del original**: panel gris translúcido, "Sala: Tarea (0/2)" en blanco, las empezadas en amarillo y las hechas en verde, con la pestaña "Tareas" en vertical para plegarla.
+- **Arriba a la derecha, los botones cuadrados de ajustes y mapa**, sin minimapa (como en el original).
+- **La sala de espera es la nave del original**:
+  - Casco con los motores de llama azul, la pared del fondo con la puerta y los asientos azules, las cajas verdes, el portátil para personalizarte y la consola de los ajustes.
+  - A la izquierda, la lista de ajustes de la partida.
+  - A la derecha, el panel con el código de sala, el mapa, la capacidad y los ajustes (EDITAR o VER).
+  - Abajo, **EMPEZAR** para el anfitrión o "ANFITRIÓN: … / ESPERANDO AL ANFITRIÓN" para los demás.
+- **Menú principal con el estilo del original**: marco gris, botones turquesa con franjas y el espacio a la derecha.
+
 ## Novedades 6.1 · reuniones, expulsión, final, fantasmas y mascotas como en el original
 - **Inicio de reunión como el original**:
   - "¡REUNIÓN DE EMERGENCIA!" con quien la convoca aporreando el botón de la mesa.

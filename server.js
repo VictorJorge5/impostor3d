@@ -74,7 +74,7 @@ const emitLobby = r => io.to(r.code).emit('lobby', {
 });
 // la nave de la sala de espera (como el lobby del original): 26 x 15 m; cada uno aparece en un sitio libre del centro
 const SHIP = { w: 26, h: 15 };
-const SHIP_SPOTS = [[13, 6], [9, 6.5], [17, 6.5], [5, 5], [21, 5], [4, 9], [22, 9.5], [13, 13], [3.5, 12.5], [11, 5]];
+const SHIP_SPOTS = [[13, 6], [11, 8], [15, 8], [5, 5.5], [21, 5.5], [13, 10.5], [9.5, 11], [16.5, 12], [3, 8], [23, 8]];   // sitios libres de la nave de la sala de espera (como en la web)
 const shipSpawn = (p, r) => { const used = r ? list(r).filter(q => q !== p && q.lx != null).map(q => [q.lx, q.lz]) : []; const free = SHIP_SPOTS.filter(([x, z]) => !used.some(([a, b]) => Math.hypot(a - x, b - z) < 1.5)); const [x, z] = (free.length ? free : SHIP_SPOTS)[0]; p.lx = x + Math.random() * .6 - .3; p.lz = z + Math.random() * .4 - .2; p.ldir = 1; p.lmv = 0; };
 
 function placeSpawns(r) {

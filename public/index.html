@@ -302,6 +302,7 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 @font-face{font-family:"Chakra Petch";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/chakra-petch-latin-700-normal.woff2) format("woff2")}
 @font-face{font-family:"VT323";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/vt323-latin-400-normal.woff2) format("woff2")}
 @font-face{font-family:"Chakra Petch";font-style:italic;font-weight:700;font-display:swap;src:url(fonts/chakra-petch-latin-700-italic.woff2) format("woff2")}
+@font-face{font-family:"Bebas Neue";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/bebas-neue-latin-400-normal.woff2) format("woff2")}
 @font-face{font-family:"Inter";font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/inter-latin-wght-normal.woff2) format("woff2")}
 :root{
   --bg:#060912;--bg2:#0a1020;--hull:#121a2e;--line:#93a8ff24;--line2:#93a8ff3d;--txt:#eef2ff;--mut:#8d99bb;--steel:#a9b8dc;
@@ -891,7 +892,6 @@ body.nokeys #keys{display:none!important}
 }
 #shipPanelX{display:none}
 .shTop{position:absolute;top:max(8px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));display:flex;align-items:center;gap:8px}
-.shTop #shipInvite{margin-left:auto}
 .shBot{position:absolute;bottom:max(8px,env(safe-area-inset-bottom));left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));display:flex;align-items:center;gap:10px}
 .shChip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;border:1px solid #9fb6ff33;background:#0a1124d0;color:#fff;font:800 14px/1 var(--fd),sans-serif}
 .shChip small{font-size:10px;letter-spacing:1.5px;color:var(--steel)}.shChip b{font-size:18px;letter-spacing:3px;color:var(--amber)}
@@ -899,12 +899,95 @@ body.nokeys #keys{display:none!important}
 #shipStart{margin:0 0 0 auto;width:auto;padding:12px 26px;font-size:17px}
 #shipWait{margin-left:auto;color:#cdd6ee;font-weight:700;font-size:13px;background:#0a1124d0;padding:8px 12px;border-radius:12px}
 .shAct{padding:12px 20px;border-radius:14px;border:3px solid #ffd23f;background:#1b2338e6;color:#ffd23f;font:900 15px/1 var(--fd),sans-serif;animation:pulse 1.2s infinite}
+/* ===== v6.2 · interfaz de partida como la del original ===== */
+.act,.act2{width:clamp(66px,21vh,92px);height:clamp(66px,21vh,92px);border:0;border-radius:0;background:none;box-shadow:none;opacity:.42;filter:grayscale(.55) brightness(.9);padding:0;gap:0;justify-content:flex-start}
+.act.on,.act2.on{opacity:1;filter:none}
+.act .au,.act2 .au{width:100%;height:100%;filter:drop-shadow(0 3px 0 #0006)}
+.act .al,.act2 .al{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);max-width:none;white-space:nowrap;font:400 clamp(15px,5vh,22px)/1 "Bebas Neue","Arial Narrow",sans-serif;letter-spacing:1px;color:#eef0f3;text-transform:uppercase;text-shadow:-2px 0 0 #1d2128,2px 0 0 #1d2128,0 -2px 0 #1d2128,0 2px 0 #1d2128,-1.5px -1.5px 0 #1d2128,1.5px 1.5px 0 #1d2128,-1.5px 1.5px 0 #1d2128,1.5px -1.5px 0 #1d2128}
+.act2 .al{font-size:clamp(13px,4.2vh,18px)}
+.acd{inset:0;border-radius:0;background:none;font:400 clamp(34px,11vh,52px)/1 "Bebas Neue",sans-serif;text-shadow:-2px 0 0 #1d2128,2px 0 0 #1d2128,0 -2px 0 #1d2128,0 2px 0 #1d2128}
+.act.cd,.act2.cd{opacity:.55;filter:grayscale(.7)}
+.act.on:active,.act2.on:active{transform:scale(.92)}
+#actions{gap:6px 10px}
+#actions2{gap:10px}
+.act2{width:clamp(58px,18vh,78px);height:clamp(58px,18vh,78px)}
+#btnUse{width:clamp(72px,23vh,100px);height:clamp(72px,23vh,100px)}
+#btnUse,#btnReport,#btnKill,#btnUse.on,#btnReport.on,#btnKill.on:not(.cd){background:none;border:0;border-radius:0;box-shadow:none;animation:none}
+#btnKill{width:clamp(66px,21vh,92px);height:clamp(66px,21vh,92px)}
+/* arriba a la derecha: ajustes y mapa en botones cuadrados, sin minimapa (como el original) */
+#topRight #minimap{display:none}
+.tools{gap:6px}
+.tools .ibtn{width:clamp(38px,11vh,50px);height:clamp(38px,11vh,50px);border-radius:8px;border:3px solid #1d2128;background:linear-gradient(#8d949e,#5c636d);box-shadow:inset 0 0 0 2px #c9ced6,0 3px 0 #0007;-webkit-backdrop-filter:none;backdrop-filter:none}
+.tools .ibtn .au{width:78%;height:78%}
+.tools .ibtn .i{color:#1d2128;stroke-width:2.6}
+.tools .ibtn.off{visibility:hidden}
+/* lista de tareas: panel gris translúcido, letra blanca y la pestaña "Tareas" en vertical a la derecha */
+#taskBox{display:grid;grid-template-columns:minmax(0,1fr) auto;border-radius:0 6px 6px 0;background:#9aa0a86b;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+#taskHead{grid-column:2;grid-row:1/span 3;writing-mode:vertical-rl;justify-content:center;gap:0;padding:8px 3px;background:#9aa0a8a0;font:400 clamp(16px,4.6vh,22px)/1 Arial,"Inter",sans-serif;letter-spacing:0;color:#fff;text-shadow:0 1px 2px #0008;border-left:1px solid #ffffff30}
+#taskHead .i,#taskHead #taskCount,#taskHead .chev{display:none}
+#sabLine{grid-column:1}
+#taskList{grid-column:1;padding:7px 9px;gap:2px;font:400 clamp(11px,3.4vh,15px)/1.25 Arial,"Inter",sans-serif;text-shadow:0 1px 2px #000a,0 0 1px #000}
+#taskList>div::before{display:none}
+#taskList>div:not(.d){color:#fff}
+#taskList .seq{color:#ffe94a!important}
+#taskList .d{color:#3fff6a!important}
+#taskList .fake{color:#ff2a2a;font-weight:700}
+#taskList .fakeH{color:#fff}
+#taskBox.min{grid-template-columns:auto}#taskBox.min #taskList,#taskBox.min #sabLine{display:none}#taskBox.min #taskHead{grid-column:1}
+
+/* ===== v6.2 · sala de espera como la del original ===== */
+.shTop{align-items:flex-start}
+#shipSet{white-space:pre;font:400 clamp(9px,2.7vh,13px)/1.22 Arial,"Inter",sans-serif;color:#fff;text-shadow:0 1px 2px #000,0 0 2px #000;pointer-events:none}
+#shipBack{width:clamp(34px,10vh,44px);height:clamp(34px,10vh,44px);border-radius:8px;border:3px solid #1d2128;background:linear-gradient(#8d949e,#5c636d);box-shadow:inset 0 0 0 2px #c9ced6;color:#1d2128;flex:none}
+#shipInfo{position:absolute;top:max(8px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));width:clamp(130px,24vw,190px);display:flex;flex-direction:column;gap:3px;padding:8px 10px 10px;border-radius:10px;border:3px solid #1d2128;background:#2b3138f0;box-shadow:inset 0 0 0 2px #59616b,0 6px 18px #0008;color:#fff}
+#shipInfo small{font:700 clamp(8px,2.2vh,10px)/1 Arial,sans-serif;letter-spacing:.5px;color:#aab2bc;margin-top:3px}
+#shipCode{display:flex;align-items:center;justify-content:space-between;gap:6px;background:none;border:0;padding:0;color:#2ee6d0}
+#shipCode b{font:400 clamp(22px,7.5vh,34px)/1 "Bebas Neue",sans-serif;letter-spacing:3px}
+#shipCode .i{width:18px;height:18px;color:#2ee6d0}
+.shMap{font:400 clamp(17px,5.5vh,26px)/1 "Bebas Neue",sans-serif;letter-spacing:1px;color:#fff;text-shadow:-1px 0 #1d2128,1px 0 #1d2128,0 -1px #1d2128,0 1px #1d2128;padding:3px 6px;background:#1d2128;border-radius:4px;text-align:center}
+.shRow{display:flex;align-items:center;justify-content:space-between;font:700 clamp(8px,2.3vh,11px)/1 Arial,sans-serif;color:#aab2bc}
+.shRow b{display:flex;align-items:center;gap:4px;background:#1d2128;padding:3px 8px;border-radius:3px;color:#ff3d3d;font:400 clamp(13px,4vh,18px)/1 "Bebas Neue",sans-serif;letter-spacing:1px}
+.shCrew{width:12px;height:12px;border-radius:6px 6px 2px 2px;background:#c51111;box-shadow:inset 4px -2px 0 -1px #8a0d0d}
+.shTeal{margin-top:3px;padding:5px 0;border:0;border-radius:3px;background:repeating-linear-gradient(115deg,#2ee6d0 0 32%,#7ff3e6 32% 40%,#2ee6d0 40% 70%,#7ff3e6 70% 76%);color:#1d2128;font:400 clamp(16px,5vh,22px)/1 "Bebas Neue",sans-serif;letter-spacing:2px;box-shadow:inset 0 -3px 0 #1aa797}
+.shBot{left:50%;right:auto;transform:translateX(-50%);flex-direction:column;gap:2px}
+#shipStart{display:flex;align-items:center;gap:0;margin:0;padding:0;background:none;border:0;width:auto}
+#shipStart .au{width:clamp(36px,11vh,54px);height:clamp(36px,11vh,54px);margin-right:-6px;filter:drop-shadow(0 3px 0 #0006)}
+#shipStart span{font:400 clamp(34px,11vh,56px)/1 "Bebas Neue",sans-serif;letter-spacing:3px;color:#f4f6f8;text-shadow:-3px 0 0 #1d2128,3px 0 0 #1d2128,0 -3px 0 #1d2128,0 3px 0 #1d2128,-2px -2px 0 #1d2128,2px 2px 0 #1d2128,-2px 2px 0 #1d2128,2px -2px 0 #1d2128,0 5px 0 #0007}
+#shipStart:active{transform:scale(.94)}
+#shipWait{margin:0;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;padding:0}
+#shipWait small{font:700 clamp(10px,3vh,13px)/1 Arial,sans-serif;color:#fff;text-shadow:0 1px 2px #000}
+#shipWait span{padding:6px 14px;border:2px solid #9aa1a8;background:#1d2128b0;font:400 clamp(18px,5.6vh,26px)/1 "Bebas Neue",sans-serif;letter-spacing:2px;color:#c3c9cf}
+#shipCount2{font:400 clamp(14px,4.4vh,20px)/1 "Bebas Neue",sans-serif;letter-spacing:1px;color:#5ae63c;text-shadow:0 1px 2px #000}
+#shipUse{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));width:clamp(70px,22vh,96px);height:clamp(70px,22vh,96px);animation:none;pointer-events:auto}
+/* ===== v6.2 · menú principal como el del original: marco gris, botones turquesa con franjas y el espacio a la derecha ===== */
+#menu{background:#000}
+#menu .stars{opacity:1}
+#menu .logo{filter:none;font-style:normal}
+#menu .logo span,#menu .logo b{font-family:"Bebas Neue",sans-serif;font-weight:400;font-style:normal;letter-spacing:2px;color:#fff;background:none;-webkit-text-fill-color:#fff;-webkit-text-stroke:0;text-shadow:-2px 0 0 #1d2128,2px 0 0 #1d2128,0 -2px 0 #1d2128,0 2px 0 #1d2128,0 4px 0 #0008}
+#menu .logo b{color:#ff3d3d;-webkit-text-fill-color:#ff3d3d}
+.auTeal,#menu #btnCreate,#menu #btnJoin{border:0;border-radius:4px;background:repeating-linear-gradient(115deg,#2ee6d0 0 30%,#86f5e9 30% 38%,#2ee6d0 38% 64%,#86f5e9 64% 69%,#2ee6d0 69%);color:#1d2128;font:400 clamp(22px,7vh,32px)/1 "Bebas Neue",sans-serif;letter-spacing:2px;text-transform:uppercase;box-shadow:inset 0 -4px 0 #18a594,0 0 0 3px #1d2128;justify-content:flex-end;padding-right:18px}
+#menu #btnCreate .i{width:1.1em;height:1.1em;margin-right:auto;margin-left:6px;color:#1d2128;stroke-width:3}
+#menu #btnJoin{font-size:clamp(18px,5.6vh,26px);justify-content:center;padding:0 16px}
+#menu #btnCreate::before,#menu #btnCreate::after{display:none}
+#menu .btn.ghost{border:0;border-radius:3px;background:repeating-linear-gradient(115deg,#5d7c80 0 40%,#6f9196 40% 46%,#5d7c80 46%);color:#e8f4f2;font:400 clamp(15px,4.6vh,20px)/1 "Bebas Neue",sans-serif;letter-spacing:1.5px;text-transform:uppercase;box-shadow:inset 0 -3px 0 #3f5a5d,0 0 0 2px #1d2128}
+#menu .btn.ghost .i{color:#e8f4f2}
+#menu .glass,#menu .pmain{background:#1b2427e6;border:3px solid #1d2128;box-shadow:inset 0 0 0 2px #3d5458;border-radius:8px;-webkit-backdrop-filter:none;backdrop-filter:none}
+#menu .sec-h{font-family:"Bebas Neue",sans-serif;font-weight:400;font-size:clamp(14px,4vh,18px);letter-spacing:1.5px;color:#9fc7c2}
+#menu .field{background:#000;border:2px solid #e8eaee;border-radius:4px;color:#fff;font-family:"Bebas Neue",sans-serif}
+#menu #menuList .citem{border-radius:6px;border:2px solid #3d5458;background:#0e1416}
+#menu #menuList .citem.sel{border-color:#2ee6d0;background:#123c38}
+#menu .topbar .ibtn{border-radius:8px;border:3px solid #1d2128;background:linear-gradient(#8d949e,#5c636d);box-shadow:inset 0 0 0 2px #c9ced6;color:#1d2128}
+#menu .topbar .ibtn .i{stroke-width:2.6}
+@media (orientation:landscape){
+  #menu .card{position:relative}
+  #menu .card::before{content:"";position:absolute;z-index:-1;left:max(8px,env(safe-area-inset-left));top:max(6px,env(safe-area-inset-top));bottom:max(6px,env(safe-area-inset-bottom));width:calc(47% - 14px);border-radius:14px;border:4px solid #1d2128;background:linear-gradient(#29393c,#1d2a2c);box-shadow:inset 0 0 0 3px #3f5659}
+}
 </style>
 <link rel="preload" href="fonts/chakra-petch-latin-700-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-zin" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5M8 11h6M11 8v6"/></symbol><symbol id="i-zout" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5M8 11h6"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></symbol><symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></symbol><symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol><symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></symbol><symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></symbol><symbol id="i-max" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M16 21h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></symbol><symbol id="i-min" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></symbol><symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4z"/><rect x="2" y="6" width="14" height="12" rx="2.5"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol><symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol><symbol id="i-crown" viewBox="0 0 24 24"><path d="m2 6 4 11h12l4-11-6 5-4-7-4 7z"/></symbol><symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.3l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></symbol><symbol id="i-report" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol><symbol id="i-knife" viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol><symbol id="i-vent" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8h10M7 12h10M7 16h10"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></symbol><symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></symbol><symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><rect x="2" y="6" width="20" height="12" rx="6"/></symbol><symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-zin" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5M8 11h6M11 8v6"/></symbol><symbol id="i-zout" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5M8 11h6"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></symbol><symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></symbol><symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol><symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></symbol><symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></symbol><symbol id="i-max" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M16 21h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></symbol><symbol id="i-min" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></symbol><symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4z"/><rect x="2" y="6" width="14" height="12" rx="2.5"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol><symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol><symbol id="i-crown" viewBox="0 0 24 24"><path d="m2 6 4 11h12l4-11-6 5-4-7-4 7z"/></symbol><symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.3l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></symbol><symbol id="i-report" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol><symbol id="i-knife" viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol><symbol id="i-vent" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8h10M7 12h10M7 16h10"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></symbol><symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></symbol><symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><rect x="2" y="6" width="20" height="12" rx="6"/></symbol><symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol><symbol id="au-use" viewBox="0 0 100 100"><path d="M6 12H94L50 94Z" fill="#1d2128"/><path d="M14 18H86L50 84Z" fill="#f4f6f8"/><path d="M21 23H79L50 46Z" fill="#e1e5ea"/><path d="M21 23L50 46L50 76Z" fill="#c3c9d1"/><path d="M79 23L50 46L50 76Z" fill="#9aa2ad"/><path d="M75 29L52 71" stroke="#d3262b" stroke-width="3.5" stroke-linecap="round"/></symbol><symbol id="au-report" viewBox="0 0 100 100"><path d="M95.1 40.9 L83.0 51.4 L94.2 62.9 L78.6 66.5 L83.1 81.9 L67.6 77.9 L64.5 93.7 L52.6 82.9 L42.6 95.4 L37.0 80.3 L22.3 86.7 L24.4 70.8 L8.4 69.7 L17.7 56.6 L4.0 48.1 L18.3 40.8 L10.2 26.9 L26.2 27.1 L25.5 11.1 L39.6 18.7 L46.4 4.1 L55.3 17.4 L68.1 7.7 L69.9 23.6 L85.7 21.0 L79.8 35.9Z" fill="#e0291f" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M86.0 48.2 L76.5 55.1 L82.7 65.1 L71.1 66.9 L71.9 78.6 L60.8 74.7 L56.1 85.5 L48.1 76.9 L38.9 84.3 L35.8 73.0 L24.3 75.2 L26.7 63.7 L15.5 60.4 L23.0 51.3 L14.7 43.1 L25.5 38.7 L21.9 27.5 L33.6 28.6 L35.6 17.0 L45.4 23.4 L52.5 14.1 L58.3 24.3 L68.9 19.4 L69.3 31.1 L81.0 31.7 L75.9 42.2Z" fill="#ff5a36"/><g transform="rotate(-22 50 52)"><path d="M24 43h13l27-15v46L37 59H24z" fill="#f4f6f8" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M30 59l5 14h8l-3-14" fill="#c3c9d1" stroke="#1d2128" stroke-width="3.5" stroke-linejoin="round"/><rect x="62" y="26" width="8" height="50" rx="3" fill="#c3c9d1" stroke="#1d2128" stroke-width="3.5"/><path d="M42 41l5-2.5v25l-5-2.5z" fill="#d3262b"/><path d="M27 47h9" stroke="#9aa2ad" stroke-width="3" stroke-linecap="round"/></g></symbol><symbol id="au-kill" viewBox="0 0 100 100"><path d="M50 4C62 16 82 14 86 34C96 46 90 70 78 80H22C10 70 4 46 14 34C18 14 38 16 50 4Z" fill="#e0291f" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M50 13C60 22 76 22 78 37C85 47 82 64 74 72H26C18 64 15 47 22 37C24 22 40 22 50 13Z" fill="#ff5a36"/><path d="M50 20C30 20 20 33 20 49C20 58 24 64 30 67V80H70V67C76 64 80 58 80 49C80 33 70 20 50 20Z" fill="#e8eaee" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M27 47C27 39 33 37 40 39C45 41 45 50 39 54C33 57 27 54 27 47ZM73 47C73 39 67 37 60 39C55 41 55 50 61 54C67 57 73 54 73 47Z" fill="#2a2e35"/><circle cx="37" cy="47" r="4" fill="#ff2a2a"/><circle cx="63" cy="47" r="4" fill="#ff2a2a"/><path d="M50 56L46 63H54Z" fill="#2a2e35"/><path d="M38 70V80M46 70V80M54 70V80M62 70V80" stroke="#1d2128" stroke-width="3"/></symbol><symbol id="au-sab" viewBox="0 0 100 100"><path d="M50 3C64 12 86 12 90 32C99 47 93 72 80 84C66 96 34 96 20 84C7 72 1 47 10 32C14 12 36 12 50 3Z" fill="#e0291f" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M50 12C62 20 80 20 82 36C89 48 85 68 74 77C62 87 38 87 26 77C15 68 11 48 18 36C20 20 38 20 50 12Z" fill="#ff5a36"/><path d="M30 84V44C30 30 39 22 52 22C65 22 74 31 74 44V84Z" fill="#4a4f57" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><rect x="20" y="46" width="12" height="28" rx="5" fill="#3a3e45" stroke="#1d2128" stroke-width="3.5"/><path d="M44 34H74C80 34 82 46 74 48H44C38 48 38 34 44 34Z" fill="#262a30" stroke="#1d2128" stroke-width="3.5"/><path d="M62 26L58 56M54 30L68 50" stroke="#ff2a2a" stroke-width="4" stroke-linecap="round"/></symbol><symbol id="au-vent" viewBox="0 0 100 100"><path d="M10 28H74L92 50L74 72H10L28 50Z" fill="#3c4048" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M22 36H70M18 43H75M26 57H77M22 64H72" stroke="#c3c9d1" stroke-width="3"/><path d="M30 50H82" stroke="#e0291f" stroke-width="3"/><path d="M48 46C48 40 56 40 56 46V54H48Z" fill="#2a2e35" stroke="#1d2128" stroke-width="2.5"/><path d="M56 47L60 54" stroke="#ff2a2a" stroke-width="3" stroke-linecap="round"/></symbol><symbol id="au-cams" viewBox="0 0 100 100"><rect x="8" y="26" width="84" height="52" rx="5" fill="#9aa2ad" stroke="#1d2128" stroke-width="4"/><rect x="15" y="32" width="70" height="40" rx="3" fill="#e1e5ea"/><path d="M18 64L38 46L50 56L62 40L82 60" fill="none" stroke="#9aa2ad" stroke-width="4"/><g transform="rotate(-30 58 44)"><rect x="40" y="36" width="34" height="18" rx="4" fill="#c3c9d1" stroke="#1d2128" stroke-width="3.5"/><path d="M74 40l9-5v20l-9-5z" fill="#9aa2ad" stroke="#1d2128" stroke-width="3"/><circle cx="48" cy="45" r="3" fill="#ff2a2a"/></g><path d="M48 46L54 58L44 60Z" fill="#2fd17a" stroke="#1d2128" stroke-width="2.5"/></symbol><symbol id="au-admin" viewBox="0 0 100 100"><path d="M12 22H36V14H64V22H88V54H72V66H28V54H12Z" fill="#e8eaee" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M20 28H34V40H20ZM44 22H58V34H44ZM66 28H80V40H66ZM34 46H48V58H34ZM54 46H66V58H54Z" fill="#9aa2ad"/><path d="M30 64H70L50 94Z" fill="#2fd17a" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/></symbol><symbol id="au-vitals" viewBox="0 0 100 100"><rect x="8" y="20" width="84" height="60" rx="6" fill="#c3c9d1" stroke="#1d2128" stroke-width="4"/><rect x="15" y="27" width="70" height="46" rx="3" fill="#eef1f4"/><path d="M15 54H34L40 44L47 64L54 34L60 54H85" fill="none" stroke="#2fd17a" stroke-width="4" stroke-linejoin="round"/></symbol><symbol id="au-doorlog" viewBox="0 0 100 100"><path d="M42 18H58V44L80 66V84H66V72L50 56L34 72V84H20V66L42 44Z" fill="#e8eaee" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M42 26H58M24 70L34 60M76 70L66 60" stroke="#2fd17a" stroke-width="4"/></symbol><symbol id="au-haunt" viewBox="0 0 100 100"><path d="M18 70C10 62 14 50 22 46C22 30 34 18 50 18C68 18 80 30 80 48C88 52 92 62 86 70C78 80 66 74 60 80C52 88 40 82 34 76C28 80 20 76 18 70Z" fill="#5aa8ff" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M46 34H72C78 34 80 46 72 48H46C40 48 40 34 46 34Z" fill="#c7e3ff" stroke="#1d2128" stroke-width="3.5"/><path d="M50 37H60" stroke="#fff" stroke-width="3" stroke-linecap="round"/></symbol><symbol id="au-custom" viewBox="0 0 100 100"><path d="M18 22H82V66H18Z" fill="#c3c9d1" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M24 28H76V60H24Z" fill="#3c4048"/><path d="M30 34h8v6h-8zM44 34h8v6h-8zM58 34h8v6h-8zM30 46h8v6h-8zM44 46h8v6h-8zM58 46h8v6h-8z" fill="#c3c9d1"/><path d="M10 70H90L84 82H16Z" fill="#9aa2ad" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/></symbol><symbol id="au-map" viewBox="0 0 100 100"><path d="M18 26L38 20L62 28L82 22V74L62 80L38 72L18 78Z" fill="#e8eaee" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M38 20V72M62 28V80" stroke="#1d2128" stroke-width="3"/><path d="M66 30C66 22 78 22 78 30C78 36 72 42 72 42C72 42 66 36 66 30Z" fill="#9aa2ad" stroke="#1d2128" stroke-width="3"/></symbol><symbol id="au-chat" viewBox="0 0 100 100"><path d="M14 22H74C78 22 80 24 80 28V56C80 60 78 62 74 62H40L26 74V62H14C10 62 8 60 8 56V28C8 24 10 22 14 22Z" fill="#e8eaee" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><path d="M22 36H66M22 46H56" stroke="#9aa2ad" stroke-width="4" stroke-linecap="round"/><path d="M84 40H90V76H82L72 84V76H58" fill="none" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/></symbol><symbol id="au-gear" viewBox="0 0 100 100"><path d="M90.0 50.0 L78.6 61.9 L78.3 78.3 L61.9 78.6 L50.0 90.0 L38.1 78.6 L21.7 78.3 L21.4 61.9 L10.0 50.0 L21.4 38.1 L21.7 21.7 L38.1 21.4 L50.0 10.0 L61.9 21.4 L78.3 21.7 L78.6 38.1Z" fill="#e8eaee" stroke="#1d2128" stroke-width="4" stroke-linejoin="round"/><circle cx="50" cy="50" r="14" fill="#3c4048" stroke="#1d2128" stroke-width="4"/></symbol><symbol id="au-start" viewBox="0 0 100 100"><path d="M6 12L96 50L6 88Z" fill="#1d2128"/><path d="M14 22L80 50L14 78Z" fill="#f4f6f8"/><path d="M20 30L64 50L20 50Z" fill="#e1e5ea"/><path d="M20 50L64 50L20 70Z" fill="#a9b0ba"/><path d="M28 70L70 52" stroke="#d3262b" stroke-width="3.5" stroke-linecap="round"/></symbol></defs></svg>
 <div id="splash" aria-hidden="true"><div class="logo"><span>IMPOSTOR</span><b>3D</b></div><div class="ld"><i></i></div></div>
 <script>setTimeout(function(){document.body.classList.add('ready')},9000)</script>
 
@@ -933,7 +1016,7 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v6.1</span></footer>
+    <footer class="foot"><span>Impostor 3D · v6.2</span></footer>
   </div>
 </div>
 
@@ -941,8 +1024,16 @@ body.nokeys #keys{display:none!important}
   <div class="stars"></div>
   <canvas id="shipCv"></canvas>
   <div id="shipHud">
-    <div class="shTop"><button id="shipBack" class="ibtn" aria-label="Salir de la sala"><svg class="i" aria-hidden="true"><use href="#i-back"/></svg></button><button id="shipCode" class="shChip"><small>CÓDIGO</small><b id="shipCodeTxt">----</b></button><button id="shipInvite" class="shChip amber"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg>Invitar</button></div>
-    <div class="shBot"><button id="shipPanel" class="shChip"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg><span id="shipCount">1/10</span></button><button id="shipUse" class="shAct" style="display:none"></button><button id="shipStart" class="btn amber">Empezar</button><span id="shipWait">Esperando al anfitrión…</span></div>
+    <div class="shTop"><button id="shipBack" class="ibtn" aria-label="Salir de la sala"><svg class="i" aria-hidden="true"><use href="#i-back"/></svg></button><div id="shipSet"></div></div>
+    <div id="shipInfo">
+      <small>CÓDIGO DE SALA</small><button id="shipCode" aria-label="Copiar el código"><b id="shipCodeTxt">----</b><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg></button>
+      <small>AJUSTES DE LA SALA</small><div class="shMap">THE SKELD</div>
+      <div class="shRow"><span>CAPACIDAD</span><b><i class="shCrew"></i><span id="shipCount">1/10</span></b></div>
+      <small>AJUSTES DE LA PARTIDA</small><button id="shipPanel" class="shTeal">VER</button>
+      <button id="shipInvite" class="shTeal">INVITAR</button>
+    </div>
+    <div class="shBot"><button id="shipStart" aria-label="Empezar"><svg class="au" aria-hidden="true"><use href="#au-start"/></svg><span>EMPEZAR</span></button><div id="shipWait"><small id="shipHost"></small><span>ESPERANDO AL ANFITRIÓN</span></div><span id="shipCount2"></span></div>
+    <button id="shipUse" class="act on" style="display:none"><svg class="au" aria-hidden="true"><use href="#au-custom"/></svg><span class="al"></span><span class="acd"></span></button>
   </div>
   <div class="card">
     <button id="shipPanelX" class="x" aria-label="Cerrar">✕</button>
@@ -987,18 +1078,18 @@ body.nokeys #keys{display:none!important}
   <canvas id="cv"></canvas>
   <div id="vignette"></div>
   <div id="topLeft" class="hud"><div id="barWrap"><div id="bar"></div><span>TAREAS TOTALES COMPLETADAS</span></div><div id="taskBox" class="hglass"><div id="taskHead" role="button" aria-label="Mostrar u ocultar tareas"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tareas</span><b id="taskCount"></b><i class="chev"></i></div><div id="sabLine"></div><div id="taskList"></div></div><div id="testTag" style="display:none">MODO PRUEBAS</div></div>
-  <div id="topRight" class="hud"><canvas id="minimap" width="300" height="205"></canvas><div class="tools"><button id="btnSound" class="ibtn sndBtn" aria-label="Sonido"></button><button id="btnCfg" class="ibtn" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button><button id="btnFull" class="ibtn" aria-label="Pantalla completa"><svg class="i" aria-hidden="true"><use href="#i-max"/></svg></button><button id="btnTest" class="ibtn" style="display:none" aria-label="Herramientas de prueba"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg></button><button id="btnEndTest" class="ibtn" style="display:none" aria-label="Terminar prueba"><svg class="i" aria-hidden="true"><use href="#i-flag"/></svg></button><button id="btnQuit" class="ibtn" aria-label="Salir de la partida"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button></div></div>
+  <div id="topRight" class="hud"><canvas id="minimap" width="300" height="205"></canvas><div class="tools"><button id="btnSound" class="ibtn sndBtn" aria-label="Sonido"></button><button id="btnCfg" class="ibtn" aria-label="Ajustes"><svg class="au" aria-hidden="true"><use href="#au-gear"/></svg></button><button id="btnMap" class="ibtn" aria-label="Mapa"><svg class="au" aria-hidden="true"><use href="#au-map"/></svg></button><button id="btnFull" class="ibtn" aria-label="Pantalla completa"><svg class="i" aria-hidden="true"><use href="#i-max"/></svg></button><button id="btnTest" class="ibtn" style="display:none" aria-label="Herramientas de prueba"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg></button><button id="btnEndTest" class="ibtn" style="display:none" aria-label="Terminar prueba"><svg class="i" aria-hidden="true"><use href="#i-flag"/></svg></button><button id="btnQuit" class="ibtn" aria-label="Salir de la partida"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button></div></div>
   <div id="ghost" class="hud">Eres un fantasma: sigue con las tareas y observa</div>
   <div id="keys" class="hud">WASD / flechas mover · E usar · R reportar · Q matar · G sabotaje · F ventilación</div>
   <div id="sabBanner" class="hud"></div><div id="redFlash" class="hud"></div>
-  <div id="actions2"><button id="btnSab" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-zap"/></svg><span class="al">Sabotaje</span><span class="acd"></span></button><button id="btnVent" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-vent"/></svg><span class="al">Rejilla</span><span class="acd"></span></button><button id="btnHaunt" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg><span class="al">Acechar</span><span class="acd"></span></button></div>
+  <div id="actions2"><button id="btnSab" class="act2 hide"><svg class="au" aria-hidden="true"><use href="#au-sab"/></svg><span class="al">Sabotaje</span><span class="acd"></span></button><button id="btnVent" class="act2 hide"><svg class="au" aria-hidden="true"><use href="#au-vent"/></svg><span class="al">Rejilla</span><span class="acd"></span></button><button id="btnHaunt" class="act2 hide"><svg class="au" aria-hidden="true"><use href="#au-haunt"/></svg><span class="al">Acechar</span><span class="acd"></span></button></div>
   <div id="ventUI"></div>
   <div id="stickZone"></div><div id="stick"><div id="knob"></div></div>
   <div id="rotateHint" class="hud hglass"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg><span>Gira el móvil para jugar mejor</span></div>
   <div id="actions">
-    <button id="btnKill" class="act hide"><svg class="i" aria-hidden="true"><use href="#i-knife"/></svg><span class="al">Matar</span><span class="acd"></span></button>
-    <button id="btnReport" class="act hide"><svg class="i" aria-hidden="true"><use href="#i-report"/></svg><span class="al">Reportar</span><span class="acd"></span></button>
-    <button id="btnUse" class="act hide"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg><span class="al">Usar</span><span class="acd"></span></button>
+    <button id="btnKill" class="act hide"><svg class="au" aria-hidden="true"><use href="#au-kill"/></svg><span class="al">Matar</span><span class="acd"></span></button>
+    <button id="btnReport" class="act hide"><svg class="au" aria-hidden="true"><use href="#au-report"/></svg><span class="al">Reportar</span><span class="acd"></span></button>
+    <button id="btnUse" class="act hide"><svg class="au" aria-hidden="true"><use href="#au-use"/></svg><span class="al">Usar</span><span class="acd"></span></button>
   </div>
 </div>
 
@@ -1069,7 +1160,7 @@ body.nokeys #keys{display:none!important}
 <input id="faceCam" type="file" accept="image/*" capture="user" style="display:none">
 <div id="helpOv" class="ov"><div class="panel"><div class="grab"></div><h2><span>Cómo se juega</span><button class="x" id="helpClose" aria-label="Cerrar">✕</button></h2>
   <div class="how">
-    <div class="hw"><div class="ic c1"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></div><div><b>Tripulación</b><p>Completa tus tareas (puntos naranjas del minimapa) y arregla los sabotajes. Ganáis al terminar todas o al expulsar a los impostores.</p></div></div>
+    <div class="hw"><div class="ic c1"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></div><div><b>Tripulación</b><p>Completa tus tareas (salen en el mapa, con el botón de arriba a la derecha) y arregla los sabotajes. Ganáis al terminar todas o al expulsar a los impostores.</p></div></div>
     <div class="hw"><div class="ic c2"><svg class="i" aria-hidden="true"><use href="#i-knife"/></svg></div><div><b>Impostor</b><p>Elimina sin que te vean, sabotea la nave y muévete por las rejillas. Ganas si quedáis tantos como tripulantes.</p></div></div>
     <div class="hw"><div class="ic c3"><svg class="i" aria-hidden="true"><use href="#i-report"/></svg></div><div><b>Reuniones</b><p>Si encuentras un cuerpo, repórtalo. O pulsa el botón rojo de la cafetería. Discutid y votad a quién expulsar.</p></div></div>
     <div class="hw"><div class="ic c4"><svg class="i" aria-hidden="true"><use href="#i-gamepad"/></svg></div><div><b>Controles</b><p>Pulgar izquierdo en cualquier sitio para moverte: el personaje va hacia donde empujas. Solo ves lo que tienes alrededor y sin paredes en medio. Los botones redondos se encienden cuando puedes usarlos.</p></div></div>
@@ -1232,32 +1323,73 @@ $('btnAgain').onclick = () => socket.emit('again');
 socket.on('toast', t => toast(t));
 /* ---------- la nave de la sala de espera, como el lobby del original ----------
    Se anda por ella (joystick o WASD), el anfitrión cambia los ajustes en el portátil y en el armario te cambias. */
-const SHIP = { w: 26, h: 15, obs: [[8, 1.6, 10.4, 3.6, 'laptop'], [15.6, 1.6, 18, 3.6, 'wardrobe'], [6.5, 9.2, 11, 12.6, 'crate'], [15, 8.6, 19.5, 12.2, 'crate'], [1.6, 1.4, 6.4, 2.4, 'seats'], [19.6, 12.6, 24.4, 13.6, 'seats']] };
+// la nave de la sala de espera del original: asientos azules en la pared del fondo, el portátil para personalizarte (a la izquierda),
+// la consola de los ajustes (a la derecha) y dos cajas verdes
+const SHIP = { w: 26, h: 15, obs: [[8, 4.6, 10, 6.2, 'wardrobe'], [16, 4.6, 18, 6.2, 'laptop'], [4, 9.4, 7.4, 12.4, 'crate'], [18.6, 9, 22, 12, 'crate'], [2, 1.2, 10, 2.2, 'seats'], [16, 1.2, 24, 2.2, 'seats']] };
 const LB = { me: null, ptr: null, raf: 0, near: null, last: 0, sent: 0, others: new Map() };
 const shipFree = (x, z) => x > 1.4 && x < SHIP.w - 1.4 && z > 1.6 && z < SHIP.h - 1.2 && !SHIP.obs.some(o => x > o[0] - .5 && x < o[2] + .5 && z > o[1] - .3 && z < o[3] + .9);
-function shipView() { const cv = $('shipCv'), w = cv.clientWidth, h = cv.clientHeight, sc = Math.min(w / (SHIP.w + 1.5), h / (SHIP.h + 2.2)); return { w, h, sc, ox: (w - SHIP.w * sc) / 2, oy: (h - SHIP.h * sc) / 2 + sc * .5 }; }
+function shipView() { const cv = $('shipCv'), w = cv.clientWidth, h = cv.clientHeight, sc = Math.min(w / (SHIP.w + 9), h / (SHIP.h + 6.4)); return { w, h, sc, ox: (w - SHIP.w * sc) / 2, oy: (h - SHIP.h * sc) / 2 + sc * .4 }; }   // la nave entera con sus motores
 function drawShip(now) {
   const cv = $('shipCv'); if (!cv.clientWidth) return;
-  const { g, w, h } = fitCanvas(cv), v = shipView(), sc = v.sc, X = x => v.ox + x * sc, Y = z => v.oy + z * sc, t = now / 1000;
-  g.fillStyle = '#05070d'; g.fillRect(0, 0, w, h);
-  // casco y suelo de placas
-  g.fillStyle = '#3a4152'; g.beginPath(); g.roundRect(X(-.4), Y(-.6), (SHIP.w + .8) * sc, (SHIP.h + 1.2) * sc, sc * 1.4); g.fill();
-  g.fillStyle = '#8f9aab'; g.fillRect(X(1), Y(1), (SHIP.w - 2) * sc, (SHIP.h - 2) * sc);
-  g.strokeStyle = '#7a8597'; g.lineWidth = Math.max(1, sc * .06);
-  for (let x = 1; x <= SHIP.w - 1; x += 2) { g.beginPath(); g.moveTo(X(x), Y(1)); g.lineTo(X(x), Y(SHIP.h - 1)); g.stroke(); }
-  for (let z = 1; z <= SHIP.h - 1; z += 2) { g.beginPath(); g.moveTo(X(1), Y(z)); g.lineTo(X(SHIP.w - 1), Y(z)); g.stroke(); }
-  // pared del fondo con la puerta de entrada (arriba, en el centro)
-  g.fillStyle = '#b8c1d1'; g.fillRect(X(1), Y(-.2), (SHIP.w - 2) * sc, 1.2 * sc); g.fillStyle = '#5b6578'; g.fillRect(X(1), Y(.85), (SHIP.w - 2) * sc, .15 * sc);
-  g.fillStyle = '#20252f'; g.fillRect(X(11.6), Y(-.2), 2.8 * sc, 1.2 * sc); g.fillStyle = '#ffd23f'; for (let k = 0; k < 6; k++) g.fillRect(X(11.6 + k * .5), Y(.75), .25 * sc, .25 * sc);
-  g.strokeStyle = '#0d0f17'; g.lineWidth = Math.max(2, sc * .12); g.strokeRect(X(1), Y(-.2), (SHIP.w - 2) * sc, (SHIP.h - .8) * sc);
-  // objetos
-  const box = (o, top, front) => { const [x0, z0, x1, z1] = o; g.fillStyle = front; g.fillRect(X(x0), Y(z1) - sc * .9, (x1 - x0) * sc, sc * .9); g.fillStyle = top; g.fillRect(X(x0), Y(z0) - sc * .9, (x1 - x0) * sc, (z1 - z0) * sc); g.strokeStyle = '#0d0f17'; g.lineWidth = Math.max(1.5, sc * .07); g.strokeRect(X(x0), Y(z0) - sc * .9, (x1 - x0) * sc, (z1 - z0 + .9) * sc); };
+  const { g, w, h } = fitCanvas(cv), v = shipView(), sc = v.sc, X = x => v.ox + x * sc, Y = z => v.oy + z * sc, t = now / 1000, O = '#141920', lw = Math.max(1.5, sc * .09);
+  const poly = (pts, fill, stroke) => { g.beginPath(); pts.forEach(([x, z], i) => i ? g.lineTo(X(x), Y(z)) : g.moveTo(X(x), Y(z))); g.closePath(); g.fillStyle = fill; g.fill(); if (stroke !== false) { g.strokeStyle = stroke || O; g.lineWidth = lw; g.stroke(); } };
+  // espacio con estrellas
+  g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 70; i++) { const sx = (Math.sin(i * 12.9898) * 43758.5453 % 1 + 1) % 1, sy = (Math.sin(i * 78.233) * 12345.678 % 1 + 1) % 1; g.fillStyle = `rgba(255,255,255,${.35 + .4 * ((i * 7) % 5) / 5})`; g.fillRect(sx * w, sy * h, 1.5, 1.5); }
+  // motores a los lados, con las llamas azules
+  for (const sd of [-1, 1]) {
+    const ex = sd < 0 ? -3.6 : SHIP.w + 3.6, x0 = Math.min(ex, sd < 0 ? -.4 : SHIP.w + .4), x1 = Math.max(ex, sd < 0 ? -.4 : SHIP.w + .4);
+    poly([[x0, 8.6], [x1, 8.2], [x1, 14.4], [x0, 14.6]], '#2e3a45'); poly([[x0 + .4, 9.2], [x1 - .4, 9], [x1 - .4, 11.6], [x0 + .4, 11.8]], '#4d5d6a');
+    poly(sd < 0 ? [[-.4, 4], [-2.2, 6.8], [-2.2, 8.6], [-.4, 8.4]] : [[SHIP.w + .4, 4], [SHIP.w + 2.2, 6.8], [SHIP.w + 2.2, 8.6], [SHIP.w + .4, 8.4]], '#3d4b57');
+    for (let k = 0; k < 4; k++) { const fx = (x0 + x1) / 2 + ((k % 2) - .5) * 1.5, fz = 15 + Math.floor(k / 2) * 1.3, fl = 1 + Math.sin(t * 18 + k * 2) * .12;
+      g.fillStyle = '#4fc8ff'; g.beginPath(); g.ellipse(X(fx), Y(fz), sc * .75 * fl, sc * .9 * fl, 0, 0, TAU); g.fill(); g.fillStyle = '#e6f8ff'; g.beginPath(); g.ellipse(X(fx), Y(fz - .1), sc * .45 * fl, sc * .6 * fl, 0, 0, TAU); g.fill(); }
+  }
+  // casco octogonal
+  poly([[-.6, -1.6], [2.6, -3.4], [SHIP.w - 2.6, -3.4], [SHIP.w + .6, -1.6], [SHIP.w + .6, SHIP.h + .2], [SHIP.w - 2.4, SHIP.h + 2.6], [2.4, SHIP.h + 2.6], [-.6, SHIP.h + .2]], '#3d4b57');
+  poly([[.2, -1.1], [2.9, -2.7], [SHIP.w - 2.9, -2.7], [SHIP.w - .2, -1.1], [SHIP.w - .2, SHIP.h - .2], [.2, SHIP.h - .2]], '#56636e');
+  g.fillStyle = '#2a8ad8'; g.fillRect(X(10), Y(-3.3), 6 * sc, .45 * sc); g.fillStyle = '#7cc7ff'; g.fillRect(X(10.4), Y(-3.25), 2 * sc, .3 * sc);   // luz azul del techo
+  // pared del fondo: paneles claros y la puerta en el centro
+  g.fillStyle = '#c3c9cf'; g.fillRect(X(.9), Y(-1.9), (SHIP.w - 1.8) * sc, 2.9 * sc);
+  g.strokeStyle = '#8e969e'; g.lineWidth = Math.max(1, sc * .07); for (let x = 1.6; x < SHIP.w - 1; x += 1.3) { g.beginPath(); g.moveTo(X(x), Y(-1.8)); g.lineTo(X(x), Y(.9)); g.stroke(); }
+  g.fillStyle = '#9aa1a8'; g.fillRect(X(.9), Y(.55), (SHIP.w - 1.8) * sc, .45 * sc);
+  g.strokeStyle = O; g.lineWidth = lw; g.strokeRect(X(.9), Y(-1.9), (SHIP.w - 1.8) * sc, 2.9 * sc);
+  g.fillStyle = '#6c757e'; g.beginPath(); g.roundRect(X(11.4), Y(-1.7), 3.2 * sc, 2.7 * sc, sc * .5); g.fill(); g.stroke();
+  g.fillStyle = '#9aa1a8'; g.beginPath(); g.roundRect(X(11.75), Y(-1.4), 1.2 * sc, 2.2 * sc, sc * .3); g.fill(); g.stroke(); g.beginPath(); g.roundRect(X(13.05), Y(-1.4), 1.2 * sc, 2.2 * sc, sc * .3); g.fill(); g.stroke();
+  g.fillStyle = '#4fc8ff'; g.fillRect(X(12.85), Y(-.6), .4 * sc, .4 * sc);
+  // suelo de rejilla con el pasillo central y las barandillas de los lados
+  g.fillStyle = '#878f97'; g.fillRect(X(.9), Y(1), (SHIP.w - 1.8) * sc, (SHIP.h - 1.4) * sc);
+  g.fillStyle = '#9aa2a9'; g.fillRect(X(10.6), Y(1), 4.8 * sc, (SHIP.h - 1.4) * sc);
+  g.strokeStyle = '#6f777f'; g.lineWidth = Math.max(1, sc * .05);
+  for (let z = 1.5; z < SHIP.h - .4; z += .5) { g.beginPath(); g.moveTo(X(.9), Y(z)); g.lineTo(X(SHIP.w - .9), Y(z)); g.stroke(); }
+  g.strokeStyle = '#a07a3a'; g.lineWidth = Math.max(1, sc * .08); for (const x of [10.6, 15.4]) { g.beginPath(); g.moveTo(X(x), Y(1)); g.lineTo(X(x), Y(SHIP.h - .4)); g.stroke(); }
+  for (let z = 3; z < SHIP.h - .4; z += 3) { g.beginPath(); g.moveTo(X(10.6), Y(z)); g.lineTo(X(15.4), Y(z)); g.stroke(); }
+  g.fillStyle = '#4b555e'; g.fillRect(X(.9), Y(1), .5 * sc, (SHIP.h - 1.4) * sc); g.fillRect(X(SHIP.w - 1.4), Y(1), .5 * sc, (SHIP.h - 1.4) * sc);
+  g.strokeStyle = O; g.lineWidth = lw; g.strokeRect(X(.9), Y(-1.9), (SHIP.w - 1.8) * sc, (SHIP.h + .5) * sc);
+  // la rampa de abajo
+  poly([[8, SHIP.h - .4], [18, SHIP.h - .4], [17.4, SHIP.h + 2.2], [8.6, SHIP.h + 2.2]], '#c3c9cf');
+  g.strokeStyle = '#8e969e'; g.lineWidth = Math.max(1, sc * .07); for (let z = SHIP.h; z < SHIP.h + 2; z += .35) { g.beginPath(); g.moveTo(X(8.8), Y(z)); g.lineTo(X(17.2), Y(z)); g.stroke(); }
+  // objetos: asientos azules, cajas verdes, el portátil y la consola
+  const cube = (x0, z0, x1, z1, hh, top, side, front) => {   // caja vista desde arriba y un poco de frente
+    g.lineJoin = 'round'; g.strokeStyle = O; g.lineWidth = lw;
+    g.fillStyle = front; g.fillRect(X(x0), Y(z1) - hh * sc, (x1 - x0) * sc, hh * sc); g.strokeRect(X(x0), Y(z1) - hh * sc, (x1 - x0) * sc, hh * sc);
+    g.fillStyle = top; g.fillRect(X(x0), Y(z0) - hh * sc, (x1 - x0) * sc, (z1 - z0) * sc); g.strokeRect(X(x0), Y(z0) - hh * sc, (x1 - x0) * sc, (z1 - z0) * sc);
+    g.strokeStyle = side; g.lineWidth = Math.max(1, sc * .07); g.strokeRect(X(x0 + .25), Y(z0 + .2) - hh * sc, (x1 - x0 - .5) * sc, (z1 - z0 - .4) * sc);
+  };
   SHIP.obs.forEach(o => {
-    if (o[4] === 'seats') { for (let x = o[0]; x < o[2] - .2; x += 1) { g.fillStyle = '#3c6fb5'; g.beginPath(); g.roundRect(X(x + .1), Y(o[1]) - sc * .5, .8 * sc, 1.2 * sc, sc * .2); g.fill(); g.strokeStyle = '#0d0f17'; g.lineWidth = Math.max(1, sc * .05); g.stroke(); } return; }
-    if (o[4] === 'crate') { box(o, '#3aa197', '#2a7a72'); g.strokeStyle = '#1f5a54'; g.lineWidth = Math.max(1, sc * .08); g.beginPath(); g.moveTo(X(o[0] + .3), Y(o[1]) - sc * .6); g.lineTo(X(o[2] - .3), Y(o[3]) - sc * 1.2); g.stroke(); return; }
-    box(o, '#7d6a52', '#5e4f3c');
-    if (o[4] === 'laptop') { const cx = X((o[0] + o[2]) / 2), cy = Y((o[1] + o[3]) / 2) - sc * 1.1; g.fillStyle = '#20252f'; g.fillRect(cx - sc * .8, cy - sc * .9, sc * 1.6, sc * 1); g.fillStyle = `rgba(110,220,255,${.7 + Math.sin(t * 3) * .2})`; g.fillRect(cx - sc * .65, cy - sc * .8, sc * 1.3, sc * .8); g.fillStyle = '#9aa3b1'; g.fillRect(cx - sc * .9, cy + sc * .1, sc * 1.8, sc * .25); }
-    else { const cx = X((o[0] + o[2]) / 2), cy = Y((o[1] + o[3]) / 2) - sc * .9; g.fillStyle = '#c8a46c'; g.fillRect(cx - sc * .9, cy - sc * .55, sc * 1.8, sc * 1.1); g.fillStyle = '#e35a5a'; g.fillRect(cx - sc * .6, cy - sc * .35, sc * .5, sc * .7); g.fillStyle = '#5aa0e3'; g.fillRect(cx + sc * .1, cy - sc * .35, sc * .5, sc * .7); }
+    const [x0, z0, x1, z1, k] = o;
+    if (k === 'seats') { for (let x = x0; x < x1 - .2; x += 1) { g.fillStyle = '#2d5ba8'; g.beginPath(); g.roundRect(X(x + .1), Y(z0) - sc * .9, .8 * sc, 1.1 * sc, sc * .25); g.fill(); g.strokeStyle = O; g.lineWidth = Math.max(1, sc * .06); g.stroke(); g.fillStyle = '#4b82d6'; g.beginPath(); g.roundRect(X(x + .1), Y(z0) + sc * .1, .8 * sc, .8 * sc, sc * .2); g.fill(); g.stroke(); } return; }
+    if (k === 'crate') { cube(x0, z0, x1, z1, 1.6, '#4f8a6e', '#79b394', '#3b6b55'); return; }
+    cube(x0, z0, x1, z1, 1.1, '#4f8a6e', '#79b394', '#3b6b55');
+    const cx = X((x0 + x1) / 2), cy = Y((z0 + z1) / 2) - sc * 1.1;
+    if (k === 'wardrobe') {   // portátil abierto con su pantalla verde
+      g.fillStyle = '#c3c9cf'; g.strokeStyle = O; g.lineWidth = lw; g.beginPath(); g.roundRect(cx - sc * .8, cy - sc * .2, sc * 1.6, sc * .6, sc * .1); g.fill(); g.stroke();
+      g.fillStyle = '#9aa1a8'; g.beginPath(); g.moveTo(cx - sc * .7, cy - sc * .2); g.lineTo(cx - sc * .55, cy - sc * 1.2); g.lineTo(cx + sc * .75, cy - sc * 1.2); g.lineTo(cx + sc * .7, cy - sc * .2); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = `rgba(90,230,150,${.75 + Math.sin(t * 3) * .2})`; g.fillRect(cx - sc * .48, cy - sc * 1.08, sc * 1.1, sc * .75);
+    } else {   // consola negra con luces
+      g.fillStyle = '#23282f'; g.strokeStyle = O; g.lineWidth = lw; g.beginPath(); g.roundRect(cx - sc * .75, cy - sc * .8, sc * 1.5, sc * 1.1, sc * .2); g.fill(); g.stroke();
+      ['#4fc8ff', '#5ae696', '#ffd23f'].forEach((c, i) => { g.fillStyle = Math.sin(t * 4 + i * 2) > -.3 ? c : '#3a4048'; g.fillRect(cx - sc * .5 + i * sc * .38, cy - sc * .55, sc * .25, sc * .25); });
+      g.fillStyle = '#3a4048'; g.fillRect(cx - sc * .5, cy - sc * .15, sc * 1, sc * .2);
+    }
   });
   // tripulantes (de atrás hacia delante)
   const all = [...LB.others.values()]; if (LB.me) all.push(LB.me);
@@ -1265,9 +1397,9 @@ function drawShip(now) {
     const hh = sc * 2.1, x = X(p.x), y = Y(p.z);
     g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.ellipse(x, y, hh * .3, hh * .08, 0, 0, TAU); g.fill();
     W2.crew(g, x, y, hh, { color: colHex(p.color), look: p.look, dir: p.dir || 1, mv: !!p.mv, ph: p.ph || 0, t });
-    W2.name(g, x, y - hh * (p.look && p.look.t ? 1.26 : 1.08), p.name, p.id === G.hostId ? '#ffd23f' : '#fff', Math.max(11, sc * .55));
+    W2.name(g, x, y - hh * (p.look && p.look.t ? 1.26 : 1.08), p.name, '#fff', Math.max(11, sc * .55));
   });
-  if (LB.near) { const o = LB.near, x = X((o[0] + o[2]) / 2), y = Y(o[1]) - sc * 2.2; g.fillStyle = '#ffd23f'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y + sc * .5); g.lineTo(x + sc * .4, y); g.lineTo(x - sc * .4, y); g.closePath(); g.fill(); g.stroke(); }
+  if (LB.near) { const o = LB.near, x = X((o[0] + o[2]) / 2), y = Y(o[1]) - sc * 3.2; g.fillStyle = '#ffd23f'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y + sc * .5); g.lineTo(x + sc * .4, y); g.lineTo(x - sc * .4, y); g.closePath(); g.fill(); g.stroke(); }
 }
 function shipTick(now) {
   LB.raf = 0; if (G.state !== 'lobby') return;
@@ -1283,10 +1415,20 @@ function shipTick(now) {
     // ¿cerca del portátil o del armario?
     LB.near = SHIP.obs.find(o => (o[4] === 'laptop' || o[4] === 'wardrobe') && Math.hypot(Math.max(o[0] - me.x, 0, me.x - o[2]), Math.max(o[1] - me.z, 0, me.z - o[3])) < 1.8) || null;
     const u = $('shipUse'), kind = LB.near && LB.near[4]; const lab = kind === 'laptop' ? 'Ajustes' : kind === 'wardrobe' ? 'Personalizar' : '';
-    if (u.textContent !== lab) { u.textContent = lab; u.style.display = lab ? '' : 'none'; }
+    if (u.dataset.k !== lab) { u.dataset.k = lab; u.querySelector('.al').textContent = lab; u.querySelector('use').setAttribute('href', kind === 'laptop' ? '#au-gear' : '#au-custom'); u.style.display = lab ? '' : 'none'; }
   }
   for (const p of LB.others.values()) { const k = Math.min(1, dt * 12); p.x += (p.tx - p.x) * k; p.z += (p.tz - p.z) * k; if (p.mv) p.ph = (p.ph || 0) + dt * 13; }
   drawShip(now); LB.raf = requestAnimationFrame(shipTick);
+}
+// arriba a la izquierda, como en la sala de espera del original: la lista de ajustes de la partida
+function shipSettings(set) {
+  if (!set) return; const sg = n => n + ' s', on = b => b ? 'Sí' : 'No';
+  const rows = [['Impostores', set.impostors], ['Confirmar expulsiones', on(set.confirmEjects)], ['Reuniones de emergencia', set.emergencies], ['Votos anónimos', on(set.anonVotes)], ['Enfriamiento del botón', sg(set.emergencyCd)],
+    ['Tiempo de discusión', sg(set.discuss)], ['Tiempo de votación', sg(set.voteTime)], ['Velocidad', set.speed + 'x'], ['Visión de la tripulación', set.visCrew + 'x'], ['Visión del impostor', set.visImp + 'x'],
+    ['Enfriamiento de matar', sg(set.killCd)], ['Distancia de matar', { corta: 'Corta', media: 'Media', larga: 'Larga' }[set.killRange] || set.killRange], ['Tareas visuales', on(set.visualTasks)],
+    ['Tareas comunes', set.commonTasks], ['Tareas largas', set.longTasks], ['Tareas cortas', set.shortTasks]];
+  if (set.testMode) rows.push(['Modo pruebas', 'Sí']);
+  $('shipSet').textContent = rows.map(([k, v]) => k + ': ' + v).join('\n');
 }
 function shipStart() { if (!LB.raf) { LB.last = 0; LB.raf = requestAnimationFrame(shipTick); } }
 socket.on('toLobby', () => { LB.me = null; LB.others.clear(); });   // tras la partida, todos vuelven a aparecer en la nave
@@ -1304,7 +1446,9 @@ socket.on('lobby', L => {
   { const seen = new Set(); L.players.forEach(p => { seen.add(p.id); if (p.id === myId) { if (!LB.me) LB.me = { id: p.id, x: p.lx || 13, z: p.lz || 6.5, dir: 1 }; Object.assign(LB.me, { name: p.name, color: p.color, look: p.look }); return; }
       const o = LB.others.get(p.id) || { id: p.id, x: p.lx || 13, z: p.lz || 6.5, tx: p.lx || 13, tz: p.lz || 6.5, dir: 1 }; Object.assign(o, { name: p.name, color: p.color, look: p.look }); LB.others.set(p.id, o); });
     for (const id of [...LB.others.keys()]) if (!seen.has(id)) LB.others.delete(id); }
-  $('shipCount').textContent = `${L.players.length}/10`; $('shipStart').style.display = L.hostId === myId ? '' : 'none'; $('shipWait').style.display = L.hostId === myId ? 'none' : '';
+  $('shipCount').textContent = `${L.players.length}/10`; $('shipCount2').textContent = `${L.players.length}/10`; $('shipStart').style.display = L.hostId === myId ? '' : 'none'; $('shipWait').style.display = L.hostId === myId ? 'none' : '';
+  { const hp = L.players.find(p => p.id === L.hostId); $('shipHost').textContent = hp ? 'ANFITRIÓN: ' + hp.name : ''; $('shipPanel').textContent = L.hostId === myId ? 'EDITAR' : 'VER'; }
+  shipSettings(L.settings);
   shipStart();
   const box = $('lobbyList'); box.innerHTML = '';
   L.players.forEach((p, i) => {
@@ -1747,10 +1891,10 @@ function updateTasksUI() {
   // una línea por tarea; las de varios pasos muestran el paso que toca y cuántos llevas, como en el original
   const heads = G.tasks.filter(id => tPrev()[id] == null), fin = heads.filter(h => chainOf(h).every(q => G.done.has(q))).length;
   $('taskCount').textContent = heads.length ? `${fin}/${heads.length}` : '';
-  if (G.role === 'impostor' && !G.cfg.test) box.append(el('div', 'fake', G.tasks.length ? 'Sabotea y elimina a todos. Tareas falsas:' : 'Sabotea y elimina a todos'));
+  if (G.role === 'impostor' && !G.cfg.test) { box.append(el('div', 'fake', 'Sabotea y elimina a todos.')); if (G.tasks.length) box.append(el('div', 'fakeH', 'Tareas falsas:')); }
   heads.forEach(h => {
     const ch = chainOf(h), n = ch.filter(q => G.done.has(q)).length, all = n === ch.length, cur = S.STATIONS[all ? ch[ch.length - 1] : ch[n]];
-    const line = el('div', all ? 'd' : '', cur.name + ' · ' + roomName(cur.room) + (ch.length > 1 ? ` (${n}/${ch.length})` : '') + (ch.some(q => (G.common || []).includes(q)) ? ' ★' : ''));
+    const line = el('div', all ? 'd' : '', roomName(cur.room) + ': ' + cur.name + (ch.length > 1 ? ` (${n}/${ch.length})` : ''));   // como en el original: "Eléctrica: Arreglar cables (0/3)"
     if (ch.length > 1 && !all && n > 0) line.classList.add('seq');
     box.append(line);
   });
@@ -1835,7 +1979,7 @@ $('mapCv').addEventListener('click', e => {
   else { if (Object.keys(G.doors.closed).length) return toast('Espera a que se abran las puertas'); if (G.sabReadyAt > performance.now()) return toast('El sabotaje se está recargando'); }
   socket.emit('sabotage', hit.o.type === 'puertas' ? { type: 'puertas', room: hit.o.room } : { type: hit.o.type }); buzz(30); if (hit.o.type === 'puertas') closeSabMenu();
 });
-$('minimap').onclick = () => openMap(); $('mapClose').onclick = closeMap;
+$('minimap').onclick = () => openMap(); $('btnMap').onclick = () => (G.mapOpen ? closeMap() : openMap()); $('mapClose').onclick = closeMap;
 
 // presentación como en el original: primero "¡Shhhhh!" y luego tu papel con tu equipo en fila
 function fitCanvas(cv) { const pr = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight; if (cv.width !== Math.round(w * pr)) { cv.width = Math.round(w * pr); cv.height = Math.round(h * pr); } const g = cv.getContext('2d'); g.setTransform(pr, 0, 0, pr, 0, 0); return { g, w, h }; }
@@ -2203,7 +2347,7 @@ function updateSabVisuals() {
   const dark = !!(s && s.type === 'luces' && crew);      // la tripulación viva casi no ve con las luces apagadas
   const vm = G.alive ? (G.role === 'impostor' ? G.cfg.visImp : G.cfg.visCrew) : 1.5;   // visión según los ajustes de la partida
   const blind = !!(s && s.type === 'coms' && crew);      // sin comunicaciones no se ve la lista de tareas ni el minimapa
-  $('barWrap').classList.toggle('coms', !!(s && s.type === 'coms')); $('taskBox').classList.toggle('comsOff', blind); $('minimap').style.visibility = blind ? 'hidden' : '';   // como en el original: barra verde oscuro y la lista dice "Comunicaciones saboteadas"
+  $('barWrap').classList.toggle('coms', !!(s && s.type === 'coms')); $('taskBox').classList.toggle('comsOff', blind); $('minimap').style.visibility = blind ? 'hidden' : ''; $('btnMap').classList.toggle('off', blind);   // como en el original: barra verde oscuro y la lista dice "Comunicaciones saboteadas"
   $('redFlash').classList.toggle('on', !!(s && s.crisis));
   updateSabBanner(performance.now());
 }
@@ -2529,7 +2673,7 @@ function updateActions(now) {
   setAct($('btnSab'), impAny && anySab, true, 'zap', G.sabMenuOpen ? 'Cerrar' : 'Sabotaje', scd > 0 ? Math.ceil(scd / 1000) : '');   // como en el original: el mapa se abre aunque esté recargando
   setAct($('btnVent'), (G.vent != null && G.role === 'impostor') || (imp && !!act.vent && G.cfg.vents), true, 'vent', G.vent != null ? 'Salir' : 'Rejilla', '');   // dentro de la rejilla, el mismo botón te saca
   const u = act.use, ucd = u && u.cd > 0 ? Math.ceil(u.cd / 1000) : '';
-  setAct($('btnUse'), playing, !!u && !ucd, !u ? 'hand' : u.type === 'panel' ? 'wrench' : u.type === 'info' ? 'eye' : u.type === 'button' ? 'alert' : 'hand',
+  setAct($('btnUse'), playing, !!u && !ucd, !u ? 'hand' : u.type === 'panel' ? 'wrench' : u.type === 'info' ? 'info:' + u.tool.id : u.type === 'button' ? 'alert' : 'hand',
     !u ? 'Usar' : u.type === 'task' ? 'Usar' : u.type === 'panel' ? 'Arreglar' : u.type === 'info' ? u.tool.short : 'Reunión', ucd, !!ucd);
   setAct($('btnReport'), playing && G.alive, act.report, 'report', 'Reportar', '');
   const hp = G.haunt && G.players.get(G.haunt);
@@ -2537,11 +2681,13 @@ function updateActions(now) {
   const kc = act.kill && act.kill.cd > 0 ? Math.ceil(act.kill.cd / 1000) : '';
   setAct($('btnKill'), !!act.kill, !!(act.kill && act.kill.target), 'knife', 'Matar', kc, !!kc);
 }
+// los dibujos de los botones del original (au-*): usar, reportar, matar, sabotaje, rejilla y los terminales
+const AU_ICON = { hand: 'use', wrench: 'use', alert: 'use', knife: 'kill', zap: 'sab', eye: 'haunt', 'info:cams': 'cams', 'info:admin': 'admin', 'info:vitals': 'vitals', 'info:doorlog': 'doorlog' };
 // pinta un botón de acción solo si ha cambiado algo (se llama varias veces por segundo)
 function setAct(b, show, on, icon, label, cd, isCd) {
   const key = [show, on, icon, label, cd, isCd].join('|'); if (b._k === key) return; b._k = key;
   b.classList.toggle('hide', !show); b.classList.toggle('on', !!on); b.classList.toggle('cd', !!(isCd || cd));
-  const u = b.querySelector('use'); if (u && u.getAttribute('href') !== '#i-' + icon) u.setAttribute('href', '#i-' + icon);
+  const ref = '#au-' + (AU_ICON[icon] || icon), u = b.querySelector('use'); if (u && u.getAttribute('href') !== ref) u.setAttribute('href', ref);
   b.querySelector('.al').textContent = label; b.querySelector('.acd').textContent = cd || '';
   if (on && !b._wasOn && show) buzz(8); b._wasOn = !!on;
 }
