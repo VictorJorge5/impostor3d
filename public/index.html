@@ -1022,6 +1022,12 @@ body.nokeys #keys{display:none!important}
 #lobby .tog{width:28px;height:28px;padding:0;border:2px solid #1d2128;border-radius:2px;background:#fff;color:#0a7f72;font:900 17px/1 Arial,sans-serif}
 #lobby .tog.on{background:#fff;color:#0a7f72;border-color:#1d2128}
 #lobby .chip{border-radius:3px;border:2px solid #1d2128;background:repeating-linear-gradient(115deg,#2ee6d0 0 50%,#86f5e9 50% 58%,#2ee6d0 58%);color:#1d2128;font:400 17px/1 "Bebas Neue",sans-serif;letter-spacing:1px}
+
+/* ===== cámaras como en el original: monitor con 4 pantallas casi cuadradas separadas por líneas turquesa claro ===== */
+#infoOv.cams #infoBody{flex:none;align-self:center;height:calc(100% - clamp(44px,13vh,60px));max-height:calc(100dvh - clamp(44px,13vh,60px) - 8px);aspect-ratio:3/2;max-width:calc(100vw - 16px);margin:0 auto max(8px,env(safe-area-inset-bottom));padding:0;gap:clamp(4px,1.2vh,8px);background:none;border:clamp(8px,2.6vh,16px) solid #34433f;border-radius:clamp(8px,2.4vh,16px);box-shadow:inset 0 0 0 2px #1d2128,0 0 0 3px #1d2128,0 10px 30px #000a}
+#infoOv.cams .feed{border:0;border-radius:0;outline:0;box-shadow:0 0 0 clamp(2px,.6vh,4px) #b9f3e4}
+#infoOv.cams .feed .fr{display:none}
+#infoOv.cams .feed .fl{opacity:.55}
 </style>
 <link rel="preload" href="fonts/chakra-petch-latin-700-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -2504,6 +2510,7 @@ function refreshInfo() {
   if (id !== 'vitals' && off) { if (!body.querySelector('.nosig')) { body.innerHTML = ''; body.append(el('div', 'nosig', '[COMUNICACIONES DESACTIVADAS]')); } return; }
   if (id === 'admin') drawAdmin(); else if (id === 'vitals') drawVitals(); else if (id === 'doorlog') pollDoorlog();
 }
+const CAM_SPAN = 11;   // metros de alto que ve cada cámara: como en el original, solo un trozo de pasillo
 function renderCamFeeds(now) {
   // las cuatro cámaras: el propio mundo 2D dibujado en cada recuadro (el resto de la pantalla, en negro)
   const g = g2, pr = VIEW.dpr, feeds = $('infoBody').querySelectorAll('.feed');
@@ -2511,7 +2518,7 @@ function renderCamFeeds(now) {
   feeds.forEach((fe, i) => {
     const r = fe.getBoundingClientRect(), c = S.CAMERAS[i]; if (!c || r.width < 2 || r.height < 2) return;
     g.save(); g.beginPath(); g.rect(r.left, r.top, r.width, r.height); g.clip(); g.translate(r.left, r.top);
-    drawWorld(g, { cx: c.look[0], cy: c.look[2], sc: r.height / 19, w: r.width, h: r.height }, now, true); g.restore();
+    drawWorld(g, { cx: c.look[0], cy: c.look[2], sc: r.height / CAM_SPAN, w: r.width, h: r.height }, now, true); g.restore();
   });
 }
 function drawAdmin() {
