@@ -4,6 +4,30 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 6.1 · reuniones, expulsión, final, fantasmas y mascotas como en el original
+- **Inicio de reunión como el original**:
+  - "¡REUNIÓN DE EMERGENCIA!" con quien la convoca aporreando el botón de la mesa.
+  - "¡CADÁVER REPORTADO!" con el cuerpo y el bocadillo de la calavera.
+  - Fondo rojo con estelas y franjas amarillas y negras.
+- **Resumen de la reunión**: antes de debatir se ven quienes han muerto en la ronda, con el sello **MUERTO**, y quien la ha convocado con el megáfono.
+- **Expulsión con los textos del original**:
+  - "X era el impostor." (o "un impostor" si hay más de uno) y "Queda 1 impostor.".
+  - "Nadie ha sido expulsado. (Empate)" o "(Saltado)".
+- **Pantalla final como el original**:
+  - "Victoria" o "Derrota" con letra de ordenador antiguo, luz turquesa si ganas y roja si pierdes.
+  - **SALIR** y **OTRA VEZ** en las esquinas; los resultados, más abajo.
+  - Si los impostores se desconectan, gana la tripulación (y al revés).
+- **Fantasmas como en el original**:
+  - Pueden mirar las cámaras, el Admin y los signos vitales (sin encender la luz roja de las cámaras).
+  - Nuevo botón **Acechar**: sigues a un jugador vivo; cada toque pasa al siguiente y al moverte lo dejas.
+- **Ajustes como los del original**: volumen de los efectos, tamaño del joystick, **texto para daltónicos** (el nombre del color en la nave, en las reuniones y en el chat) y temblor de pantalla.
+- **Mascotas**:
+  - 4 nuevas: hámster, ovni, cangrejo y calamar.
+  - Se asustan en la animación de muerte de su dueño.
+  - **Se quedan llorando donde murió** (o junto a la mesa si lo expulsaron) hasta el final de la partida.
+- **Detalles del mapa**: ventiladores que giran en Motores, Oxígeno, Eléctrica y Almacén; luces de aviso del reactor; mancha de sangre bajo los cadáveres.
+- Arreglado: la luz roja de las cámaras ya se apaga cuando la última persona deja de mirarlas.
+
 ## Novedades 6.0 · sabotajes, Admin, tareas y sala de espera como en el original
 - **La sala de espera es una nave**, como el lobby del original:
   - Te mueves por ella con tus amigos.

@@ -67,7 +67,7 @@ const genCode = () => {
 };
 const list = r => [...r.players.values()];
 const humans = r => list(r).filter(p => !p.isBot);
-const pub = r => list(r).map(p => ({ id: p.id, name: p.name, color: p.color, look: p.look, alive: p.alive, x: p.x, z: p.z, ry: p.ry, vent: p.vent == null ? null : p.vent }));
+const pub = r => list(r).map(p => ({ id: p.id, name: p.name, color: p.color, look: p.look, alive: p.alive, x: p.x, z: p.z, ry: p.ry, vent: p.vent == null ? null : p.vent, pet: p.alive ? null : p.petAt || null }));
 const emitLobby = r => io.to(r.code).emit('lobby', {
   code: r.code, hostId: r.hostId, settings: r.set,
   players: list(r).map(p => ({ id: p.id, name: p.name, color: p.color, look: p.look, offline: !!p.offline, bot: !!p.isBot, lx: p.lx, lz: p.lz }))
@@ -124,7 +124,7 @@ function checkWin(r) {
 }
 
 function doKill(r, killer, t) {
-  t.alive = false; clearHolds(r, t.id); killer.st = killer.st || {}; killer.st.kills = (killer.st.kills || 0) + 1;
+  t.alive = false; t.petAt = { x: t.x, z: t.z }; (r.roundDead = r.roundDead || []).push(t.id); clearHolds(r, t.id); killer.st = killer.st || {}; killer.st.kills = (killer.st.kills || 0) + 1;
   killer.x = t.x; killer.z = t.z;   // como en el original, el impostor salta hasta la víctima
   killer.killReadyAt = Date.now() + killCdMs(r);
   const body = { id: ++r.bodySeq, pid: t.id, color: t.color, look: t.look, x: t.x, z: t.z };
@@ -141,7 +141,7 @@ function emitProgress(r) {
 function startGame(r) {
   humans(r).filter(p => p.offline).forEach(p => dropPlayer(r, p));
   const set = r.set, now = Date.now();
-  r.state = 'play'; r.bodies = []; r.bodySeq = 0; r.doneTasks = 0; r.shownDone = 0; r.sab = null; openDoors(r, true); r.doorReady = {}; r.doorLog = []; r.camViewers = new Set(); r.camN = 0;
+  r.state = 'play'; r.roundDead = []; r.bodies = []; r.bodySeq = 0; r.doneTasks = 0; r.shownDone = 0; r.sab = null; openDoors(r, true); r.doorReady = {}; r.doorLog = []; r.camViewers = new Set(); r.camN = 0;
   r.sabReadyAt = now + sabFirstMs(r); r.emReadyAt = now + ms(set.emergencyCd);
   const ps = shuffle(list(r));
   let nImp = Math.min(set.impostors, Math.floor((ps.length - 1) / 2));
@@ -158,7 +158,7 @@ function startGame(r) {
   if (!set.commonTasks && !set.longTasks && !set.shortTasks) set.shortTasks = 1;   // siempre hay al menos una tarea
   ps.forEach((p, i) => {
     p.role = i < nImp ? 'impostor' : 'crew';
-    p.alive = true; p.done = []; p.vote = null; p.emergencies = set.emergencies; p.vent = null; p.killLeft = null; p.st = {}; p.fx = null;
+    p.alive = true; p.petAt = null; p.done = []; p.vote = null; p.emergencies = set.emergencies; p.vent = null; p.killLeft = null; p.st = {}; p.fx = null;
     p.killReadyAt = now + firstKillMs(r);
     // el impostor no tiene tareas (salvo en el modo pruebas, para poder probar los minijuegos): así nadie espera por él
     p.tasks = p.role === 'impostor' && !set.testMode ? [] : common.concat(ofKind('long').slice(0, set.longTasks).concat(ofKind('short').slice(0, set.shortTasks)).flatMap(k => S.pickUnit(S.TASK_UNITS[k])));
@@ -183,9 +183,9 @@ function startMeeting(r, caller, kind, body) {
   list(r).forEach(p => { p.vent = null; p.vote = null; p.fx = null; });
   const victim = body ? r.players.get(body.pid) : null, dMs = ms(r.set.discuss), vMs = ms(r.set.voteTime), now = Date.now();
   r.meetingPhase = dMs > 0 ? 'discuss' : 'vote'; r.discussEnds = now + dMs; r.meetingEnds = now + dMs + vMs;
-  r.meetingCaller = caller.id; r.meetingKind = kind; r.meetingVictimName = victim ? victim.name : null; r.meetingVictim = victim ? victim.id : null; r.lastResult = null;
+  r.meetingCaller = caller.id; r.meetingKind = kind; r.meetingVictimName = victim ? victim.name : null; r.meetingVictim = victim ? victim.id : null; r.meetingDead = r.roundDead || []; r.roundDead = []; r.lastResult = null;
   io.to(r.code).emit('meeting', {
-    caller: caller.id, kind, victim: victim ? victim.id : null, victimName: victim ? victim.name : null, victimColor: victim ? victim.color : null,
+    caller: caller.id, kind, victim: victim ? victim.id : null, victimName: victim ? victim.name : null, victimColor: victim ? victim.color : null, dead: r.meetingDead,
     ends: dMs + vMs, discuss: dMs, vote: vMs
   });
   if (r.set.taskbar === 'reuniones') emitProgress(r);
@@ -216,7 +216,7 @@ function resolveMeeting(r) {
   let info = null;
   if (top && !tie && max > skips) {
     const e = r.players.get(top);
-    if (e) { e.alive = false; info = { id: e.id, name: e.name, color: e.color, impostor: r.set.confirmEjects ? e.role === 'impostor' : null }; }
+    if (e) { e.alive = false; e.petAt = S.freeNear(S.BUTTON.x + (Math.random() * 8 - 4), S.BUTTON.z + 4 + Math.random() * 2); info = { id: e.id, name: e.name, color: e.color, impostor: r.set.confirmEjects ? e.role === 'impostor' : null }; }
   }
   r.state = 'result';
   const anon = r.set.anonVotes;
@@ -301,7 +301,6 @@ function clearCams(r) { if (r.camViewers && r.camViewers.size) { r.camViewers.cl
 function infoBlock(r, p, tool) {
   if (!r || !p) return 'No estás en una sala';
   if (r.state !== 'play') return 'Ahora no se puede';
-  if (!p.alive) return 'Los fantasmas no usan los terminales';
   if (!r.set.infoTools) return 'Los terminales de información están desactivados en esta partida';
   const t = S.INFO.find(q => q.id === tool); if (!t) return 'Terminal desconocido';
   if (dist(p, S.cellPos(t)) > 5.5) return 'Estás demasiado lejos del terminal';
@@ -322,8 +321,9 @@ function dropPlayer(r, p) {
     r.totalTasks -= p.tasks.length; r.doneTasks -= p.done.length;
     if (r.set.taskbar === 'siempre') emitProgress(r);
   }
-  if (r.state === 'play') checkWin(r);
-  else if ((r.state === 'meeting' || r.state === 'result') && winner(r)) endGame(r, winner(r));
+  const why = p.role === 'impostor' ? 'disconnect:impostor' : 'disconnect:crew';   // como en el original: si se van, gana el otro bando
+  if (r.state === 'play') { const w = winner(r); if (w) endGame(r, w, why); }
+  else if ((r.state === 'meeting' || r.state === 'result') && winner(r)) endGame(r, winner(r), why);
   else if (r.state === 'meeting' && r.meetingPhase === 'vote' && allVoted(r)) resolveMeeting(r);
 }
 // Estado completo para quien vuelve a entrar en mitad de la partida
@@ -336,7 +336,7 @@ function snapshot(r, p) {
     sabCd: p.role === 'impostor' ? (r.sabReadyAt === Infinity ? -1 : Math.max(0, (r.sabReadyAt || 0) - Date.now())) : 0
   };
   if (r.state === 'meeting' || r.state === 'result') s.meeting = {
-    ends: Math.max(0, (r.meetingEnds || 0) - Date.now()), phase: r.meetingPhase, discussLeft: r.meetingPhase === 'discuss' ? Math.max(0, r.discussEnds - Date.now()) : 0, caller: r.meetingCaller, kind: r.meetingKind, victim: r.meetingVictim, victimName: r.meetingVictimName,
+    ends: Math.max(0, (r.meetingEnds || 0) - Date.now()), phase: r.meetingPhase, discussLeft: r.meetingPhase === 'discuss' ? Math.max(0, r.discussEnds - Date.now()) : 0, caller: r.meetingCaller, kind: r.meetingKind, victim: r.meetingVictim, victimName: r.meetingVictimName, dead: r.meetingDead || [],
     voted: list(r).filter(q => q.alive && q.vote !== null).map(q => q.id)
   };
   if (r.state === 'result') s.result = r.lastResult;
@@ -560,7 +560,8 @@ io.on('connection', sock => {
   });
   sock.on('camera', d => {   // quien mira las cámaras hace parpadear la luz roja de las cámaras para todos
     if (!room || !me) return;
-    if (d && d.on) { if (infoBlock(room, me, 'cams') || !me.alive) return; room.camViewers.add(me.id); }   // los fantasmas no encienden la luz else room.camViewers.delete(me.id);
+    // los fantasmas pueden mirar, pero no encienden la luz roja (como en el original)
+    if (d && d.on) { if (infoBlock(room, me, 'cams') || !me.alive) return; room.camViewers.add(me.id); } else room.camViewers.delete(me.id);
     emitCam(room);
   });
 

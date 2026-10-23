@@ -255,10 +255,10 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 #bannerOv span{margin-top:10px;color:#ffd0d6;font-size:16px}
 @keyframes bannerIn{from{transform:scale(.4) rotate(-6deg);opacity:0}to{transform:none;opacity:1}}
 @keyframes bannerFade{0%{opacity:0}10%{opacity:1}80%{opacity:1}100%{opacity:0}}
-#ejectOv{z-index:30;background:#02040a;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:12vh}
+#ejectOv{z-index:30;background:#02040a;flex-direction:column;align-items:center;justify-content:center}
 #ejectCv{position:absolute;inset:0;width:100%;height:100%}
-#ejectTxt{position:relative;text-align:center;font-size:clamp(20px,6vw,36px);font-weight:800;text-shadow:0 2px 8px #000;min-height:1.3em;padding:0 16px}
-#ejectSub{position:relative;margin-top:8px;color:var(--steel);font-size:16px;min-height:1.2em;text-shadow:0 2px 6px #000}
+#ejectTxt{position:relative;text-align:center;font-family:Arial,"Inter",sans-serif;font-size:clamp(18px,5.4vh,34px);font-weight:400;color:#fff;text-shadow:0 2px 8px #000;min-height:1.3em;padding:0 16px}
+#ejectSub{position:relative;margin-top:6px;font-family:Arial,"Inter",sans-serif;color:#fff;font-size:clamp(14px,4vh,24px);min-height:1.2em;text-shadow:0 2px 6px #000}
 #infoOv{align-items:stretch;justify-content:flex-start;background:#000d;flex-direction:column}
 #infoOv.cams{background:transparent}
 #infoBar{display:flex;align-items:center;gap:12px;padding:max(10px,env(safe-area-inset-top)) 14px 10px;background:#0a0f1cf2;border-bottom:1px solid var(--line)}
@@ -300,6 +300,7 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 /* ================= Impostor 3D · diseño premium (móvil primero) ================= */
 @font-face{font-family:"Chakra Petch";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/chakra-petch-latin-600-normal.woff2) format("woff2")}
 @font-face{font-family:"Chakra Petch";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/chakra-petch-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"VT323";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/vt323-latin-400-normal.woff2) format("woff2")}
 @font-face{font-family:"Chakra Petch";font-style:italic;font-weight:700;font-display:swap;src:url(fonts/chakra-petch-latin-700-italic.woff2) format("woff2")}
 @font-face{font-family:"Inter";font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/inter-latin-wght-normal.woff2) format("woff2")}
 :root{
@@ -473,7 +474,6 @@ body.ready #splash{opacity:0;visibility:hidden}
 #endOv h1{font-family:var(--fd);font-style:italic;letter-spacing:-.5px;margin-top:auto;text-shadow:0 10px 40px currentColor;animation:titleIn .6s var(--ease) both}
 #endRoles{grid-template-columns:1fr 1fr;width:min(420px,94vw)}
 #endRoles .pl{animation:plIn .4s var(--ease) both}
-#endOv #btnAgain{margin-bottom:auto}
 .rtag{font-weight:800!important;letter-spacing:.6px;text-transform:uppercase}.rtag.imp{color:var(--red)!important}.rtag.crew{color:var(--mint)!important}
 #endRoles .pl.isImp{border-color:#ff3d5e66;background:linear-gradient(180deg,#ff3d5e1c,#ff3d5e06)}
 #endRoles{display:flex;flex-direction:column;gap:10px;width:min(560px,94vw)}
@@ -590,9 +590,9 @@ body.ready #splash{opacity:0;visibility:hidden}
 
 /* joystick flotante */
 #stickZone{position:absolute;left:0;bottom:0;width:46%;height:70%;touch-action:none;z-index:1}
-#stick{left:max(26px,env(safe-area-inset-left));bottom:max(26px,env(safe-area-inset-bottom));width:132px;height:132px;background:radial-gradient(circle,#ffffff0d 0 55%,#ffffff1a 56% 60%,#ffffff08 61%);border:1.5px solid #ffffff30;box-shadow:0 0 30px #0006 inset;pointer-events:none;z-index:2;transition:opacity .25s,transform .25s var(--ease);opacity:.55}
+#stick{left:max(26px,env(safe-area-inset-left));bottom:max(26px,env(safe-area-inset-bottom));width:calc(132px * var(--joy,1));height:calc(132px * var(--joy,1));background:radial-gradient(circle,#ffffff0d 0 55%,#ffffff1a 56% 60%,#ffffff08 61%);border:1.5px solid #ffffff30;box-shadow:0 0 30px #0006 inset;pointer-events:none;z-index:2;transition:opacity .25s,transform .25s var(--ease);opacity:.55}
 #stick.act{opacity:1;transition:opacity .1s}
-#knob{width:60px;height:60px;margin:-30px;background:radial-gradient(circle at 35% 30%,#ffffffcc,#c9d6ff88 60%,#8fa6e688);box-shadow:0 6px 18px #0008,0 0 0 4px #ffffff14}
+#knob{width:calc(60px * var(--joy,1));height:calc(60px * var(--joy,1));margin:calc(-30px * var(--joy,1));background:radial-gradient(circle at 35% 30%,#ffffffcc,#c9d6ff88 60%,#8fa6e688);box-shadow:0 6px 18px #0008,0 0 0 4px #ffffff14}
 @media (hover:hover) and (pointer:fine){#stickZone{display:none}}
 
 /* botones de acción redondos */
@@ -650,7 +650,6 @@ body.ready #splash{opacity:0;visibility:hidden}
 }
 
 /* ---------- estilo Among Us (v5) ---------- */
-#bannerWho .pt{border-width:4px;margin-bottom:10px;animation:bannerIn .5s cubic-bezier(.2,1.5,.4,1) both}
 #taskList .d{color:#5ef2c0;text-decoration:none;opacity:1}
 #taskList>div:not(.d){color:#fff}
 .act,.act2{border-radius:24px;border:3px solid #ffffff38;background:linear-gradient(180deg,#2c3754ee,#141b30f2);box-shadow:0 6px 0 #0009,inset 0 2px 0 #ffffff22}
@@ -672,8 +671,9 @@ body.ready #splash{opacity:0;visibility:hidden}
 #roleOv span em{font-style:normal;color:#ff2a2a}
 #deathOv{background:#000;animation:deathFade 2.6s forwards}
 #deathOv span{position:absolute;bottom:max(7vh,env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#fff;font-weight:800;font-size:18px;text-shadow:0 2px 0 #000}
-#bannerOv{background:radial-gradient(circle at 50% 46%,#0000 0 18%,#2a0008e6 78%),repeating-conic-gradient(from 0deg at 50% 46%,#b3001e 0 9deg,#e2342a 9deg 18deg)}
-#bannerOv.body{background:radial-gradient(circle at 50% 46%,#0000 0 18%,#0a0f22ee 78%),repeating-conic-gradient(from 0deg at 50% 46%,#25305a 0 9deg,#3a4a86 9deg 18deg)}
+#bannerOv{background:#3d0005;animation:none}
+#bannerCv{position:absolute;inset:0;width:100%;height:100%}
+#bannerOv #bannerSub{position:absolute;left:50%;top:7%;transform:translateX(-50%);margin:0;padding:3px 14px;border-radius:99px;background:#000a;font-size:clamp(12px,2.4vh,16px);white-space:nowrap}
 #bannerOv b{font-family:"Arial Black","Inter",system-ui,sans-serif;font-style:italic;letter-spacing:0;text-shadow:-3px 0px 0 #000,3px 0px 0 #000,0px -3px 0 #000,0px 3px 0 #000,-2px -2px 0 #000,2px 2px 0 #000,-2px 2px 0 #000,2px -2px 0 #000,0 7px 0 #000}
 #bannerOv span{color:#fff;font-weight:800;text-shadow:0 2px 0 #000}
 #meeting{background:radial-gradient(120% 90% at 50% 40%,#1a2340,#05070d)}
@@ -713,6 +713,8 @@ body.ready #splash{opacity:0;visibility:hidden}
 .cfgRow input{width:46px;height:26px;appearance:none;-webkit-appearance:none;border-radius:13px;background:#3a445c;position:relative;cursor:pointer;transition:background .2s;flex:none}
 .cfgRow input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
 .cfgRow input:checked{background:#2fbf71}.cfgRow input:checked::after{transform:translateX(20px)}
+.cfgRow.cfgRange input{width:min(150px,34vw);height:26px;background:none;appearance:auto;-webkit-appearance:auto;accent-color:#2fbf71}.cfgRow.cfgRange input::after{display:none}
+#cfgBox{max-height:92dvh;overflow:auto}
 body.lefty #stickZone{left:auto;right:0}
 body.lefty #stick{left:auto;right:max(26px,env(safe-area-inset-right))}
 body.lefty #actions{right:auto;left:max(18px,env(safe-area-inset-left));grid-template-columns:auto auto auto;grid-template-areas:"use report kill"}
@@ -721,6 +723,19 @@ body.lefty #actions2{left:auto;right:max(18px,env(safe-area-inset-right));bottom
 body.nokeys #keys{display:none!important}
 #taskList .fake{color:#ff6b81;font-weight:700}
 #endCv{width:min(760px,100%);height:clamp(200px,46vh,340px);flex:none;margin-top:4px}
+/* pantalla final como la del original: "Victoria"/"Derrota" con letra de ordenador, los ganadores en fila y SALIR / OTRA VEZ en las esquinas */
+#endOv{padding:0 0 30px}
+#endHero{position:relative;flex:none;width:100%;height:100dvh;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px}
+#endOv h1#endTitle{font-family:"VT323","Courier New",monospace;font-weight:400;font-style:normal;font-size:clamp(70px,22vh,150px);line-height:.9;letter-spacing:4px;margin:0;text-shadow:0 0 18px currentColor,0 4px 0 #0008;animation:titleIn .6s var(--ease) both}
+#endOv #endSub{font-size:clamp(12px,2.6vh,15px);opacity:.85}
+#endHero #endCv{flex:1;max-height:56vh;height:auto}
+.endCorner{position:absolute;bottom:max(10px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:0;background:none;border:0;padding:4px;color:#e8eaee;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(15px,4vh,22px);letter-spacing:1px;text-shadow:-2px 0 0 #2b2f36,2px 0 0 #2b2f36,0 -2px 0 #2b2f36,0 2px 0 #2b2f36;cursor:pointer}
+.endCorner svg{width:clamp(38px,11vh,64px);height:clamp(38px,11vh,64px)}
+.endCorner:active{transform:scale(.94)}
+#endQuit{left:max(12px,env(safe-area-inset-left))}
+#btnAgain{right:max(12px,env(safe-area-inset-right))}
+#endWait{position:absolute;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));margin:0}
+#endMore{position:absolute;left:50%;bottom:max(8px,env(safe-area-inset-bottom));transform:translateX(-50%);background:#ffffff14;border:1px solid #ffffff26;border-radius:99px;padding:5px 14px;color:#cfd6e4;font-size:13px}
 
 /* ===== v5.8 · la tableta de votación del original ===== */
 #meeting{background:#04070dcc;align-items:center;justify-content:center;padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));gap:10px}
@@ -762,6 +777,17 @@ body.nokeys #keys{display:none!important}
 #mtgResult{display:block;flex:1;min-width:0;padding:0;border:none;background:none;text-align:center;color:#1b2a44;font:800 clamp(11px,3.4vh,18px)/1.15 var(--fd),sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #mtgInfo{flex:none;margin-left:auto;color:#2a3344;font:700 clamp(11px,3.6vh,20px)/1 Inter,system-ui,sans-serif;text-align:right;min-height:0}
 #mtgDiscuss{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:3}
+/* resumen de la reunión (como en el original): los muertos de la ronda con el sello MUERTO y quien la ha convocado abajo a la izquierda */
+#mtgOver{position:absolute;inset:0;z-index:4;display:none;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,2vh,14px);background:linear-gradient(165deg,#d9e8f5 0%,#bcd5ea 50%,#a6c3de 100%);pointer-events:none}
+#mtgOver.on{display:flex}
+#mtgOver .ovDead{display:flex;flex-direction:column;gap:clamp(10px,3vh,22px);align-items:center}
+#mtgOver .ovPlate{position:relative;display:flex;align-items:center;gap:10px;width:clamp(170px,34vw,300px);height:clamp(34px,10vh,62px);padding:0 14px 0 6px;border-radius:clamp(5px,1.4vh,10px);background:linear-gradient(#ffffff,#e6ebf1);box-shadow:0 4px 0 #8794a5,0 1px 6px #0002;font-family:"Arial Black","Inter",sans-serif;font-size:clamp(13px,3.4vh,20px);color:#1b2230}
+#mtgOver .ovPlate.dead{background:linear-gradient(#b9c0ca,#a2aab6)}
+#mtgOver .ovPlate .stamp{position:absolute;left:50%;top:-55%;transform:translateX(-50%) rotate(-8deg) scale(2.4);opacity:0;color:#d01026;font-family:"Arial Black",Impact,sans-serif;font-style:italic;font-size:clamp(18px,6vh,34px);letter-spacing:1px;text-shadow:-2px 0 0 #fff,2px 0 0 #fff,0 -2px 0 #fff,0 2px 0 #fff,0 3px 0 #5a0008;animation:stamp .35s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes stamp{to{opacity:1;transform:translateX(-50%) rotate(-8deg) scale(1)}}
+#mtgOver .ovCaller{position:absolute;left:clamp(8px,2.2vh,18px);bottom:clamp(8px,2.2vh,18px)}
+#mtgOver .ovCaller .ovPlate{width:clamp(150px,28vw,250px)}
+#mtgOver .mega{width:clamp(20px,5vh,34px);margin-left:auto}
 #mtgDiscuss.on{display:flex;animation:discuss 2.6s cubic-bezier(.2,1.4,.4,1) both}
 #mtgDiscuss canvas{width:min(78vh,62vw);height:min(78vh,62vw);border-radius:50%;box-shadow:0 10px 40px #0007}
 #mtgDiscuss b{position:absolute;top:calc(50% - min(31vh,25vw));left:0;right:0;text-align:center;color:#fff;font:900 min(13vh,10vw)/1 "Comic Sans MS","Chalkboard SE","Marker Felt",var(--fd),cursive;letter-spacing:1px;text-shadow:-3px -3px 0 #2a5f12,3px -3px 0 #2a5f12,-3px 3px 0 #2a5f12,3px 3px 0 #2a5f12,0 -3px 0 #2a5f12,0 3px 0 #2a5f12,-3px 0 0 #2a5f12,3px 0 0 #2a5f12,0 6px 0 #0005;transform:rotate(-4deg)}
@@ -907,7 +933,7 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v6.0</span></footer>
+    <footer class="foot"><span>Impostor 3D · v6.1</span></footer>
   </div>
 </div>
 
@@ -965,7 +991,7 @@ body.nokeys #keys{display:none!important}
   <div id="ghost" class="hud">Eres un fantasma: sigue con las tareas y observa</div>
   <div id="keys" class="hud">WASD / flechas mover · E usar · R reportar · Q matar · G sabotaje · F ventilación</div>
   <div id="sabBanner" class="hud"></div><div id="redFlash" class="hud"></div>
-  <div id="actions2"><button id="btnSab" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-zap"/></svg><span class="al">Sabotaje</span><span class="acd"></span></button><button id="btnVent" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-vent"/></svg><span class="al">Rejilla</span><span class="acd"></span></button></div>
+  <div id="actions2"><button id="btnSab" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-zap"/></svg><span class="al">Sabotaje</span><span class="acd"></span></button><button id="btnVent" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-vent"/></svg><span class="al">Rejilla</span><span class="acd"></span></button><button id="btnHaunt" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg><span class="al">Acechar</span><span class="acd"></span></button></div>
   <div id="ventUI"></div>
   <div id="stickZone"></div><div id="stick"><div id="knob"></div></div>
   <div id="rotateHint" class="hud hglass"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg><span>Gira el móvil para jugar mejor</span></div>
@@ -978,11 +1004,15 @@ body.nokeys #keys{display:none!important}
 
 <div id="roleOv" class="ov"><canvas id="roleCv"></canvas><div id="roleTxt"><b id="roleTitle"></b><span id="roleSub"></span></div></div>
 <div id="deathOv" class="ov"></div><div id="hitFlash"></div>
-<div id="bannerOv" class="ov"><div id="bannerWho"></div><b id="bannerTxt"></b><span id="bannerSub"></span></div>
+<div id="bannerOv" class="ov"><canvas id="bannerCv"></canvas><span id="bannerSub"></span></div>
 <div id="cfgOv" class="ov" role="dialog" aria-label="Ajustes"><div id="cfgBox" class="glass"><div class="cfgHead"><b>Ajustes</b><button class="x" id="cfgClose" aria-label="Cerrar">✕</button></div>
   <label class="cfgRow"><span><b>Joystick a la derecha</b><small>Los botones de usar, matar y reportar pasan a la izquierda</small></span><input type="checkbox" id="cfgLefty"></label>
   <label class="cfgRow"><span><b>Vibración</b><small>Al matar, al votar y al completar tareas</small></span><input type="checkbox" id="cfgBuzz"></label>
   <label class="cfgRow"><span><b>Sonido</b><small>Efectos del juego</small></span><input type="checkbox" id="cfgSound"></label>
+  <label class="cfgRow cfgRange"><span><b>Volumen de los efectos</b><small id="cfgVolTxt"></small></span><input type="range" id="cfgVol" min="0" max="100" step="5"></label>
+  <label class="cfgRow cfgRange"><span><b>Tamaño del joystick</b><small id="cfgJoyTxt"></small></span><input type="range" id="cfgJoy" min="0.7" max="1.3" step="0.15"></label>
+  <label class="cfgRow"><span><b>Texto para daltónicos</b><small>Muestra el nombre del color de cada jugador en la nave, en las reuniones y en el chat</small></span><input type="checkbox" id="cfgCb"></label>
+  <label class="cfgRow"><span><b>Temblor de pantalla</b><small>La cámara tiembla cuando matan a alguien cerca</small></span><input type="checkbox" id="cfgShake"></label>
   <label class="cfgRow"><span><b>Ayuda de teclas</b><small>En el ordenador: WASD, E, R, Q…</small></span><input type="checkbox" id="cfgKeys"></label>
   <div class="cfgBtns"><button id="cfgFull" class="btn">Pantalla completa</button><button id="cfgQuit" class="btn">Salir de la partida</button></div>
 </div></div>
@@ -1002,6 +1032,7 @@ body.nokeys #keys{display:none!important}
       <div id="mtgPlayers"></div>
       <div id="mtgFoot"><div id="btnSkip" role="button" tabindex="0"></div><div id="mtgResult"></div><div id="mtgInfo"></div></div>
       <div id="mtgDiscuss"><canvas width="600" height="600"></canvas><b>¡A DEBATIR!</b></div>
+      <div id="mtgOver"><div class="ovDead"></div><div class="ovCaller"></div></div>
     </div>
     <i id="mtgHome" aria-hidden="true"></i>
   </div>
@@ -1013,12 +1044,16 @@ body.nokeys #keys{display:none!important}
 </div>
 
 <div id="endOv" class="ov">
-  <h1 id="endTitle"></h1>
-  <div id="endSub" class="hint"></div>
-  <canvas id="endCv"></canvas>
+  <div id="endHero">
+    <h1 id="endTitle"></h1>
+    <div id="endSub" class="hint"></div>
+    <canvas id="endCv"></canvas>
+    <button id="endQuit" class="endCorner" aria-label="Salir"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 8 32 26 50 8l8 8-18 16 18 16-8 8-18-18-18 18-8-8 18-16L6 16z" fill="#c9ced6" stroke="#2b2f36" stroke-width="4" stroke-linejoin="round"/><path d="M14 13 32 31" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/></svg><span>SALIR</span></button>
+    <button id="btnAgain" class="endCorner" aria-label="Volver a jugar"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M30 6 8 22l22 16V28c12 0 20 6 20 14s-6 14-16 14v8c16 0 26-10 26-22S50 20 30 20z" fill="#c9ced6" stroke="#2b2f36" stroke-width="4" stroke-linejoin="round"/><path d="M27 12 14 22" stroke="#e8453c" stroke-width="3" stroke-linecap="round"/></svg><span>OTRA VEZ</span></button>
+    <p id="endWait" class="hint" style="display:none">Esperando al anfitrión…</p>
+    <button id="endMore" class="hint" aria-label="Ver los resultados">Resultados ▾</button>
+  </div>
   <div id="endRoles"></div>
-  <button id="btnAgain" class="btn amber" style="width:min(340px,90vw)">Volver a la sala</button>
-  <p id="endWait" class="hint" style="display:none">Esperando al anfitrión…</p>
 </div>
 
 <div id="crop" class="ov">
@@ -1116,7 +1151,9 @@ renderNet();
 
 /* ---------- móvil: vibración y pantalla siempre encendida ---------- */
 // ajustes de este móvil (no son de la partida): lado del joystick, vibración, sonido, ayuda de teclas
-const PREFS = (() => { try { return Object.assign({ lefty: false, buzz: true, keys: true }, JSON.parse(localStorage.getItem('i3d_prefs') || '{}')); } catch (e) { return { lefty: false, buzz: true, keys: true }; } })();
+// y, como en los ajustes del original: volumen, tamaño del joystick, texto para daltónicos y temblor de pantalla
+const PREF0 = { lefty: false, buzz: true, keys: true, vol: 70, joy: 1, cb: false, shake: true };
+const PREFS = (() => { try { return Object.assign({}, PREF0, JSON.parse(localStorage.getItem('i3d_prefs') || '{}')); } catch (e) { return Object.assign({}, PREF0); } })();
 const savePrefs = () => { try { localStorage.setItem('i3d_prefs', JSON.stringify(PREFS)); } catch (e) {} };
 const buzz = pat => { try { if (PREFS.buzz && navigator.vibrate && !document.hidden) navigator.vibrate(pat); } catch (e) {} };
 let wakeLock = null;
@@ -1691,7 +1728,7 @@ function clearWorld() { clearTaskFx(); G.players.clear(); G.bodies.clear(); G.fx
 function addPlayer(p) {
   const look = S.cleanLook(p.look);
   G.players.set(p.id, { id: p.id, name: p.name, color: p.color, look, alive: p.alive !== false, ghost: p.alive === false, x: p.x, z: p.z, ry: p.ry || 0, tx: p.x, tz: p.z, try: p.ry || 0, mv: false,
-    dir: Math.sin(p.ry || 0) < -.1 ? -1 : 1, ph: 0, pet: look.pet ? { x: p.x - 1, z: p.z, dir: 1, mv: false } : null });
+    dir: Math.sin(p.ry || 0) < -.1 ? -1 : 1, ph: 0, pet: look.pet ? { x: p.x - 1, z: p.z, dir: 1, mv: false } : null, petAt: p.pet || null });
 }
 function ghostify(p) { if (p) p.ghost = true; }
 function addBody(b) { G.bodies.set(b.id, { id: b.id, x: b.x, z: b.z, color: colHex(b.color), dir: Math.random() < .5 ? -1 : 1, look: S.cleanLook(b.look) }); }
@@ -1722,15 +1759,26 @@ $('taskBox').classList.toggle('min', lsGet('i3d_taskMin', false));
 $('taskHead').addEventListener('click', () => { const b = $('taskBox'); b.classList.toggle('min'); lsSet('i3d_taskMin', b.classList.contains('min')); snd('click'); });
 function updateBar() { $('bar').style.width = (G.total ? Math.min(100, G.doneN / G.total * 100) : 0) + '%'; }
 function updateGhost() { $('ghost').style.display = !G.alive && G.state !== 'menu' ? 'block' : 'none'; }
-function applyPrefs() { document.body.classList.toggle('lefty', !!PREFS.lefty); document.body.classList.toggle('nokeys', !PREFS.keys); }
-function openCfg() { $('cfgFull').style.display = fsOK ? '' : 'none'; $('cfgFull').textContent = document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa'; $('cfgQuit').style.display = G.state === 'menu' ? 'none' : ''; $('cfgLefty').checked = !!PREFS.lefty; $('cfgBuzz').checked = !!PREFS.buzz; $('cfgKeys').checked = !!PREFS.keys; $('cfgSound').checked = !sfx.isMuted(); ov('cfgOv', true); snd('click'); }
+const JOY_TXT = { 0.7: 'Pequeño', 0.85: 'Mediano', 1: 'Normal', 1.15: 'Grande', 1.3: 'Enorme' };
+function applyPrefs() {
+  document.body.classList.toggle('lefty', !!PREFS.lefty); document.body.classList.toggle('nokeys', !PREFS.keys);
+  sfx.setVolume((PREFS.vol == null ? 70 : PREFS.vol) / 100); document.documentElement.style.setProperty('--joy', PREFS.joy || 1);
+  $('cfgVolTxt').textContent = PREFS.vol + ' %'; $('cfgJoyTxt').textContent = JOY_TXT[String(+(+PREFS.joy).toFixed(2))] || 'Normal';
+}
+// con el texto para daltónicos, el nombre del color acompaña al del jugador
+const cbName = p => PREFS.cb && p && p.color != null ? colName(p.color) : '';
+function openCfg() { $('cfgFull').style.display = fsOK ? '' : 'none'; $('cfgFull').textContent = document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa'; $('cfgQuit').style.display = G.state === 'menu' ? 'none' : ''; $('cfgLefty').checked = !!PREFS.lefty; $('cfgVol').value = PREFS.vol; $('cfgJoy').value = PREFS.joy; $('cfgCb').checked = !!PREFS.cb; $('cfgShake').checked = PREFS.shake !== false; $('cfgBuzz').checked = !!PREFS.buzz; $('cfgKeys').checked = !!PREFS.keys; $('cfgSound').checked = !sfx.isMuted(); ov('cfgOv', true); snd('click'); }
 $('cfgFull').onclick = () => { ov('cfgOv', false); $('btnFull').onclick(); }; $('cfgQuit').onclick = () => { ov('cfgOv', false); $('btnQuit').onclick(); };
 $('btnCfg').onclick = openCfg; $('btnCfgMenu').onclick = openCfg; $('cfgClose').onclick = () => ov('cfgOv', false); $('cfgOv').onclick = e => { if (e.target.id === 'cfgOv') ov('cfgOv', false); };
 $('cfgLefty').onchange = e => { PREFS.lefty = e.target.checked; savePrefs(); applyPrefs(); };
 $('cfgBuzz').onchange = e => { PREFS.buzz = e.target.checked; savePrefs(); buzz(30); };
 $('cfgKeys').onchange = e => { PREFS.keys = e.target.checked; savePrefs(); applyPrefs(); };
+$('cfgVol').oninput = e => { PREFS.vol = +e.target.value; savePrefs(); applyPrefs(); }; $('cfgVol').onchange = () => snd('click');
+$('cfgJoy').oninput = e => { PREFS.joy = +e.target.value; savePrefs(); applyPrefs(); };
+$('cfgCb').onchange = e => { PREFS.cb = e.target.checked; savePrefs(); if (G.state === 'meeting') renderMeeting(); };
+$('cfgShake').onchange = e => { PREFS.shake = e.target.checked; savePrefs(); };
 $('cfgSound').onchange = e => { if (e.target.checked === sfx.isMuted()) document.querySelector('.sndBtn').click(); };
-applyPrefs();
+applyPrefs(); try { document.fonts.load('40px VT323'); } catch (e) {}   // la letra de "Victoria" ya cargada para el final
 // mapa grande al tocar el minimapa, como el botón de mapa del original: salas, tus tareas, los sabotajes y dónde estás
 let bigMap = null;
 function openMap(sab) {
@@ -1840,6 +1888,7 @@ socket.on('pos', arr => {
 });
 socket.on('killed', ({ victim, body, by }) => {
   const now = performance.now(), vp = G.players.get(victim), kp = G.players.get(by);
+  if (vp) vp.petAt = S.freeNear(body.x + 1.1, body.z + .3);   // como en el original, la mascota se queda donde murió su dueño
   if (vp) { vp.alive = false; vp.dying = { t0: now, dur: 950, x: vp.x, z: vp.z, spin: (Math.random() < .5 ? -1 : 1) * 1.6 }; }
   G.fx.push({ kind: 'ring', x: body.x, z: body.z, t0: now, life: 600, color: '#ff1d3a', size: 3 });
   addBody(body); const bd = G.bodies.get(body.id); if (bd) bd.revealAt = now + 800;   // el cuerpo aparece cuando acaba de caer
@@ -1873,9 +1922,18 @@ function onMeeting(d, resync) {
   G.mtg = { caller: d.caller, kind: d.kind, victim: d.victim || null, victimName: d.victimName };
   $('chatLog').innerHTML = ''; $('mtgResult').textContent = ''; updateChatBadge(); closeChat();
   $('chatIn').disabled = false; $('chatSend').disabled = false; $('chatIn').placeholder = G.alive ? 'Escribe…' : 'Chat de fantasmas (solo os leéis entre vosotros)';
-  $('mtgMain').classList.toggle('ghost', !G.alive); ov('meeting', true); renderMeeting(); if (!resync) playDiscuss(d);
+  $('mtgMain').classList.toggle('ghost', !G.alive); ov('meeting', true); renderMeeting(); clearTimeout(G.overT); $('mtgOver').classList.remove('on'); if (!resync) { showOverview(d); playDiscuss(d); }
 }
 socket.on('meeting', onMeeting);
+// después del cartel, el resumen: quién ha muerto desde la última reunión y quién la ha convocado
+const OVERVIEW_MS = 2100;
+function showOverview(d) {
+  const o = $('mtgOver'), dead = o.querySelector('.ovDead'), cl = o.querySelector('.ovCaller'); dead.innerHTML = ''; cl.innerHTML = '';
+  const plate = (p, isDead) => { const w = el('div', 'ovPlate' + (isDead ? ' dead' : '')); w.append(crewIcon(p, Math.max(26, Math.min(52, innerHeight * .085)), isDead), el('span', '', p.name)); return w; };
+  (d.dead || []).map(id => G.players.get(id)).filter(Boolean).forEach((p, i) => { const w = plate(p, true), st = el('b', 'stamp', 'MUERTO'); st.style.animationDelay = (300 + i * 250) + 'ms'; w.append(st); dead.append(w); });
+  const cp = G.players.get(d.caller); if (cp) { const w = plate(cp, false); w.insertAdjacentHTML('beforeend', MEGAPHONE); cl.append(w); }
+  clearTimeout(G.overT); G.overT = setTimeout(() => { o.classList.add('on'); G.overT = setTimeout(() => o.classList.remove('on'), OVERVIEW_MS); }, BANNER_MS - 150);
+}
 // "¡A DEBATIR!": el círculo verde con dos tripulantes cara a cara al empezar la reunión, como en el original
 function playDiscuss(d) {
   const box = $('mtgDiscuss'), cvD = box.querySelector('canvas'), g = cvD.getContext('2d'), W = cvD.width;
@@ -1894,7 +1952,7 @@ function playDiscuss(d) {
       if (t < 2.6 && G.state === 'meeting') G.discussRaf = requestAnimationFrame(fr); else box.classList.remove('on');
     };
     G.discussRaf = requestAnimationFrame(fr); snd('report');
-  }, 1700);
+  }, BANNER_MS + OVERVIEW_MS - 150);
 }
 socket.on('meetingPhase', d => { G.phase = d.phase; G.sel = null; renderMeeting(); if (G.state === 'meeting' && G.alive) { toast('¡Hora de votar!', 2000); snd('click'); } });
 const meetingCanVote = () => G.alive && G.myVote === null && G.state === 'meeting' && !G.resultShown && G.phase === 'vote';
@@ -1937,7 +1995,7 @@ function renderMeeting() {
     const ic = el('div', 'icw'); ic.append(crewIcon(p, ih, !p.alive));
     if (!res && p.alive && G.voted.has(p.id)) ic.append(el('span', 'voted', 'HE VOTADO'));
     card.append(ic);
-    const info = el('div', 'pname'); info.append(el('span', 'nm', p.name));
+    const info = el('div', 'pname'); info.append(el('span', 'nm', p.name)); if (cbName(p)) info.append(el('small', 'cbn', cbName(p)));
     if (res) { const c = voteChips(votesTo[p.id], res.counts ? res.counts[p.id] : 0, k, Math.max(16, ih * .42)); k = c.next; if (c.w.childNodes.length) info.append(c.w); }
     card.append(info);
     if (G.mtg && G.mtg.caller === p.id) card.insertAdjacentHTML('beforeend', MEGAPHONE);
@@ -1969,7 +2027,7 @@ $('btnChat').onclick = openChat; $('chatClose').onclick = closeChat;
 socket.on('chat', m => {
   const log = $('chatLog'), line = el('div', 'msg'), p = G.players.get(m.id), bub = el('div', 'bub'), b = el('b', '', m.name);
   if (m.ghost) line.classList.add('ghost');
-  if (p) line.append(portrait(p.look, colHex(m.color), 30)); b.style.color = '#3a4f86'; b.textContent = m.name + (m.ghost ? ' · fantasma' : ''); bub.append(b, document.createTextNode(m.text)); line.append(bub); log.append(line); log.scrollTop = log.scrollHeight;
+  if (p) line.append(portrait(p.look, colHex(m.color), 30)); b.style.color = '#3a4f86'; b.textContent = m.name + (cbName(m) ? ` (${cbName(m)})` : '') + (m.ghost ? ' · fantasma' : ''); bub.append(b, document.createTextNode(m.text)); line.append(bub); log.append(line); log.scrollTop = log.scrollHeight;
   if (!chatVisible() && m.id !== myId) { G.unread++; updateChatBadge(); snd('vote'); }
 });
 socket.on('voted', ({ id }) => { G.voted.add(id); renderMeeting(); if (id !== myId) snd('vote'); });
@@ -1989,7 +2047,7 @@ socket.on('meetingResult', onResult);
 socket.on('resume', d => {
   d.players.forEach(s => {
     const p = G.players.get(s.id); if (!p) return;
-    p.x = p.tx = s.x; p.z = p.tz = s.z; p.ry = p.try = s.ry; p.alive = s.alive;
+    p.x = p.tx = s.x; p.z = p.tz = s.z; p.ry = p.try = s.ry; p.alive = s.alive; if (s.pet) p.petAt = s.pet;   // la del expulsado espera junto a la mesa
     if (s.id === myId) { G.x = s.x; G.z = s.z; G.alive = s.alive; G.ry = s.ry; G.heading = Math.atan2(S.BUTTON.x - s.x, S.BUTTON.z - s.z); }
   });
   unstick();
@@ -2001,15 +2059,15 @@ function showEnd(d) {
   buzz((G.role === 'crew') === crewWin ? [40, 40, 40, 40, 120] : 250);
   const iWin = (G.role === 'crew') === crewWin;
   $('endTitle').textContent = iWin ? 'Victoria' : 'Derrota';
-  $('endTitle').style.color = iWin ? '#2fb8ff' : '#ff2a2a';
-  const why = d.reason === 'sabotage:reactor' ? 'El reactor ha colapsado. ' : d.reason === 'sabotage:o2' ? 'La tripulación se ha quedado sin oxígeno. ' : '';
+  $('endTitle').style.color = iWin ? '#1e8cff' : '#ff1a1a';
+  const why = d.reason === 'sabotage:reactor' ? 'El reactor ha colapsado. ' : d.reason === 'sabotage:o2' ? 'La tripulación se ha quedado sin oxígeno. ' : d.reason === 'disconnect:impostor' ? 'El impostor se ha desconectado. ' : d.reason === 'disconnect:crew' ? 'Se han desconectado demasiados tripulantes. ' : '';
   $('endSub').textContent = d.reason === 'test' ? 'El anfitrión ha dado la prueba por terminada.' : why + (crewWin ? 'Gana la tripulación' : 'Ganan los impostores');
   if (d.reason === 'test') { $('endTitle').textContent = 'Prueba terminada'; $('endTitle').style.color = '#ffb347'; }
   if (d.reason !== 'test') snd(iWin ? 'win' : 'lose');
   { // los ganadores en fila, como en la pantalla final del original (tú delante si has ganado)
     const win = d.roles.filter(p => (p.role === 'impostor') !== crewWin).map(p => Object.assign({}, p, { look: S.cleanLook(p.look) }));
-    win.sort((a, b) => (b.id === myId) - (a.id === myId)); const cv = $('endCv'), t0 = performance.now(), list = lineupOf(win), glow = crewWin ? 'rgba(60,170,255,.55)' : 'rgba(255,40,60,.6)';
-    const tick = now => { if (G.state !== 'end' || !$('endOv').classList.contains('on')) return; const { g, w, h } = fitCanvas(cv); g.clearRect(0, 0, w, h); W2.lineup(g, w, h, list, { k: Math.min(1, (now - t0) / 900), t: now / 1000, glow, base: .9, hmax: .62 }); requestAnimationFrame(tick); };
+    win.sort((a, b) => (b.id === myId) - (a.id === myId)); const cv = $('endCv'), t0 = performance.now(), list = lineupOf(win), glow = iWin ? 'rgba(70,200,230,.6)' : 'rgba(255,30,40,.6)';   // como en el original: luz turquesa si ganas, roja si pierdes
+    const tick = now => { if (G.state !== 'end' || !$('endOv').classList.contains('on')) return; const { g, w, h } = fitCanvas(cv); g.clearRect(0, 0, w, h); W2.lineup(g, w, h, list, { k: Math.min(1, (now - t0) / 900), t: now / 1000, glow, base: .84, hmax: .62, namesBelow: true }); requestAnimationFrame(tick); };
     requestAnimationFrame(tick);
   }
   // Resultados: primero el MVP, luego los impostores y después la tripulación, con lo que hizo cada uno
@@ -2043,7 +2101,9 @@ function showEnd(d) {
   ov('endOv', true);
 }
 socket.on('end', showEnd);
-socket.on('left', ({ hostId }) => { G.hostId = hostId; applyCfgUI(); if (hostId === myId && G.state === 'end') { $('btnAgain').style.display = 'block'; $('endWait').style.display = 'none'; } });
+socket.on('left', ({ hostId }) => { G.hostId = hostId; applyCfgUI(); if (hostId === myId && G.state === 'end') { $('btnAgain').style.display = 'flex'; $('endWait').style.display = 'none'; } });
+$('endQuit').onclick = () => leaveRoom();
+$('endMore').onclick = () => $('endRoles').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 /* ---------- minijuegos ---------- */
 function flash(node) { node.classList.remove('shake'); void node.offsetWidth; node.classList.add('shake'); }
@@ -2232,7 +2292,7 @@ if (location.search.includes('debug=1')) window.__i3d = { G, S, socket, sfx, get
 /* ---------- herramientas de información: cámaras, administración, signos vitales y registro de puertas ---------- */
 const infoNoSignal = () => !!(G.sab && G.sab.type === 'coms');
 function openInfo(id) {
-  if (mgOpen || G.state !== 'play' || !G.alive || G.cfg.info === false) return;
+  if (mgOpen || G.state !== 'play' || G.cfg.info === false) return;   // los fantasmas también pueden mirar las cámaras, el Admin y los signos vitales
   const t = S.INFO.find(q => q.id === id); if (!t) return;
   mgOpen = true; releaseLock(); stick.x = stick.y = 0; $('knob').style.transform = ''; G.info = id; G._infoRows = null; G._dlAt = 0;
   $('infoTitle').textContent = t.name; $('infoRec').textContent = id === 'cams' ? 'Mientras miras, la luz roja de las cámaras parpadea para todos' : ''; const body = $('infoBody'); body.innerHTML = '';
@@ -2335,27 +2395,34 @@ function killCam(byId) {
   const tick = now => { if (!o.classList.contains('on')) return; const { g, w, h } = fitCanvas(cv); W2.killScene(g, w, h, A, B, Math.min(1, (now - t0) / 2300), kind); requestAnimationFrame(tick); };
   requestAnimationFrame(tick); setTimeout(() => ov('deathOv', false), 3000);
 }
+// la pantalla del original al empezar una reunión: "¡REUNIÓN DE EMERGENCIA!" con quien pulsa el botón, o "¡CADÁVER REPORTADO!" con el cuerpo
+const BANNER_MS = 2300;
 function showBanner(d) {
-  $('bannerTxt').textContent = d.kind === 'body' ? '¡Cadáver encontrado!' : '¡Reunión de emergencia!';
-  { const w = $('bannerWho'), cp = G.players.get(d.caller); w.innerHTML = ''; if (cp) w.append(portrait(cp.look, colHex(cp.color), 110, colHex(cp.color))); }
-  $('bannerSub').textContent = (d.kind === 'body' ? 'Lo ha encontrado ' : 'Convocada por ') + nameOf(d.caller);
-  const o = $('bannerOv'); o.className = 'ov' + (d.kind === 'body' ? ' body' : ''); void o.offsetWidth; o.classList.add('on'); setTimeout(() => ov('bannerOv', false), 1800);
+  const cp = G.players.get(d.caller), vp = d.victim ? G.players.get(d.victim) : null, body = d.kind === 'body';
+  $('bannerSub').textContent = (body ? 'Lo ha encontrado ' : 'Convocada por ') + nameOf(d.caller);
+  const o = $('bannerOv'), cvB = $('bannerCv'); o.className = 'ov'; void o.offsetWidth; o.classList.add('on');
+  const sc = { kind: body ? 'body' : 'button', title: body ? '¡CADÁVER REPORTADO!' : '¡REUNIÓN DE EMERGENCIA!',
+    caller: cp ? { color: colHex(cp.color), look: cp.look } : null, victim: vp ? { color: colHex(vp.color), look: vp.look } : d.victimColor != null ? { color: colHex(d.victimColor) } : null };
+  const t0 = performance.now(); cancelAnimationFrame(G.bannerRaf);
+  const fr = now => { if (!o.classList.contains('on')) return; const { g, w, h } = fitCanvas(cvB); W2.meetingScene(g, w, h, Math.min(1, (now - t0) / BANNER_MS), sc); G.bannerRaf = requestAnimationFrame(fr); };
+  G.bannerRaf = requestAnimationFrame(fr); clearTimeout(G.bannerT); G.bannerT = setTimeout(() => ov('bannerOv', false), BANNER_MS);
 }
 function drawEject(g, W, H, k, st) {
   g.fillStyle = '#02040a'; g.fillRect(0, 0, W, H);
   for (const s of st.stars) { const x = (((s.x - k * s.z * 1.7) % 1) + 1) % 1; g.globalAlpha = .3 + .7 * s.z; g.fillStyle = '#fff'; const r = .8 + s.z * 2.4; g.fillRect(x * W, s.y * H, r, r); }
   g.globalAlpha = 1;
   if (st.p) {   // el expulsado atraviesa el espacio dando vueltas, como en el original
-    const x = (-.14 + 1.28 * k) * W, y = H * .42 + Math.sin(k * 8) * H * .035, sz = Math.min(W, H) * (.3 - .1 * k);
+    const x = (-.1 + 1.2 * k) * W, y = H * .47 + Math.sin(k * 6) * H * .03, sz = Math.min(W, H) * .2;
     g.save(); g.translate(x, y); g.rotate(k * 9); W2.crew(g, 0, sz * .5, sz, { color: st.col, look: st.p.look, dir: 1, t: k * 5 }); g.restore();
   }
 }
 function ejectText(k, st) { const n = Math.floor(Math.max(0, Math.min(1, (k - .15) / .5)) * st.line1.length); return { l1: st.line1.slice(0, n), l2: k > .72 ? st.line2 : '' }; }
 function makeEject(d) {
-  const e = d.ejected, p = e ? G.players.get(e.id) : null;
+  const e = d.ejected, p = e ? G.players.get(e.id) : null, art = (G.impCount || 1) > 1 ? 'un impostor' : 'el impostor';
   return { stars: Array.from({ length: 150 }, () => ({ x: Math.random(), y: Math.random(), z: Math.random() })), p, col: p ? colHex(p.color) : null,
-    line1: e ? `${e.name} ${e.impostor === true ? 'era un impostor' : e.impostor === false ? 'no era un impostor' : 'ha sido expulsado'}.` : 'Nadie ha sido expulsado.',
-    line2: e && d.impLeft != null ? (d.impLeft === 0 ? 'No quedan impostores' : d.impLeft === 1 ? 'Queda 1 impostor' : `Quedan ${d.impLeft} impostores`) : '' };
+    // los textos del original: "X era el impostor." (o "un impostor" si hay más de uno), "X ha sido expulsado." sin confirmar, "Nadie ha sido expulsado. (Empate)"
+    line1: e ? `${e.name} ${e.impostor === true ? 'era ' + art : e.impostor === false ? 'no era ' + art : 'ha sido expulsado'}.` : `Nadie ha sido expulsado. (${d.tie ? 'Empate' : 'Saltado'})`,
+    line2: d.impLeft != null ? (d.impLeft === 0 ? 'No quedan impostores.' : d.impLeft === 1 ? 'Queda 1 impostor.' : `Quedan ${d.impLeft} impostores.`) : '' };
 }
 function playEject(d) {
   stopEject(); const dur = Math.max(1200, (d.ms || 7000) * .62), cv = $('ejectCv'); ov('ejectOv', true);
@@ -2402,7 +2469,15 @@ function doUse() { const a = G.act; if (!a || !a.use) return; if (a.use.type ===
 function doVent() { const a = G.act; if (G.vent != null) return socket.emit('vent', { action: 'exit' }); if (a && a.vent && G.role === 'impostor' && G.alive) socket.emit('vent', { action: 'enter', id: a.vent.id }); }
 function doReport() { if (G.act && G.act.report) socket.emit('report'); }
 function doKill() { const a = G.act; if (a && a.kill && a.kill.ready) socket.emit('kill', a.kill.target.id); }
-[['btnUse', doUse], ['btnReport', doReport], ['btnKill', doKill], ['btnSab', () => (G.sabMenuOpen ? closeSabMenu() : openSabMenu())], ['btnVent', doVent]].forEach(([id, fn]) => {
+// Acechar (como el fantasma del original): sigues a un jugador vivo; cada toque pasa al siguiente y al moverte lo dejas
+function doHaunt() {
+  if (G.alive || G.state !== 'play') return;
+  const alive = [...G.players.values()].filter(p => p.alive && p.id !== myId); if (!alive.length) return toast('No queda nadie vivo a quien seguir');
+  const i = alive.findIndex(p => p.id === G.haunt); const nx = alive[(i + 1) % alive.length];
+  if (i === alive.length - 1) { G.haunt = null; toast('Ya no acechas a nadie', 1500); return; }
+  G.haunt = nx.id; toast(`Acechando a ${nx.name}`, 1500);
+}
+[['btnHaunt', doHaunt], ['btnUse', doUse], ['btnReport', doReport], ['btnKill', doKill], ['btnSab', () => (G.sabMenuOpen ? closeSabMenu() : openSabMenu())], ['btnVent', doVent]].forEach(([id, fn]) => {
   $(id).addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (id !== 'btnKill') snd('click'); fn(); });
 });
 window.addEventListener('keydown', e => {
@@ -2428,7 +2503,7 @@ function updateActions(now) {
       if (d < bd) { bd = d; act.use = { type: 'panel', panel: pn }; }
     }
     // un sabotaje por arreglar va antes que los terminales
-    if (G.alive && G.cfg.info !== false && !(act.use && act.use.type === 'panel')) for (const t of S.INFO) { const ip = S.cellPos(t), d = Math.hypot(G.x - ip.x, G.z - ip.z); if (d < bd) { bd = d; act.use = { type: 'info', tool: t }; } }
+    if (G.cfg.info !== false && !(act.use && act.use.type === 'panel')) for (const t of S.INFO) { const ip = S.cellPos(t), d = Math.hypot(G.x - ip.x, G.z - ip.z); if (d < bd) { bd = d; act.use = { type: 'info', tool: t }; } }
     if (!(act.use && (act.use.type === 'panel' || act.use.type === 'info')) && (G.role !== 'impostor' || G.cfg.test)) for (const id of G.tasks) {   // el impostor no puede hacer sus tareas falsas (salvo en modo pruebas)
       if (!canDo(id)) continue;
       const p = S.stationPos(S.STATIONS[id]), d = Math.hypot(G.x - p.x, G.z - p.z);
@@ -2457,6 +2532,8 @@ function updateActions(now) {
   setAct($('btnUse'), playing, !!u && !ucd, !u ? 'hand' : u.type === 'panel' ? 'wrench' : u.type === 'info' ? 'eye' : u.type === 'button' ? 'alert' : 'hand',
     !u ? 'Usar' : u.type === 'task' ? 'Usar' : u.type === 'panel' ? 'Arreglar' : u.type === 'info' ? u.tool.short : 'Reunión', ucd, !!ucd);
   setAct($('btnReport'), playing && G.alive, act.report, 'report', 'Reportar', '');
+  const hp = G.haunt && G.players.get(G.haunt);
+  setAct($('btnHaunt'), playing && !G.alive, true, 'eye', hp ? hp.name : 'Acechar', '');
   const kc = act.kill && act.kill.cd > 0 ? Math.ceil(act.kill.cd / 1000) : '';
   setAct($('btnKill'), !!act.kill, !!(act.kill && act.kill.target), 'knife', 'Matar', kc, !!kc);
 }
@@ -2589,6 +2666,10 @@ function update(dt, now) {
       if (free(G.x, nz)) G.z = nz;
       G.ry = Math.atan2(vx, vz);
     }
+    if (moving || G.alive) G.haunt = null;
+    const hp = G.haunt && G.players.get(G.haunt);
+    if (hp && hp.alive) { const k = Math.min(1, dt * 6), tx = hp.x - (hp.dir || 1) * 1.6, tz = hp.z + .4; G.x += (tx - G.x) * k; G.z += (tz - G.z) * k; G.ry = hp.ry; }
+    else if (G.haunt) G.haunt = null;
     G.mv = moving;
     if (now - lastSend > 66) { lastSend = now; socket.emit('move', { x: G.x, z: G.z, ry: G.ry, mv: moving ? 1 : 0 }); }
   } else G.mv = false;
@@ -2604,7 +2685,8 @@ function update(dt, now) {
     const dying = !!p.dying, venting = !!p.ventAnim;
     p.base = venting || (p.id === myId ? G.vent == null : (((p.alive || !G.alive) && !p.vent) || dying));
     if (p.id !== myId && p.base) p.seen = canSee(p.x, p.z, p.seen);
-    if (p.pet) {   // la mascota te sigue un poco por detrás, dando saltitos
+    if (p.pet && !p.alive && p.petAt) { p.pet.x = p.petAt.x; p.pet.z = p.petAt.z; p.pet.mv = false; p.petSeen = canSee(p.petAt.x, p.petAt.z, p.petSeen); }   // sola, llorando
+    else if (p.pet) {   // la mascota te sigue un poco por detrás, dando saltitos
       const pt = p.pet, tx = p.x - p.dir * 1.3, tz = p.z + .2, dx = tx - pt.x, dz = tz - pt.z, d = Math.hypot(dx, dz);
       pt.mv = d > .3; if (d > 8) { pt.x = tx; pt.z = tz; } else if (pt.mv) { const k = Math.min(1, dt * 5.5); pt.x += dx * k; pt.z += dz * k; pt.dir = dx > .05 ? 1 : dx < -.05 ? -1 : pt.dir; }
     }
@@ -2635,7 +2717,7 @@ function drawWorld(g, v, now, cam) {
   W2.drawProps(g, v, { t, noDecor: true, hl: cam ? null : new Set((G.tasks || []).filter(canDo)), use: cam ? null : use, sabPanels, ventOpen, camOn: G.camN > 0 });
   const ents = [], vw = v.w / v.sc / 2 + 8, vh = v.h / v.sc / 2 + 8;
   S.DECOR.forEach(d => { if (Math.abs(d.x - v.cx) < vw + (d.len || 0) && Math.abs(d.z - v.cy) < vh) ents.push({ z: W2.decorBase(d), d: () => W2.drawDecor(g, v, d, t) }); });
-  G.bodies.forEach(b => { if (b.revealAt || (!cam && !b.seen)) return; ents.push({ z: b.z - .3, d: () => W2.body(g, X(b.x), Y(b.z), ch * crewScale(b.look), b.color, b.dir) }); });
+  G.bodies.forEach(b => { if (b.revealAt || (!cam && !b.seen)) return; ents.push({ z: b.z - .3, d: () => { W2.splat(g, X(b.x), Y(b.z), ch * crewScale(b.look), b.id); W2.body(g, X(b.x), Y(b.z), ch * crewScale(b.look), b.color, b.dir); } }); });
   for (const p of G.players.values()) {
     const vis = cam ? (p.base && (p.alive || !G.alive)) : p.base && (p.id === myId || p.seen); if (!vis) continue;
     let x = p.x, z = p.z, squash = 0, alpha = null;
@@ -2643,11 +2725,12 @@ function drawWorld(g, v, now, cam) {
     if (p.ventAnim) { const k = Math.min(1, (now - p.ventAnim.t0) / 520); squash = p.ventAnim.out ? 1 - k : k; x = p.ventAnim.x; z = p.ventAnim.z; }
     if (p.dying) { const k = Math.min(1, (now - p.dying.t0) / p.dying.dur); alpha = 1 - k; }
     const ghost = p.ghost || !p.alive, hh = ch * crewScale(p.look), col = colHex(p.color);
+    if (ghost && p.pet && p.petAt && !p.dying && (cam || p.petSeen || !G.alive)) { const pt = p.pet; ents.push({ z: pt.z, d: () => W2.pet(g, X(pt.x), Y(pt.z), hh * .42, p.look.pet, col, t, false, pt.dir, 'sad') }); }
     if (ghost && G.alive && !cam) continue;
     ents.push({ z, d: () => {
       if (!ghost && !p.vent) { g.fillStyle = 'rgba(0,0,0,.22)'; g.beginPath(); g.ellipse(X(x), Y(z), hh * .3, hh * .07, 0, 0, TAU); g.fill(); }
       W2.crew(g, X(x), Y(z), hh, { color: col, look: p.look, dir: p.dir, mv: p.mv && !ghost, ph: p.ph, ghost, alpha: ghost ? .5 : alpha, t, squash });
-    }, name: () => { if (squash < .5) { const mate = G.role === 'impostor' && G.mates.includes(p.id); W2.name(g, X(x), Y(z) - hh * (ghost ? 1.3 : 1.12) - (p.look.t ? hh * .18 : 0), p.name, mate ? '#ff3b3b' : ghost ? 'rgba(255,255,255,.75)' : '#fff', Math.max(10, v.sc * .58)); } } });
+    }, name: () => { if (squash < .5) { const mate = G.role === 'impostor' && G.mates.includes(p.id); W2.name(g, X(x), Y(z) - hh * (ghost ? 1.3 : 1.12) - (p.look.t ? hh * .18 : 0), p.name, mate ? '#ff3b3b' : ghost ? 'rgba(255,255,255,.75)' : '#fff', Math.max(10, v.sc * .58)); const cb = cbName(p); if (cb) W2.name(g, X(x), Y(z) + v.sc * .55, cb, '#d8e2f0', Math.max(9, v.sc * .45)); } } });
     if (p.pet && !ghost && !p.vent && !p.ventAnim && !p.dying) { const pt = p.pet; ents.push({ z: pt.z, d: () => W2.pet(g, X(pt.x), Y(pt.z), hh * .42, p.look.pet, col, t, pt.mv, pt.dir) }); }
   }
   ents.sort((a, b) => a.z - b.z).forEach(e => e.d());
@@ -2664,7 +2747,7 @@ function drawWorld(g, v, now, cam) {
 function render2D(now) {
   const g = g2, pr = VIEW.dpr; g.setTransform(pr, 0, 0, pr, 0, 0);
   const v = { cx: G.camX, cy: G.camZ - CREW_H * .4, sc: VIEW.sc, w: VIEW.w, h: VIEW.h };
-  if (now < G.shakeUntil) { const a = G.shakeAmp * ((G.shakeUntil - now) / 380); v.cx += (Math.random() - .5) * a; v.cy += (Math.random() - .5) * a; }
+  if (now < G.shakeUntil && PREFS.shake !== false) { const a = G.shakeAmp * ((G.shakeUntil - now) / 380); v.cx += (Math.random() - .5) * a; v.cy += (Math.random() - .5) * a; }
   drawWorld(g, v, now, false);
 }
 function drawMini() {
