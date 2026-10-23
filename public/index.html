@@ -162,7 +162,7 @@ label.l{display:block;color:var(--steel);font-size:14px;margin:16px 0 6px}
 #chatRow{display:flex;gap:8px}
 #chatRow .field{padding:11px 12px;font-size:15px}
 #chatRow button{padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--hull);font-weight:700}
-@media (min-width:900px) and (orientation:landscape){
+@media (min-width:1200px) and (orientation:landscape){
   #meeting{flex-direction:row}
   #chatPanel{position:static;display:flex;width:340px;flex:none;border-radius:18px;border:3px solid #3f5a8c;padding:10px}
   #btnChat,#chatClose{display:none}
@@ -721,6 +721,104 @@ body.lefty #actions2{left:auto;right:max(18px,env(safe-area-inset-right));bottom
 body.nokeys #keys{display:none!important}
 #taskList .fake{color:#ff6b81;font-weight:700}
 #endCv{width:min(760px,100%);height:clamp(200px,46vh,340px);flex:none;margin-top:4px}
+
+/* ===== v5.8 · la tableta de votación del original ===== */
+#meeting{background:#04070dcc;align-items:center;justify-content:center;padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));gap:10px}
+#mtgTab{position:relative;display:flex;width:min(100%,calc((100dvh - 12px) * 1.78),1180px);height:min(100%,calc((100vw - 16px) / 1.78));min-height:0;padding:clamp(8px,2.6vh,20px) clamp(34px,9vh,74px) clamp(8px,2.6vh,20px) clamp(10px,2.8vh,22px);border-radius:clamp(14px,4vh,34px);background:linear-gradient(160deg,#dfe4ea,#aeb7c2 55%,#8d97a4);box-shadow:inset 0 2px 0 #fff9,inset 0 -3px 0 #6c7584,0 18px 50px -10px #000}
+#mtgHome{position:absolute;right:clamp(8px,2.4vh,20px);top:50%;width:clamp(22px,7vh,48px);height:clamp(22px,7vh,48px);margin-top:calc(clamp(22px,7vh,48px) / -2);border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff,#d9dee5 60%,#aab3bf);box-shadow:0 0 0 2px #7d8796,inset 0 -2px 4px #0003}
+#mtgMain{position:relative;flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:clamp(4px,1.4vh,10px);padding:clamp(6px,1.8vh,14px) clamp(8px,2.2vh,18px);border-radius:clamp(8px,2.4vh,20px);border:clamp(3px,.9vh,7px) solid #3b4250;background:linear-gradient(165deg,#d9e8f5 0%,#bcd5ea 50%,#a6c3de 100%);box-shadow:inset 0 0 0 2px #ffffff80;color:#1b2230;overflow:hidden}
+#mtgMain::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(118deg,transparent 58%,#ffffff2e 58%,#ffffff2e 64%,transparent 64%,transparent 68%,#ffffff22 68%,#ffffff22 70%,transparent 70%)}
+#mtgHead{position:relative;display:flex;align-items:center;justify-content:center;flex:none;min-height:clamp(26px,9vh,64px)}
+#mtgHead h2{margin:0;text-align:center;color:#f2f4f7;font:900 clamp(18px,7vh,46px)/1 "Arial Black","Arial Rounded MT Bold",var(--fd),system-ui,sans-serif;letter-spacing:.5px;text-shadow:0 0 0 #3a414d,-2px -2px 0 #3a414d,2px -2px 0 #3a414d,-2px 2px 0 #3a414d,2px 2px 0 #3a414d,0 -2px 0 #3a414d,0 2px 0 #3a414d,-2px 0 0 #3a414d,2px 0 0 #3a414d,0 4px 0 #3a414d99}
+#btnChat{position:absolute;right:0;top:50%;transform:translateY(-50%);width:clamp(34px,10vh,64px);height:clamp(30px,8.5vh,54px);border:none;border-radius:0;background:none;padding:0}
+#btnChat svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 0 #0003)}
+#chatBadge{top:auto;bottom:-2px;left:-6px;right:auto;min-width:clamp(14px,4.4vh,24px);height:clamp(14px,4.4vh,24px);border-radius:50%;border:2px solid #fff;background:#e8303a;font-size:clamp(9px,2.6vh,13px)}
+#mtgPlayers{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,calc((100% - (var(--rows,5) - 1) * clamp(4px,1.6vh,12px)) / var(--rows,5)));gap:clamp(4px,1.6vh,12px) clamp(8px,3vh,24px);padding:2px 2px 4px;overflow:auto;align-content:start}
+#mtgPlayers .pcard{position:relative;display:flex;align-items:center;gap:clamp(4px,1.5vh,12px);min-height:0;padding:0 clamp(6px,1.8vh,14px) 0 clamp(4px,1vh,8px);border:none;border-radius:clamp(5px,1.4vh,10px);background:linear-gradient(#ffffff,#e6ebf1);box-shadow:0 clamp(2px,.6vh,4px) 0 #8794a5,0 1px 6px #0002;color:#1b2230;overflow:visible;animation:none;filter:none;opacity:1}
+#mtgPlayers .pcard::after{content:none}
+#mtgPlayers .pcard.me{box-shadow:0 clamp(2px,.6vh,4px) 0 #8794a5,0 0 0 3px #4aa3ff}
+#mtgPlayers .pcard.can{cursor:pointer}#mtgPlayers .pcard.can:active{transform:translateY(1px)}
+#mtgPlayers .pcard.sel{grid-column:auto;box-shadow:0 clamp(2px,.6vh,4px) 0 #8794a5,0 0 0 3px #ffcf3a}
+#mtgPlayers .pcard.dead{background:linear-gradient(#a4adb8,#8e98a5);box-shadow:0 clamp(2px,.6vh,4px) 0 #6a7482}
+#mtgPlayers .pcard.dead .nm{color:#d5dae0}
+#mtgPlayers .pcard.out{box-shadow:0 0 0 3px #e8303a,0 clamp(2px,.6vh,4px) 0 #8794a5;animation:shake .5s}
+#mtgPlayers .icw{position:relative;flex:none;align-self:flex-end;display:flex}
+.cicon{display:block}
+#mtgPlayers .voted{position:absolute;left:-4px;top:-6%;width:clamp(20px,6vh,40px);height:clamp(20px,6vh,40px);border-radius:50%;border:2px solid #d4242f;background:#ffffffe6;color:#d4242f;font:900 clamp(5px,1.35vh,9px)/1.05 var(--fd),sans-serif;display:flex;align-items:center;justify-content:center;text-align:center;transform:rotate(-16deg);box-shadow:inset 0 0 0 2px #fff,inset 0 0 0 3.5px #d4242f;animation:pop .3s both}
+#mtgPlayers .pname{flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:2px}
+#mtgPlayers .nm{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#f4f6f8;font:900 clamp(12px,4.6vh,28px)/1.1 "Arial Black",var(--fd),system-ui,sans-serif;text-shadow:-1.5px -1.5px 0 #59606c,1.5px -1.5px 0 #59606c,-1.5px 1.5px 0 #59606c,1.5px 1.5px 0 #59606c,0 2px 0 #59606c}
+#mtgPlayers .pcard.imp .nm{color:#ff4b4b}
+#mtgPlayers .mega{flex:none;width:clamp(26px,9vh,64px);height:auto;opacity:.9}
+#mtgPlayers .vchips,#btnSkip .vchips{display:flex;flex-wrap:wrap;gap:1px;margin:0}
+.vchips .cicon{animation:pop .35s cubic-bezier(.2,1.6,.4,1) both;animation-delay:calc(var(--i)*.22s)}.vchips .cicon.anon{filter:grayscale(1) brightness(1.2)}
+.pconf{display:flex;gap:clamp(4px,1.4vh,10px);flex:none}
+.cbtn{width:clamp(26px,8vh,52px);height:clamp(26px,8vh,52px);border-radius:50%;font-size:clamp(14px,4.4vh,28px);border:3px solid #fff;box-shadow:0 2px 0 #0004}
+.cbtn.ok{background:#21b14b}.cbtn.no{background:#d4242f}
+#mtgFoot{display:flex;flex-direction:row;align-items:center;gap:10px;flex:none;min-height:clamp(24px,8vh,52px)}
+#btnSkip{display:flex;align-items:center;gap:8px;flex:none;min-height:0;height:clamp(24px,7.5vh,48px);padding:0 clamp(10px,3vh,22px);border:none;border-radius:clamp(5px,1.4vh,10px);background:linear-gradient(#ffffff,#e3e8ee);box-shadow:0 clamp(2px,.6vh,4px) 0 #8794a5;font:900 clamp(11px,3.6vh,22px)/1 "Arial Black",var(--fd),sans-serif;color:#f4f6f8;text-shadow:-1.5px -1.5px 0 #59606c,1.5px -1.5px 0 #59606c,-1.5px 1.5px 0 #59606c,1.5px 1.5px 0 #59606c;text-transform:uppercase}
+#btnSkip.sel{box-shadow:0 clamp(2px,.6vh,4px) 0 #8794a5,0 0 0 3px #ffcf3a}
+#btnSkip.res{background:none;box-shadow:none;padding-left:0}
+#btnSkip .sl{flex:none}
+#mtgResult{display:block;flex:1;min-width:0;padding:0;border:none;background:none;text-align:center;color:#1b2a44;font:800 clamp(11px,3.4vh,18px)/1.15 var(--fd),sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mtgInfo{flex:none;margin-left:auto;color:#2a3344;font:700 clamp(11px,3.6vh,20px)/1 Inter,system-ui,sans-serif;text-align:right;min-height:0}
+#mtgDiscuss{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:3}
+#mtgDiscuss.on{display:flex;animation:discuss 2.6s cubic-bezier(.2,1.4,.4,1) both}
+#mtgDiscuss canvas{width:min(78vh,62vw);height:min(78vh,62vw);border-radius:50%;box-shadow:0 10px 40px #0007}
+#mtgDiscuss b{position:absolute;top:calc(50% - min(31vh,25vw));left:0;right:0;text-align:center;color:#fff;font:900 min(13vh,10vw)/1 "Comic Sans MS","Chalkboard SE","Marker Felt",var(--fd),cursive;letter-spacing:1px;text-shadow:-3px -3px 0 #2a5f12,3px -3px 0 #2a5f12,-3px 3px 0 #2a5f12,3px 3px 0 #2a5f12,0 -3px 0 #2a5f12,0 3px 0 #2a5f12,-3px 0 0 #2a5f12,3px 0 0 #2a5f12,0 6px 0 #0005;transform:rotate(-4deg)}
+@keyframes discuss{0%{transform:scale(.2);opacity:0}12%{transform:scale(1);opacity:1}85%{transform:scale(1);opacity:1}100%{transform:scale(1.15);opacity:0}}
+#chatPanel{background:#d7e3ef;color:#1b2230}#chatHead{color:#1b2230}#chatLog{background:#f4f7fa;border-color:#a9b8c8}
+@media (orientation:portrait){#mtgTab{width:100%;height:auto;max-height:100%;aspect-ratio:auto;padding:12px 12px 40px}#mtgHome{right:auto;left:50%;top:auto;bottom:8px;margin:0 0 0 -16px;width:32px;height:32px}#mtgPlayers{grid-template-columns:1fr 1fr;grid-auto-rows:minmax(54px,auto)}}
+
+/* ===== v5.8 · monitor de cámaras de Seguridad ===== */
+#infoOv.cams{background:#000b}
+#infoOv.cams #infoBody{margin:0 max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));padding:clamp(6px,2vh,14px);gap:clamp(5px,1.6vh,10px);border-radius:clamp(10px,3vh,22px);background:linear-gradient(160deg,#5b6372,#353b47 60%,#262a33);box-shadow:inset 0 2px 0 #ffffff30,inset 0 -3px 0 #0006,0 10px 30px #000a}
+#infoOv.cams .feed{border:clamp(2px,.8vh,5px) solid #14171d;border-radius:clamp(4px,1.2vh,8px);box-shadow:inset 0 0 0 1px #ffffff14;overflow:hidden}
+#infoOv.cams .feed::after{background:repeating-linear-gradient(0deg,#0000 0 2px,#0002 2px 3px),radial-gradient(ellipse at center,#0000 60%,#0008 100%),linear-gradient(#9fd8ff08,#9fd8ff10)}
+#infoOv.cams .feed .fl{font:800 clamp(8px,2.4vh,11px)/1 var(--fd),sans-serif;opacity:.85}
+#infoOv.cams .feed .fr{animation:flash 1.2s steps(2) infinite}
+#infoOv.cams .feed.off{background:#222;animation:none}
+#infoOv.cams .feed.off .nosig{position:absolute;inset:0;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.9'/></svg>");animation:noise .18s steps(4) infinite;font-size:0}
+@keyframes noise{0%{background-position:0 0}25%{background-position:-40px 20px}50%{background-position:30px -50px}75%{background-position:-70px -10px}100%{background-position:10px 40px}}
+
+/* ===== v5.8 · móvil en horizontal ===== */
+#topRight .tools #btnSound,#topRight .tools #btnFull,#topRight .tools #btnQuit{display:none!important}   /* como en el original: solo la rueda de ajustes */
+.cfgBtns{display:flex;gap:8px;margin-top:4px}.cfgBtns .btn{flex:1;margin:0;font-size:14px;padding:11px 10px}
+#cfgQuit{color:#ffb3c0}
+#chatIn{background:#fff;color:#1b2230;border-color:#a9b8c8}#chatIn::placeholder{color:#7d8899}
+#chatRow button{background:#2f7dff;color:#fff;border:none}
+#chatPanel .x{color:#1b2230;background:#c3d1e0}
+@media (orientation:landscape) and (max-height:620px){
+  .screen{overflow:auto}
+  #menu .card,#lobby .card,#chars .card{max-width:min(980px,100%);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);column-gap:clamp(16px,4vw,40px);grid-auto-flow:row dense;align-items:start;align-content:start;padding:max(10px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}
+  #menu .card>*,#lobby .card>*,#chars .card>*{grid-column:2;min-width:0}
+  #menu .topbar,#lobby .topbar{grid-column:1/-1}
+  #menu .hero,#menu .pmain,#menu #btnCreate{grid-column:1}#menu .foot{display:none}
+  #menu .logo{flex-direction:row;align-items:baseline;gap:.25em;margin:0}#menu .logo span{font-size:clamp(28px,9.5vh,46px)}#menu .logo b{font-size:clamp(32px,11vh,54px)}#menu .pmain{margin-top:6px}
+  #menu .topbar{margin-bottom:0}#menu #menuList{margin-left:0;margin-right:0;padding-left:0}#menu .hero{margin:0 0 4px;text-align:left}
+  #menu .hero{margin:0 0 10px}#menu .hero .sub{display:none}
+  #menu .sec-h:first-of-type{margin-top:0}
+  #menu #btnCreate{margin-top:10px}#menu .joinBox{margin-top:10px}
+  #lobby #ticket,#lobby #btnShare,#lobby .dock,#lobby #minHint{grid-column:1}
+  #lobby .dock{position:static;margin:10px 0 0;padding:0;background:none}
+  #lobby .sec-h{margin-top:0}
+  #chars #edBack,#chars #prev,#chars #edName,#chars #edUse{grid-column:1}
+  #chars #prev{height:calc(100dvh - 190px);min-height:150px;margin:6px 0 8px}
+  #chars #edRand{margin-top:0}
+  #infoOv:not(.cams) #infoBody{padding:8px 12px}
+  #admCv{width:auto;max-width:100%;height:calc(100dvh - 120px);max-height:none}
+  #infoOv.vitals #infoBody{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;align-content:start}
+  #infoOv.vitals .vit{margin:0;padding:5px 10px;max-width:none}
+}
+/* las cámaras: los recuadros son ventanas al lienzo del juego; el marco lo dibujan los bordes */
+#infoOv.cams{background:transparent}
+#infoOv.cams #infoBody{background:none;border:clamp(6px,2vh,14px) solid #3c424e;box-shadow:0 0 0 2px #1b1f26,0 10px 30px #000a}
+#infoOv.cams .feed{outline:clamp(3px,1vh,6px) solid #2a2f38}
+
+/* ===== v5.8 · mapa (y mapa de sabotaje) sin bloquear el joystick ===== */
+#mapOv{background:transparent;pointer-events:none}
+#mapOv #mapBox{pointer-events:auto}
+@media (orientation:landscape){#mapOv{justify-content:flex-start;padding-left:max(24vw,170px)}body.lefty #mapOv{justify-content:flex-end;padding-left:0;padding-right:max(24vw,170px)}#mapBox{width:min(46vw,calc(80vh * 188 / 122))}}   /* entre el joystick y los botones: se puede seguir andando y pulsar sabotaje
+#mapOv.sab #mapBox{border-color:#ff8a8a;background:#3a0a10;box-shadow:0 0 0 4px #3a0a10,0 0 40px #ff2e4d66,0 20px 60px #000}
 </style>
 <link rel="preload" href="fonts/chakra-petch-latin-700-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -755,7 +853,7 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.7.1</span></footer>
+    <footer class="foot"><span>Impostor 3D · v5.8</span></footer>
   </div>
 </div>
 
@@ -803,9 +901,9 @@ body.nokeys #keys{display:none!important}
   <canvas id="cv"></canvas>
   <div id="vignette"></div>
   <div id="topLeft" class="hud"><div id="taskBox" class="hglass"><div id="taskHead" role="button" aria-label="Mostrar u ocultar tareas"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tareas</span><b id="taskCount"></b><i class="chev"></i></div><div id="barWrap"><div id="bar"></div><span>TAREAS COMPLETADAS</span></div><div id="taskList"></div></div><div id="testTag" style="display:none">MODO PRUEBAS</div></div>
-  <div id="topRight" class="hud"><canvas id="minimap" width="300" height="205"></canvas><div class="tools"><button id="btnView" class="ibtn" aria-label="Alejar la cámara"><svg class="i" aria-hidden="true"><use href="#i-zout"/></svg></button><button id="btnSound" class="ibtn sndBtn" aria-label="Sonido"></button><button id="btnCfg" class="ibtn" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button><button id="btnFull" class="ibtn" aria-label="Pantalla completa"><svg class="i" aria-hidden="true"><use href="#i-max"/></svg></button><button id="btnTest" class="ibtn" style="display:none" aria-label="Herramientas de prueba"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg></button><button id="btnEndTest" class="ibtn" style="display:none" aria-label="Terminar prueba"><svg class="i" aria-hidden="true"><use href="#i-flag"/></svg></button><button id="btnQuit" class="ibtn" aria-label="Salir de la partida"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button></div></div>
+  <div id="topRight" class="hud"><canvas id="minimap" width="300" height="205"></canvas><div class="tools"><button id="btnSound" class="ibtn sndBtn" aria-label="Sonido"></button><button id="btnCfg" class="ibtn" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button><button id="btnFull" class="ibtn" aria-label="Pantalla completa"><svg class="i" aria-hidden="true"><use href="#i-max"/></svg></button><button id="btnTest" class="ibtn" style="display:none" aria-label="Herramientas de prueba"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg></button><button id="btnEndTest" class="ibtn" style="display:none" aria-label="Terminar prueba"><svg class="i" aria-hidden="true"><use href="#i-flag"/></svg></button><button id="btnQuit" class="ibtn" aria-label="Salir de la partida"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button></div></div>
   <div id="ghost" class="hud">Eres un fantasma: sigue con las tareas y observa</div>
-  <div id="keys" class="hud">WASD / flechas mover · E usar · R reportar · Q matar · G sabotaje · F ventilación · Z zoom</div>
+  <div id="keys" class="hud">WASD / flechas mover · E usar · R reportar · Q matar · G sabotaje · F ventilación</div>
   <div id="sabBanner" class="hud"></div><div id="redFlash" class="hud"></div>
   <div id="actions2"><button id="btnSab" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-zap"/></svg><span class="al">Sabotaje</span><span class="acd"></span></button><button id="btnVent" class="act2 hide"><svg class="i" aria-hidden="true"><use href="#i-vent"/></svg><span class="al">Rejilla</span><span class="acd"></span></button></div>
   <div id="ventUI"></div>
@@ -826,6 +924,7 @@ body.nokeys #keys{display:none!important}
   <label class="cfgRow"><span><b>Vibración</b><small>Al matar, al votar y al completar tareas</small></span><input type="checkbox" id="cfgBuzz"></label>
   <label class="cfgRow"><span><b>Sonido</b><small>Efectos del juego</small></span><input type="checkbox" id="cfgSound"></label>
   <label class="cfgRow"><span><b>Ayuda de teclas</b><small>En el ordenador: WASD, E, R, Q…</small></span><input type="checkbox" id="cfgKeys"></label>
+  <div class="cfgBtns"><button id="cfgFull" class="btn">Pantalla completa</button><button id="cfgQuit" class="btn">Salir de la partida</button></div>
 </div></div>
 <div id="mapOv" class="ov" role="dialog" aria-label="Mapa de la nave"><div id="mapBox"><canvas id="mapCv"></canvas><button class="x" id="mapClose" aria-label="Cerrar mapa">✕</button></div></div>
 <div id="ejectOv" class="ov"><canvas id="ejectCv"></canvas><div id="ejectTxt"></div><div id="ejectSub"></div></div>
@@ -833,16 +932,18 @@ body.nokeys #keys{display:none!important}
 
 <div id="testMenu" class="ov"><div class="panel"><h2><span>Herramientas de prueba</span><button class="x" id="testClose">✕</button></h2><div id="testBody"></div></div></div>
 
-<div id="sabMenu" class="ov"><div class="panel"><h2><span id="sabTitle">Sabotaje</span><button class="x" id="sabClose">✕</button></h2><div id="sabBody"></div></div></div>
 
 <div id="mg" class="ov"><div class="panel"><h2><span id="mgTitle"></span><button class="x" id="mgClose">✕</button></h2><div id="mgBody"></div></div></div>
 
 <div id="meeting" class="ov">
-  <div id="mtgMain">
-    <div id="mtgHead"><button id="btnChat" aria-label="Chat">💬<span id="chatBadge"></span></button><div><h2 id="mtgTitle"></h2><div id="mtgSub"></div></div></div>
-    <div id="mtgBar"><i></i></div>
-    <div id="mtgPlayers"></div>
-    <div id="mtgFoot"><div id="btnSkip" role="button" tabindex="0"></div><div id="mtgInfo"></div><div id="mtgResult"></div></div>
+  <div id="mtgTab">
+    <div id="mtgMain">
+      <div id="mtgHead"><h2 id="mtgTitle">¿Quién es el impostor?</h2><button id="btnChat" aria-label="Chat"><svg viewBox="0 0 48 40" aria-hidden="true"><path d="M6 4h36a3 3 0 0 1 3 3v20a3 3 0 0 1-3 3H20l-9 8v-8H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z" fill="#fff" stroke="#2b3240" stroke-width="2.6" stroke-linejoin="round"/><path d="M11 12q4-3 8 0t8 0 8 0M11 18q4-3 8 0t8 0 8 0M11 24q3-2 6 0" fill="none" stroke="#6b7484" stroke-width="2.2" stroke-linecap="round"/></svg><span id="chatBadge"></span></button></div>
+      <div id="mtgPlayers"></div>
+      <div id="mtgFoot"><div id="btnSkip" role="button" tabindex="0"></div><div id="mtgResult"></div><div id="mtgInfo"></div></div>
+      <div id="mtgDiscuss"><canvas width="600" height="600"></canvas><b>¡A DEBATIR!</b></div>
+    </div>
+    <i id="mtgHome" aria-hidden="true"></i>
   </div>
   <div id="chatPanel">
     <div id="chatHead"><span>Chat de la reunión</span><button class="x" id="chatClose">✕</button></div>
@@ -1484,9 +1585,9 @@ $('taskBox').classList.toggle('min', lsGet('i3d_taskMin', false));
 $('taskHead').addEventListener('click', () => { const b = $('taskBox'); b.classList.toggle('min'); lsSet('i3d_taskMin', b.classList.contains('min')); snd('click'); });
 function updateBar() { $('bar').style.width = (G.total ? Math.min(100, G.doneN / G.total * 100) : 0) + '%'; }
 function updateGhost() { $('ghost').style.display = !G.alive && G.state !== 'menu' ? 'block' : 'none'; }
-$('btnView').onclick = toggleView;
 function applyPrefs() { document.body.classList.toggle('lefty', !!PREFS.lefty); document.body.classList.toggle('nokeys', !PREFS.keys); }
-function openCfg() { $('cfgLefty').checked = !!PREFS.lefty; $('cfgBuzz').checked = !!PREFS.buzz; $('cfgKeys').checked = !!PREFS.keys; $('cfgSound').checked = !sfx.isMuted(); ov('cfgOv', true); snd('click'); }
+function openCfg() { $('cfgFull').style.display = fsOK ? '' : 'none'; $('cfgFull').textContent = document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa'; $('cfgQuit').style.display = G.state === 'menu' ? 'none' : ''; $('cfgLefty').checked = !!PREFS.lefty; $('cfgBuzz').checked = !!PREFS.buzz; $('cfgKeys').checked = !!PREFS.keys; $('cfgSound').checked = !sfx.isMuted(); ov('cfgOv', true); snd('click'); }
+$('cfgFull').onclick = () => { ov('cfgOv', false); $('btnFull').onclick(); }; $('cfgQuit').onclick = () => { ov('cfgOv', false); $('btnQuit').onclick(); };
 $('btnCfg').onclick = openCfg; $('btnCfgMenu').onclick = openCfg; $('cfgClose').onclick = () => ov('cfgOv', false); $('cfgOv').onclick = e => { if (e.target.id === 'cfgOv') ov('cfgOv', false); };
 $('cfgLefty').onchange = e => { PREFS.lefty = e.target.checked; savePrefs(); applyPrefs(); };
 $('cfgBuzz').onchange = e => { PREFS.buzz = e.target.checked; savePrefs(); buzz(30); };
@@ -1495,23 +1596,57 @@ $('cfgSound').onchange = e => { if (e.target.checked === sfx.isMuted()) document
 applyPrefs();
 // mapa grande al tocar el minimapa, como el botón de mapa del original: salas, tus tareas, los sabotajes y dónde estás
 let bigMap = null;
-function openMap() { if (G.state !== 'play') return; G.mapOpen = true; ov('mapOv', true); snd('click'); drawBigMap(performance.now()); }
-function closeMap() { G.mapOpen = false; ov('mapOv', false); }
+function openMap(sab) {
+  if (G.state !== 'play') return; G.mapOpen = true; G.mapSab = !!sab; G.mapAt = performance.now(); G.sabHits = [];
+  $('mapOv').classList.toggle('sab', G.mapSab); ov('mapOv', true); snd('click'); drawBigMap(performance.now());
+}
+function closeMap() { G.mapOpen = false; if (G.mapSab) { G.mapSab = false; G.sabMenuOpen = false; } ov('mapOv', false); $('mapOv').classList.remove('sab'); }
 function drawBigMap(now) {
   if (!bigMap) bigMap = W2.miniMap(10);
   const { g, w, h } = fitCanvas($('mapCv')), sx = w / S.MAPW, sz = h / S.MAPH, t = now / 1000;
   g.clearRect(0, 0, w, h); g.drawImage(bigMap, 0, 0, w, h);
-  G.tasks.forEach(id => { if (!canDo(id)) return; const p = S.stationPos(S.STATIONS[id]), x = p.x * sx, y = p.z * sz, b = Math.sin(t * 5) * 2;
+  if (G.mapSab) { g.save(); g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(255,40,60,.42)'; g.fillRect(0, 0, w, h); g.restore(); }   // el mapa de sabotaje es rojo
+  if (!G.mapSab) G.tasks.forEach(id => { if (!canDo(id)) return; const p = S.stationPos(S.STATIONS[id]), x = p.x * sx, y = p.z * sz, b = Math.sin(t * 5) * 2;
     g.fillStyle = '#ffd23f'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y - 16 + b); g.lineTo(x + 9, y + b); g.lineTo(x - 9, y + b); g.closePath(); g.fill(); g.stroke(); g.fillStyle = '#000'; g.font = '900 11px Inter,sans-serif'; g.textAlign = 'center'; g.fillText('!', x, y - 3 + b); });
   if (G.sab && G.sab.panels) G.sab.panels.forEach(id => { if ((G.sab.done || []).includes(id)) return; const p = S.cellPos(S.PANELS.find(q => q.id === id)); g.fillStyle = Math.sin(t * 8) > 0 ? '#ff2e4d' : '#7a1020'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.arc(p.x * sx, p.z * sz, 9, 0, TAU); g.fill(); g.stroke(); });
   const me = G.players.get(myId); if (me) W2.crew(g, G.x * sx, G.z * sz + 10, 30, { color: colHex(me.color), look: me.look, dir: me.dir || 1, t });
+  if (G.mapSab) drawSabIcons(g, w, h, sx, sz, now);
 }
-$('minimap').onclick = openMap; $('mapClose').onclick = closeMap; $('mapOv').onclick = e => { if (e.target.id === 'mapOv') closeMap(); };
-function toggleView() {   // dos alturas de cámara: cerca (por defecto) y lejos
-  G.zoom = G.zoom ? 0 : 1; const b = $('btnView'); b.classList.toggle('fp', !!G.zoom); b.setAttribute('aria-label', G.zoom ? 'Acercar la cámara' : 'Alejar la cámara');
-  b.querySelector('use').setAttribute('href', G.zoom ? '#i-zin' : '#i-zout'); lsSet('i3d_zoom', G.zoom);
+// mapa de sabotaje del original: en cada sala, el icono de lo que se puede sabotear (y una puerta en las salas con puertas)
+const DOOR_ROOMS = ['cafeteria', 'almacen', 'enfermeria', 'seguridad', 'electrica', 'motores', 'motorinf'];
+function sabIcons() {
+  const rc = id => S.ROOMS.find(r => r.id === id).c, out = [];
+  [['luces', 'electrica', 'zap'], ['reactor', 'reactor', 'rad'], ['o2', 'oxigeno', 'o2'], ['coms', 'comunicaciones', 'ant']].forEach(([type, room, ic]) => { if (G.cfg.sabs[type]) out.push({ type, room, ic, x: rc(room)[0], z: rc(room)[1] - 1.6 }); });
+  if (G.cfg.sabs.puertas) DOOR_ROOMS.forEach(room => { const c = rc(room), big = out.some(o => o.room === room); out.push({ type: 'puertas', room, ic: 'door', x: c[0] + (big ? 5.5 : 0), z: c[1] + (big ? 1.5 : 1.2) }); });
+  return out;
 }
-if (lsGet('i3d_zoom', 0)) toggleView();
+function drawSabIcons(g, w, h, sx, sz, now) {
+  const cd = G.sab ? -1 : Math.max(0, G.sabReadyAt - now), off = !!G.sab || cd > 0, R = Math.max(14, Math.min(26, w / 36)), tot = Math.max(1, (G.cfg.sabCd || 30) * 1000);
+  G.sabHits = [];
+  sabIcons().forEach(o => {
+    const x = o.x * sx, y = o.z * sz; G.sabHits.push({ o, x, y, r: R * 1.25 });
+    g.save(); g.translate(x, y);
+    g.fillStyle = off ? '#5a5f6b' : '#d8262f'; g.strokeStyle = '#1a0a0c'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, R, 0, TAU); g.fill(); g.stroke();
+    if (cd > 0) { g.fillStyle = '#d8262faa'; g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, R - 2, -Math.PI / 2, -Math.PI / 2 + TAU * (1 - cd / tot)); g.closePath(); g.fill(); }
+    g.strokeStyle = '#fff'; g.fillStyle = '#fff'; g.lineWidth = R * .14; g.lineCap = g.lineJoin = 'round'; const k = R * .55;
+    if (o.ic === 'zap') { g.beginPath(); g.moveTo(k * .2, -k); g.lineTo(-k * .5, k * .1); g.lineTo(0, k * .1); g.lineTo(-k * .2, k); g.lineTo(k * .5, -k * .1); g.lineTo(0, -k * .1); g.closePath(); g.fill(); }
+    else if (o.ic === 'rad') { g.beginPath(); g.arc(0, 0, k * .22, 0, TAU); g.fill(); for (let i = 0; i < 3; i++) { const a = i * TAU / 3 - Math.PI / 2; g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, k, a - .5, a + .5); g.closePath(); g.fill(); } }
+    else if (o.ic === 'o2') { g.font = `900 ${R * .8}px Inter,sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('O₂', 0, 1); }
+    else if (o.ic === 'ant') { g.beginPath(); g.moveTo(0, -k * .2); g.lineTo(-k * .5, k); g.moveTo(0, -k * .2); g.lineTo(k * .5, k); g.moveTo(-k * .3, k * .45); g.lineTo(k * .3, k * .45); g.stroke(); g.beginPath(); g.arc(0, -k * .45, k * .25, 0, TAU); g.fill(); g.beginPath(); g.arc(0, -k * .45, k * .6, -2.4, -.7); g.stroke(); }
+    else { g.strokeRect(-k * .55, -k * .8, k * 1.1, k * 1.6); g.beginPath(); g.arc(k * .25, 0, k * .1, 0, TAU); g.fill(); }
+    if (cd > 0) { g.fillStyle = '#fff'; g.font = `900 ${R * .62}px Inter,sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(Math.ceil(cd / 1000), 0, R + R * .5); }
+    g.restore();
+  });
+}
+$('mapCv').addEventListener('click', e => {
+  if (!G.mapSab || performance.now() - G.mapAt < 400) return;   // un toque recién abierto no cuenta: así no marcas nada sin querer
+  const r = e.currentTarget.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, hit = (G.sabHits || []).find(h => Math.hypot(h.x - x, h.y - y) < h.r);
+  if (!hit) return;
+  if (G.sab) { toast('Ya hay un sabotaje en marcha'); return; }
+  if (G.sabReadyAt > performance.now()) { toast('El sabotaje se está recargando'); return; }
+  socket.emit('sabotage', hit.o.type === 'puertas' ? { type: 'puertas', room: hit.o.room } : { type: hit.o.type }); buzz(30);
+});
+$('minimap').onclick = () => openMap(); $('mapClose').onclick = closeMap;
 
 // presentación como en el original: primero "¡Shhhhh!" y luego tu papel con tu equipo en fila
 function fitCanvas(cv) { const pr = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight; if (cv.width !== Math.round(w * pr)) { cv.width = Math.round(w * pr); cv.height = Math.round(h * pr); } const g = cv.getContext('2d'); g.setTransform(pr, 0, 0, pr, 0, 0); return { g, w, h }; }
@@ -1595,20 +1730,37 @@ function onMeeting(d, resync) {
   buzz([120, 60, 120]); G.phase = d.discuss > 0 ? 'discuss' : 'vote'; G.phaseEnds = performance.now() + (d.discuss || 0); G.barTotal = { discuss: d.discuss || 0, vote: d.vote != null ? d.vote : Math.max(1, d.ends - (d.discuss || 0)) };
   if (!resync && d.caller === myId && d.kind === 'button') G.emerg = Math.max(0, G.emerg - 1);   // al reconectar ya viene descontado
   G.mtg = { caller: d.caller, kind: d.kind, victim: d.victim || null, victimName: d.victimName };
-  $('mtgTitle').textContent = '¿Quién es el impostor?';
-  $('mtgSub').textContent = d.kind === 'body' ? `Cuerpo de ${d.victimName} · lo encontró ${nameOf(d.caller)} · ` : `Reunión de emergencia de ${nameOf(d.caller)} · `;
-  const t = el('span', '', ''); t.id = 'mtgTimer'; $('mtgSub').append(t);
-  $('chatLog').innerHTML = ''; $('mtgResult').style.display = 'none'; updateChatBadge(); closeChat();
+  $('chatLog').innerHTML = ''; $('mtgResult').textContent = ''; updateChatBadge(); closeChat();
   $('chatIn').disabled = false; $('chatSend').disabled = false; $('chatIn').placeholder = G.alive ? 'Escribe…' : 'Chat de fantasmas (solo os leéis entre vosotros)';
-  ov('meeting', true); renderMeeting();
+  ov('meeting', true); renderMeeting(); if (!resync) playDiscuss(d);
 }
 socket.on('meeting', onMeeting);
+// "¡A DEBATIR!": el círculo verde con dos tripulantes cara a cara al empezar la reunión, como en el original
+function playDiscuss(d) {
+  const box = $('mtgDiscuss'), cvD = box.querySelector('canvas'), g = cvD.getContext('2d'), W = cvD.width;
+  const ps = [...G.players.values()], a = G.players.get(d.caller) || ps[0], b = ps.find(p => p !== a && p.alive) || ps.find(p => p !== a) || a;
+  clearTimeout(G.discussT); box.classList.remove('on'); cancelAnimationFrame(G.discussRaf);
+  G.discussT = setTimeout(() => {
+    box.classList.add('on'); const t0 = performance.now();
+    const fr = now => {
+      const t = (now - t0) / 1000; g.clearRect(0, 0, W, W); g.save(); g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 6, 0, TAU); g.clip();
+      g.fillStyle = '#8fd14f'; g.fillRect(0, 0, W, W); g.fillStyle = '#b6e57a';
+      for (let k = 0; k < 12; k++) { const an = k / 12 * TAU + t * .25; g.beginPath(); g.moveTo(W / 2, W * .62); g.arc(W / 2, W * .62, W, an, an + TAU / 24); g.closePath(); g.fill(); }
+      const bob = Math.sin(t * 5) * 6;
+      if (a) W2.crew(g, W * .32, W * 1.02 + bob, W * .6, { color: colHex(a.color), look: a.look, dir: 1, t });
+      if (b) W2.crew(g, W * .69, W * 1.02 - bob, W * .6, { color: colHex(b.color), look: b.look, dir: -1, t });
+      g.restore(); g.lineWidth = 12; g.strokeStyle = '#3f7d1c'; g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 6, 0, TAU); g.stroke();
+      if (t < 2.6 && G.state === 'meeting') G.discussRaf = requestAnimationFrame(fr); else box.classList.remove('on');
+    };
+    G.discussRaf = requestAnimationFrame(fr); snd('report');
+  }, 1700);
+}
 socket.on('meetingPhase', d => { G.phase = d.phase; G.sel = null; renderMeeting(); if (G.state === 'meeting' && G.alive) { toast('¡Hora de votar!', 2000); snd('click'); } });
 const meetingCanVote = () => G.alive && G.myVote === null && G.state === 'meeting' && !G.resultShown && G.phase === 'vote';
 function confirmBtns(target) {
-  const w = el('div', 'pconf'), ok = el('button', 'cbtn ok', '✓'), no = el('button', 'cbtn no', '✕'); ok.setAttribute('aria-label', 'Confirmar voto'); no.setAttribute('aria-label', 'Cancelar');
+  const w = el('div', 'pconf'), ok = el('button', 'cbtn ok', '✔'), no = el('button', 'cbtn no', '✖'); ok.setAttribute('aria-label', 'Confirmar voto'); no.setAttribute('aria-label', 'Cancelar');
   ok.onclick = e => { e.stopPropagation(); castVote(target); }; no.onclick = e => { e.stopPropagation(); G.sel = null; renderMeeting(); };
-  w.append(ok, no); return w;
+  w.append(no, ok); return w;
 }
 function voteChips(ids, anonCount, start) {   // las caras de quienes han votado (o puntos grises si el voto es anónimo)
   const w = el('div', 'vchips'); let i = start;
@@ -1616,44 +1768,59 @@ function voteChips(ids, anonCount, start) {   // las caras de quienes han votado
   for (let k = 0; k < (anonCount || 0); k++) { const d = el('span', 'dot'); d.style.setProperty('--i', i++); w.append(d); }
   return { w, next: i };
 }
+// icono del tripulante para la tableta: casco con la cara (y la mochila), tachado si está muerto
+function crewIcon(p, h, dead) {
+  const c = document.createElement('canvas'), w = Math.round(h * 1.15); c.width = w * 2; c.height = h * 2; c.className = 'cicon'; c.style.width = w + 'px'; c.style.height = h + 'px';
+  const g = c.getContext('2d'); g.scale(2, 2); W2.crew(g, w * .52, h * 1.5, h * 1.62, { color: colHex(p.color), look: p.look, dir: 1, t: 0 });
+  if (dead) { g.strokeStyle = '#c8102e'; g.lineCap = 'round'; g.lineWidth = h * .13; g.beginPath(); g.moveTo(w * .15, h * .18); g.lineTo(w * .85, h * .92); g.moveTo(w * .85, h * .18); g.lineTo(w * .15, h * .92); g.stroke(); }
+  return c;
+}
+const MEGAPHONE = '<svg class="mega" viewBox="0 0 64 44" aria-hidden="true"><path d="M8 16h10l26-12v36L18 28H8a4 4 0 0 1-4-4v-4a4 4 0 0 1 4-4z" fill="#eef1f5" stroke="#8d97a6" stroke-width="3" stroke-linejoin="round"/><path d="M12 28l4 12h7l-3-12" fill="#eef1f5" stroke="#8d97a6" stroke-width="3" stroke-linejoin="round"/><path d="M27 10v25" stroke="#e05a5a" stroke-width="4"/><path d="M49 14q6 8 0 16" fill="none" stroke="#8d97a6" stroke-width="3" stroke-linecap="round"/></svg>';
+function voteChips(ids, anonCount, start, h) {   // quién ha votado a quién: tripulantes en miniatura (grises si el voto es anónimo)
+  const w = el('div', 'vchips'); let i = start;
+  (ids || []).forEach(id => { const p = G.players.get(id); if (!p) return; const c = crewIcon(p, h); c.style.setProperty('--i', i++); w.append(c); });
+  for (let k = 0; k < (anonCount || 0); k++) { const c = crewIcon({ color: 6, look: {} }, h); c.classList.add('anon'); c.style.setProperty('--i', i++); w.append(c); }
+  return { w, next: i };
+}
 function renderMeeting() {
   const box = $('mtgPlayers'); box.innerHTML = '';
   const can = meetingCanVote(), res = G.result, votesTo = {}, skipFrom = []; let k = 0;
-  if (G.mtg) {   // quién ha encontrado el cuerpo (o quién ha pulsado el botón), bien visible durante toda la votación
-    const m = G.mtg, rp = G.players.get(m.caller), vp = m.victim && G.players.get(m.victim), card = el('div', 'rpCard ' + (m.kind === 'body' ? 'body' : 'btn'));
-    if (rp) card.append(portrait(rp.look, colHex(rp.color), 44));
-    const tx = el('div', 'rpTxt'); tx.append(el('small', '', m.kind === 'body' ? 'CUERPO REPORTADO' : 'REUNIÓN DE EMERGENCIA'));
-    tx.append(el('b', '', m.kind === 'body' ? `${rp ? rp.name : '?'} encontró a ${m.victimName || '?'}` : `Convocada por ${rp ? rp.name : '?'}`));
-    card.append(tx); if (vp) { const pc = portrait(vp.look, colHex(vp.color), 44); pc.classList.add('rpVictim'); card.append(pc); }
-    box.append(card);
-  }
+  const n = G.players.size, rows = Math.max(4, Math.ceil(n / 2)); box.style.setProperty('--rows', rows);
+  const ih = Math.max(26, Math.min(64, (box.clientHeight || 260) / rows * .78));   // alto del icono según el hueco de cada tarjeta
   if (res && res.votes) res.votes.forEach(v => { if (!v.to) return; if (v.to === 'skip') skipFrom.push(v.from); else (votesTo[v.to] = votesTo[v.to] || []).push(v.from); });
-  for (const p of G.players.values()) {
+  const order = [...G.players.values()].sort((a, b) => (b.alive - a.alive));   // los vivos primero, como en el original
+  for (const p of order) {
     const mate = G.role === 'impostor' && G.mates.includes(p.id) && p.id !== myId, selectable = can && p.alive;   // también puedes votarte a ti mismo
     const card = el('div', 'pcard' + (p.alive ? '' : ' dead') + (p.id === myId ? ' me' : '') + (selectable ? ' can' : '') + (G.sel === p.id && selectable ? ' sel' : '') + (mate ? ' imp' : '') + (res && res.ejected && res.ejected.id === p.id ? ' out' : ''));
-    card.dataset.id = p.id; card.append(portrait(p.look, colHex(p.color), 46));
-    const info = el('div', 'pname'); info.append(document.createTextNode(p.name + (p.id === myId ? ' (tú)' : '')));
-    if (mate) info.append(el('small', '', 'impostor')); else if (G.mtg && G.mtg.victim === p.id) info.append(el('small', '', 'cuerpo encontrado')); else if (!p.alive) info.append(el('small', '', 'eliminado'));
-    if (res) { const c = voteChips(votesTo[p.id], res.counts ? res.counts[p.id] : 0, k); k = c.next; if (c.w.childNodes.length) info.append(c.w); }
+    card.dataset.id = p.id;
+    const ic = el('div', 'icw'); ic.append(crewIcon(p, ih, !p.alive));
+    if (!res && p.alive && G.voted.has(p.id)) ic.append(el('span', 'voted', 'HE VOTADO'));
+    card.append(ic);
+    const info = el('div', 'pname'); info.append(el('span', 'nm', p.name));
+    if (res) { const c = voteChips(votesTo[p.id], res.counts ? res.counts[p.id] : 0, k, Math.max(16, ih * .42)); k = c.next; if (c.w.childNodes.length) info.append(c.w); }
     card.append(info);
+    if (G.mtg && G.mtg.caller === p.id) card.insertAdjacentHTML('beforeend', MEGAPHONE);
     if (selectable && G.sel === p.id) card.append(confirmBtns(p.id));
-    if (!res && p.alive && G.voted.has(p.id)) card.append(el('span', 'sticker', 'HA VOTADO'));
-    if (G.mtg && G.mtg.caller === p.id) { const st = el('span', 'sticker rep'); st.append(ico(G.mtg.kind === 'body' ? 'report' : 'alert'), G.mtg.kind === 'body' ? 'LO ENCONTRÓ' : 'CONVOCÓ'); card.append(st); }
     if (selectable) card.onclick = () => { G.sel = G.sel === p.id ? null : p.id; renderMeeting(); snd('click'); };
     box.append(card);
   }
-  const sk = $('btnSkip'); sk.innerHTML = ''; sk.className = (can ? 'can' : '') + (can && G.sel === 'skip' ? ' sel' : '');
-  sk.style.display = can || res ? 'flex' : 'none'; sk.append(el('span', 'sl', 'Saltar voto'));
-  if (res) { const c = voteChips(skipFrom, res.counts ? res.counts.skip : 0, k); if (c.w.childNodes.length) sk.append(c.w); }
+  const sk = $('btnSkip'); sk.innerHTML = ''; sk.className = (can ? 'can' : '') + (can && G.sel === 'skip' ? ' sel' : '') + (res ? ' res' : '');
+  sk.style.visibility = can || res || G.phase === 'discuss' ? 'visible' : 'hidden'; sk.append(el('span', 'sl', res ? 'Saltaron' : 'Saltar voto'));
+  if (res) { const c = voteChips(skipFrom, res.counts ? res.counts.skip : 0, k, 22); if (c.w.childNodes.length) sk.append(c.w); }
   if (can && G.sel === 'skip') sk.append(confirmBtns('skip'));
-  $('mtgInfo').textContent = G.resultShown ? '' : !G.alive ? 'Estás eliminado: solo puedes mirar.' : G.myVote !== null ? 'Has votado. Esperando al resto…' : G.phase === 'discuss' ? 'Discusión: habla en el chat 💬. La votación se abrirá enseguida.' : G.sel ? 'Confirma tu voto con ✓ o cancélalo con ✕.' : 'Toca a quien creas que es el impostor, o salta el voto.';
+  meetingClock(performance.now());
+}
+// el reloj de abajo a la derecha, con los textos del original
+function meetingClock(now) {
+  const i = $('mtgInfo'); if (!i) return;
+  i.textContent = G.resultShown ? 'Votación terminada' : G.phase === 'discuss' ? `La votación empieza en: ${Math.max(0, Math.ceil((G.phaseEnds - now) / 1000))}s` : `La votación termina en: ${Math.max(0, Math.ceil((G.mtgEnds - now) / 1000))}s`;
 }
 function castVote(t) { if (G.myVote !== null) return; buzz(25); G.myVote = t; G.sel = null; socket.emit('vote', t); snd('vote'); renderMeeting(); }
 $('btnSkip').onclick = e => { if (e.target.closest('.pconf') || !meetingCanVote()) return; G.sel = G.sel === 'skip' ? null : 'skip'; renderMeeting(); snd('click'); };
 function sendChat() { const v = $('chatIn').value.trim(); if (!v) return; socket.emit('chat', v); $('chatIn').value = ''; }
 $('chatSend').onclick = sendChat;
 $('chatIn').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
-const chatVisible = () => $('chatPanel').classList.contains('on') || matchMedia('(min-width:900px) and (orientation:landscape)').matches;
+const chatVisible = () => $('chatPanel').classList.contains('on') || matchMedia('(min-width:1200px) and (orientation:landscape)').matches;
 function updateChatBadge() { const b = $('chatBadge'); b.textContent = G.unread > 9 ? '9+' : String(G.unread || ''); b.classList.toggle('on', G.unread > 0); }
 function openChat() { $('chatPanel').classList.add('on'); G.unread = 0; updateChatBadge(); setTimeout(() => { $('chatLog').scrollTop = 1e9; if (G.alive) $('chatIn').focus(); }, 30); }
 function closeChat() { $('chatPanel').classList.remove('on'); }
@@ -1667,15 +1834,13 @@ socket.on('chat', m => {
 socket.on('voted', ({ id }) => { G.voted.add(id); renderMeeting(); if (id !== myId) snd('vote'); });
 function onResult(d) {
   G.resultShown = true; G.result = d; G.sel = null; closeChat();
-  { const tm = $('mtgTimer'); if (tm) tm.textContent = 'resultado'; $('mtgBar').firstChild.style.width = '0%'; }
-  const r = $('mtgResult'); r.innerHTML = ''; r.style.display = 'block';
+  const r = $('mtgResult'); r.innerHTML = '';
   if (d.ejected) {
     const p = G.players.get(d.ejected.id); if (p) { p.alive = false; ghostify(p); }
     if (d.ejected.id === myId) { G.alive = false; updateGhost(); updateSabVisuals(); }
-    r.append(el('b', '', `${d.ejected.name} ha sido expulsado.`));
-    if (d.ejected.impostor !== null && d.ejected.impostor !== undefined) r.append(el('div', '', d.ejected.impostor ? 'Era un impostor.' : 'No era impostor.'));
-  } else r.append(el('b', '', 'Nadie ha sido expulsado.'));
-  if (!d.votes) r.append(el('div', 'vs', 'Votos anónimos: solo se ve cuántos votos ha recibido cada uno.'));
+    r.textContent = `${d.ejected.name} ha sido expulsado`;
+  } else r.textContent = d.tie ? 'Empate: nadie es expulsado' : 'Nadie ha sido expulsado';
+  if (!d.votes) r.textContent += ' · votos anónimos';
   renderMeeting();
   clearTimeout(G.ejectTimer); G.ejectTimer = setTimeout(() => { if (G.state === 'meeting' && G.resultShown) playEject(d); }, Math.max(0, (d.ms || 7000) * .34));   // primero se ven los votos y luego la expulsión
 }
@@ -1884,29 +2049,11 @@ function renderVentUI() {
   v.links.forEach(id => { const b = el('button', 'btn', 'Ir a ' + roomName(S.VENTS[id].room)); b.onclick = () => socket.emit('vent', { action: 'move', id }); box.append(b); });
   const x = el('button', 'btn amber', 'Salir aquí'); x.onclick = () => socket.emit('vent', { action: 'exit' }); box.append(x);
 }
-function closeSabMenu() { ov('sabMenu', false); G.sabMenuOpen = false; }
+function closeSabMenu() { if (G.sabMenuOpen && G.mapSab) closeMap(); G.sabMenuOpen = false; }
 function openSabMenu() {
   if (G.role !== 'impostor' || G.state !== 'play' || G.vent != null || mgOpen) return;   // también el impostor fantasma
-  G.sabMenuOpen = true; G.sabStep = 'main'; renderSabMenu(); ov('sabMenu', true);
+  G.sabMenuOpen = true; openMap(true);
 }
-function renderSabMenu() {
-  const box = $('sabBody'); box.innerHTML = '';
-  const cd = G.sab ? -1 : Math.max(0, G.sabReadyAt - performance.now()), off = !!G.sab || cd > 0;
-  if (G.sabStep === 'doors') {
-    $('sabTitle').textContent = 'Cerrar puertas de…';
-    S.ROOMS.forEach(rm => { const b = el('button', 'btn', rm.name); b.disabled = off; b.onclick = () => socket.emit('sabotage', { type: 'puertas', room: rm.id }); box.append(b); });
-    const back = el('button', 'btn', '← Volver'); back.onclick = () => { G.sabStep = 'main'; renderSabMenu(); }; box.append(back); return;
-  }
-  $('sabTitle').textContent = 'Sabotaje';
-  box.append(el('div', 'hint', G.sab ? 'Ya hay un sabotaje en marcha' : cd > 0 ? `Recargando: ${Math.ceil(cd / 1000)} s` : 'Elige un sabotaje'));
-  [['luces', 'Luces', 'La tripulación casi no ve hasta que lo arregle'], ['coms', 'Comunicaciones', 'Sin lista de tareas ni minimapa'], ['reactor', 'Reactor', `Crisis de ${G.cfg.times.reactor} s: ganas si no lo arreglan`],
-   ['o2', 'Oxígeno', `Crisis de ${G.cfg.times.o2} s: ganas si no lo arreglan`], ['puertas', 'Puertas', `Cierra una sala ${G.cfg.times.doors} s`]].filter(([id]) => G.cfg.sabs[id]).forEach(([id, name, sub]) => {
-    const b = el('button', 'btn', name); b.append(el('small', '', sub)); b.disabled = off;
-    b.onclick = () => { if (id === 'puertas') { G.sabStep = 'doors'; renderSabMenu(); } else socket.emit('sabotage', { type: id }); }; box.append(b);
-  });
-}
-$('sabClose').onclick = closeSabMenu;
-setInterval(() => { if (G.sabMenuOpen && G.sabStep === 'main') renderSabMenu(); }, 500);
 if (location.search.includes('debug=1')) window.__i3d = { G, S, socket, sfx, get VIEW() { return VIEW; }, get FOW() { return FOW; } };   // solo para pruebas automáticas
 
 
@@ -1920,7 +2067,7 @@ function openInfo(id) {
   $('infoOv').className = 'ov on ' + id; $('game').classList.toggle('incams', id === 'cams');
   if (id === 'admin') { const cv = document.createElement('canvas'); cv.id = 'admCv'; cv.width = 660; cv.height = 450; body.append(cv, el('div', 'admRooms')); body.lastChild.id = 'admRooms'; }
   if (id === 'cams') {
-    S.CAMERAS.forEach((c, i) => { const f = el('div', 'feed'); f.append(el('div', 'fl', `CAM ${i + 1} · ${c.name}`), el('div', 'fr', '● REC')); body.append(f); });
+    S.CAMERAS.forEach((c, i) => { const f = el('div', 'feed'); f.append(el('div', 'fl', c.name.toUpperCase()), el('div', 'fr', '● REC')); body.append(f); });
     if (!infoNoSignal()) socket.emit('camera', { on: true });
     snd('camOn'); sfx.loopStart('camhum');
   }
@@ -1935,7 +2082,7 @@ function closeInfo() {
 $('infoClose').onclick = () => closeMG();
 function refreshInfo() {
   const id = G.info; if (!id) return; const body = $('infoBody'), off = infoNoSignal();
-  if (id === 'cams') { body.querySelectorAll('.feed').forEach(f => { f.classList.toggle('off', off); f.querySelectorAll('.nosig').forEach(n => n.remove()); if (off) f.append(el('div', 'nosig', 'SIN SEÑAL')); }); return; }
+  if (id === 'cams') { body.querySelectorAll('.feed').forEach(f => { f.classList.toggle('off', off); f.querySelectorAll('.nosig').forEach(n => n.remove()); if (off) f.append(el('div', 'nosig', '')); }); return; }
   if (id !== 'vitals' && off) { if (!body.querySelector('.nosig')) { body.innerHTML = ''; body.append(el('div', 'nosig', 'Sin señal: las comunicaciones están caídas. Arregla el panel de Navegación.')); } return; }
   if (id === 'admin') drawAdmin(); else if (id === 'vitals') drawVitals(); else if (id === 'doorlog') pollDoorlog();
 }
@@ -1946,7 +2093,7 @@ function renderCamFeeds(now) {
   feeds.forEach((fe, i) => {
     const r = fe.getBoundingClientRect(), c = S.CAMERAS[i]; if (!c || r.width < 2 || r.height < 2) return;
     g.save(); g.beginPath(); g.rect(r.left, r.top, r.width, r.height); g.clip(); g.translate(r.left, r.top);
-    drawWorld(g, { cx: c.look[0], cy: c.look[2], sc: r.height / 15, w: r.width, h: r.height }, now, true); g.restore();
+    drawWorld(g, { cx: c.look[0], cy: c.look[2], sc: r.height / 19, w: r.width, h: r.height }, now, true); g.restore();
   });
 }
 function drawAdmin() {
@@ -2052,11 +2199,10 @@ function playEject(d) {
 }
 function stopEject() { if (G.eject && G.eject.raf) cancelAnimationFrame(G.eject.raf); G.eject = null; clearTimeout(G.ejectTimer); ov('ejectOv', false); }
 if (location.search.includes('debug=1')) window.__i3d_anim = { drawEject, makeEject, ejectText, playEject, spawnBlood, killCam, showBanner, showEnd };
-if (location.search.includes('debug=1')) window.__i3d_tasks = { open: i => openTask(S.STATIONS[i]), panel: id => openPanel(S.PANELS.find(p => p.id === id)), isOpen: () => mgOpen, tp: (x, z, h) => { G.x = x; G.z = z; G.ry = h || 0; G.camX = null; }, state: () => ({ role: G.role, tasks: G.tasks, done: [...G.done], list: $('taskList').innerText }), vis: k => { G.cfg.visCrew = G.cfg.visImp = k; }, fow: () => ({ role: G.role, on: FOW.on, R: FOW.R, seen: [...G.players.values()].filter(p => p.id !== myId && p.base && p.seen).map(p => p.name) }), floor: () => floorCanvas && floorCanvas.toDataURL('image/png'), fx: id => taskFx.set('dbg' + id, { st: id, type: S.STATIONS[id].type, t0: performance.now() }) };
+if (location.search.includes('debug=1')) window.__i3d_tasks = { open: i => openTask(S.STATIONS[i]), panel: id => openPanel(S.PANELS.find(p => p.id === id)), isOpen: () => mgOpen, tp: (x, z, h) => { G.x = x; G.z = z; G.ry = h || 0; G.camX = null; }, state: () => ({ role: G.role, tasks: G.tasks, done: [...G.done], list: $('taskList').innerText }), vis: k => { G.cfg.visCrew = G.cfg.visImp = k; }, fow: () => ({ role: G.role, on: FOW.on, R: FOW.R, seen: [...G.players.values()].filter(p => p.id !== myId && p.base && p.seen).map(p => p.name) }), floor: () => floorCanvas && floorCanvas.toDataURL('image/png'), info: id => openInfo(id), fx: id => taskFx.set('dbg' + id, { st: id, type: S.STATIONS[id].type, t0: performance.now() }) };
 
 /* ---------- entrada ---------- */
 const cv = $('cv');
-cv.addEventListener('wheel', e => { if (G.state === 'play' && (e.deltaY > 0) !== !!G.zoom) toggleView(); }, { passive: true });
 
 // joystick táctil
 // joystick flotante: aparece donde apoyas el pulgar izquierdo
@@ -2084,7 +2230,7 @@ function doUse() { const a = G.act; if (!a || !a.use) return; if (a.use.type ===
 function doVent() { const a = G.act; if (G.vent != null) return socket.emit('vent', { action: 'exit' }); if (a && a.vent && G.role === 'impostor' && G.alive) socket.emit('vent', { action: 'enter', id: a.vent.id }); }
 function doReport() { if (G.act && G.act.report) socket.emit('report'); }
 function doKill() { const a = G.act; if (a && a.kill && a.kill.ready) socket.emit('kill', a.kill.target.id); }
-[['btnUse', doUse], ['btnReport', doReport], ['btnKill', doKill], ['btnSab', () => openSabMenu()], ['btnVent', doVent]].forEach(([id, fn]) => {
+[['btnUse', doUse], ['btnReport', doReport], ['btnKill', doKill], ['btnSab', () => (G.sabMenuOpen ? closeSabMenu() : openSabMenu())], ['btnVent', doVent]].forEach(([id, fn]) => {
   $(id).addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (id !== 'btnKill') snd('click'); fn(); });
 });
 window.addEventListener('keydown', e => {
@@ -2092,7 +2238,7 @@ window.addEventListener('keydown', e => {
   keys[e.code] = true;
   if (G.state !== 'play') return;
   if (e.code === 'KeyM' || (e.code === 'Escape' && G.mapOpen)) { G.mapOpen ? closeMap() : openMap(); return; }
-  if (e.code === 'KeyE') doUse(); else if (e.code === 'KeyR') doReport(); else if (e.code === 'KeyQ') doKill(); else if (e.code === 'KeyZ' || e.code === 'KeyV') toggleView(); else if (e.code === 'KeyG') openSabMenu(); else if (e.code === 'KeyF') doVent();
+  if (e.code === 'KeyE') doUse(); else if (e.code === 'KeyR') doReport(); else if (e.code === 'KeyQ') doKill(); else if (e.code === 'KeyG') (G.sabMenuOpen ? closeSabMenu() : openSabMenu()); else if (e.code === 'KeyF') doVent();
   if (e.code === 'Escape' && mgOpen) closeMG();
   if (e.code === 'Escape' && G.sabMenuOpen) closeSabMenu();
 });
@@ -2131,9 +2277,9 @@ function updateActions(now) {
   }
   G.act = act;
   const playing = G.state === 'play' && G.vent == null && !mgOpen;
-  const impAny = G.role === 'impostor' && playing && !G.sabMenuOpen, imp = impAny && G.alive, anySab = Object.values(G.cfg.sabs).some(Boolean);
+  const impAny = G.role === 'impostor' && playing, imp = impAny && G.alive, anySab = Object.values(G.cfg.sabs).some(Boolean);
   const scd = G.sab ? -1 : Math.max(0, G.sabReadyAt - now);
-  setAct($('btnSab'), impAny && anySab, scd === 0, 'zap', G.sab ? 'Activo' : 'Sabotaje', scd > 0 ? Math.ceil(scd / 1000) : '');
+  setAct($('btnSab'), impAny && anySab, true, 'zap', G.sabMenuOpen ? 'Cerrar' : 'Sabotaje', scd > 0 ? Math.ceil(scd / 1000) : '');   // como en el original: el mapa se abre aunque esté recargando
   setAct($('btnVent'), imp && !!act.vent && G.cfg.vents, true, 'vent', 'Rejilla', '');
   const u = act.use, ucd = u && u.cd > 0 ? Math.ceil(u.cd / 1000) : '';
   setAct($('btnUse'), playing, !!u && !ucd, !u ? 'hand' : u.type === 'panel' ? 'wrench' : u.type === 'info' ? 'eye' : u.type === 'button' ? 'alert' : 'hand',
@@ -2296,16 +2442,15 @@ function update(dt, now) {
     const f = G.fx[i]; if (now - f.t0 > f.life) { G.fx.splice(i, 1); continue; }
     if (f.kind === 'drop') { f.vy -= 14 * dt; f.x += f.vx * dt; f.z += f.vz * dt; f.y = Math.max(0, f.y + f.vy * dt); }
   }
-  // cámara: te sigue con suavidad; el zoom cambia cuánto se ve
-  const scT = Math.min(VIEW.h / 14, VIEW.w / 9) * (G.zoom ? .68 : 1) / Math.max(1, Math.min(1.35, FOW.Rn / 9.5));
+  // cámara: te sigue con suavidad
+  const scT = Math.min(VIEW.h / 14, VIEW.w / 9) / Math.max(1, Math.min(1.35, FOW.Rn / 9.5));
   VIEW.sc = VIEW.sc ? VIEW.sc + (scT - VIEW.sc) * Math.min(1, dt * 4) : scT;
   if (G.camX == null || Math.hypot(G.camX - G.x, G.camZ - G.z) > 14) { G.camX = G.x; G.camZ = G.z; VIEW.sc = scT; }
   G.camX += (G.x - G.camX) * Math.min(1, dt * 9); G.camZ += (G.z - G.camZ) * Math.min(1, dt * 9);
   updateFow(dt, now);
 
   // reunión: cuenta atrás
-  if (G.state === 'meeting' && !G.resultShown) { const t = $('mtgTimer'); if (t) t.textContent = G.phase === 'discuss' ? `discusión ${Math.max(0, Math.ceil((G.phaseEnds - now) / 1000))} s` : `votación ${Math.max(0, Math.ceil((G.mtgEnds - now) / 1000))} s`; }
-  if (G.state === 'meeting' && !G.resultShown && G.barTotal) { const bar = $('mtgBar'), left = G.phase === 'discuss' ? G.phaseEnds - now : G.mtgEnds - now, tot = Math.max(1, G.phase === 'discuss' ? G.barTotal.discuss : G.barTotal.vote); bar.className = G.phase === 'discuss' ? 'discuss' : ''; bar.firstChild.style.width = Math.max(0, Math.min(100, left / tot * 100)) + '%'; }
+  if (G.state === 'meeting' && frame % 10 === 0) meetingClock(now);
 }
 
 // Pinta el mundo en una vista. cam = true para las cámaras de seguridad (se ve a todo el que pasa, sin niebla)
