@@ -4,8 +4,9 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
-## Novedades 6.3.1
+## Novedades 6.3.1 · fin de partida en modo pruebas y minimapa
 - **El modo pruebas termina como una partida normal si hay 3 jugadores o más (bots incluidos)**: si solo quedan un impostor y un tripulante, gana el impostor; y si se expulsa al impostor o se terminan las tareas, gana la tripulación. Con 1 o 2 jugadores sigue sin terminar sola, para poder probar.
+- **Vuelve el minimapa** arriba a la derecha, debajo de los botones de ajustes y mapa, con marco gris (al tocarlo se abre el mapa grande).
 
 ## Novedades 6.3 · personalizar y ajustes de la sala como en el original
 - **Pantalla de personalizar** con el estilo del original: botón VOLVER turquesa, pestañas con borde blanco (la elegida en turquesa), cuadros de color con marco y "JUGAR CON ESTE PERSONAJE" con franjas.
@@ -14,7 +15,7 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 ## Novedades 6.2 · interfaz y sala de espera como en el original
 - **Botones de partida dibujados como los del original**: USAR (triángulo), REPORTAR (megáfono), MATAR (calavera), SABOTAJE, REJILLA, y los de las cámaras, el Admin, los signos vitales y el registro de puertas. Sin círculos; el número de la recarga aparece encima.
 - **Lista de tareas como la del original**: panel gris translúcido, "Sala: Tarea (0/2)" en blanco, las empezadas en amarillo y las hechas en verde, con la pestaña "Tareas" en vertical para plegarla.
-- **Arriba a la derecha, los botones cuadrados de ajustes y mapa**, sin minimapa (como en el original).
+- **Arriba a la derecha, los botones cuadrados de ajustes y mapa**, con el minimapa debajo.
 - **La sala de espera es la nave del original**:
   - Casco con los motores de llama azul, la pared del fondo con la puerta y los asientos azules, las cajas verdes, el portátil para personalizarte y la consola de los ajustes.
   - A la izquierda, la lista de ajustes de la partida.
