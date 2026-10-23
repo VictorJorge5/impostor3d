@@ -4,6 +4,30 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.8 · votación, sabotaje y cámaras como en el original
+- **La votación es la tableta del original**:
+  - Marco gris con botón, pantalla azul y el título "¿Quién es el impostor?".
+  - Tarjetas en dos columnas con el casco y la cara de cada uno, y la pegatina "HE VOTADO".
+  - Los eliminados salen tachados en gris y el megáfono marca a quien convocó.
+  - Para votar se elige con ✖ / ✔. Abajo están "Saltar voto" y "La votación empieza/termina en: Xs".
+  - Al empezar sale el círculo verde de **"¡A DEBATIR!"** con dos tripulantes cara a cara.
+  - En el resultado, los votos aparecen como tripulantes en miniatura (grises si son anónimos).
+- **Sabotaje desde el mapa, como en el juego**:
+  - El botón de sabotaje abre el mapa en rojo con un icono en cada sala: luces, reactor, oxígeno, comunicaciones y las puertas de las 7 salas que las tienen.
+  - Se puede seguir andando con el mapa abierto.
+  - Un toque recién abierto no cuenta, así no se marca nada sin querer.
+  - La recarga se ve en los iconos.
+- **Cámaras**:
+  - Las cuatro del original, en su orden: pasillo de Navegación, de Admin, de Enfermería y de Seguridad.
+  - Monitor con marco y más campo de visión.
+  - Estática si se sabotean las comunicaciones.
+  - Los fantasmas no encienden la luz roja.
+- **Sin zoom en la partida.**
+- **Móvil en horizontal**:
+  - Menú, editor y sala de espera a dos columnas.
+  - En la partida solo queda la rueda de ajustes; dentro están el sonido, la pantalla completa y salir.
+  - Administración, signos vitales y chat caben en pantalla.
+
 ## Novedades 5.7.1 · nadie aparece encajado
 - **La web y el servidor de juego comprueban que tienen el mismo mapa.** Si la página es antigua, se recarga sola; si el servidor aún se está actualizando (Render tarda unos minutos tras cada cambio), te avisa en vez de meterte en una partida con las mesas y paredes descolocadas.
 - **Nunca te quedas encajado**: si por lo que sea apareces dentro de una mesa, un aparato o una pared, el juego te saca al hueco libre más cercano. Al empezar, todos aparecen en corro alrededor de la mesa, sin pisar los bancos.

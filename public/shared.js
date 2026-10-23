@@ -172,11 +172,13 @@
   ];
   // Cámaras de seguridad: posición en la pared (x, altura, z) y centro de lo que se ve
   const cam = (id, name, px, py, lx, ly) => { const p = U(px, py), l = U(lx, ly); return { id, name, pos: [p[0], 2.6, p[1]], look: [l[0], 1, l[1]] }; };
+  // las cuatro cámaras de The Skeld, en el orden del monitor de Seguridad: arriba el pasillo de Armería a Escudos y el de
+  // Admin, Cafetería y Almacén; abajo el de Enfermería y Motor superior y el de Seguridad y Reactor
   const CAMERAS = [
-    cam(0, 'Pasillo de motores',    111, 140, 111, 162),
-    cam(1, 'Pasillo de Enfermería', 190, 70,  190, 82),
-    cam(2, 'Pasillo de Admin',      321, 163, 330, 188),
-    cam(3, 'Pasillo de Navegación', 480, 126, 476, 150)
+    cam(0, 'Pasillo de Navegación', 486, 127, 468, 168),
+    cam(1, 'Pasillo de Admin',      328, 168, 330, 190),
+    cam(2, 'Pasillo de Enfermería', 190, 70,  205, 86),
+    cam(3, 'Pasillo de Seguridad',  92, 149,  111, 165)
   ];
   // Red de ventilaciones (solo las usa el impostor), donde están en The Skeld
   const VENTS = [

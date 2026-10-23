@@ -25,7 +25,7 @@ const sabEnabled = (r, t) => ({ luces: r.set.sabLuces, coms: r.set.sabComs, puer
 const clientCfg = r => ({
   visual: r.set.visualTasks !== false, speed: r.set.speed, visCrew: r.set.visCrew, visImp: r.set.visImp, killRange: KILL_RANGES[r.set.killRange], taskbar: r.set.taskbar, test: r.set.testMode, vents: r.set.vents, info: r.set.infoTools,
   sabs: { luces: r.set.sabLuces, coms: r.set.sabComs, puertas: r.set.sabPuertas, reactor: r.set.sabReactor, o2: r.set.sabO2 },
-  times: { reactor: r.set.reactorTime, o2: r.set.o2Time, doors: r.set.doorTime }
+  times: { reactor: r.set.reactorTime, o2: r.set.o2Time, doors: r.set.doorTime }, sabCd: r.set.sabCd
 });
 // Orígenes que pueden conectarse desde otra web (la página publicada en Vercel). Por defecto: cualquier *.vercel.app y localhost.
 // Para un dominio propio: ALLOWED_ORIGINS=https://impostor3d.es,https://www.impostor3d.es  ·  ALLOWED_ORIGINS=* abre a cualquiera.
@@ -211,7 +211,7 @@ function resolveMeeting(r) {
   r.state = 'result';
   const anon = r.set.anonVotes;
   r.lastResult = {
-    ejected: info, anon, confirm: r.set.confirmEjects, ms: RESULT_MS, impLeft: r.set.confirmEjects ? list(r).filter(q => q.role === 'impostor' && q.alive).length : null,
+    ejected: info, tie: !info && tie, anon, confirm: r.set.confirmEjects, ms: RESULT_MS, impLeft: r.set.confirmEjects ? list(r).filter(q => q.role === 'impostor' && q.alive).length : null,
     votes: anon ? null : alive.map(p => ({ from: p.id, to: p.vote || 'skip' })),
     counts: anon ? Object.assign({}, tally, { skip: skips }) : null
   };
@@ -520,7 +520,7 @@ io.on('connection', sock => {
   });
   sock.on('camera', d => {   // quien mira las cámaras hace parpadear la luz roja de las cámaras para todos
     if (!room || !me) return;
-    if (d && d.on) { if (infoBlock(room, me, 'cams')) return; room.camViewers.add(me.id); } else room.camViewers.delete(me.id);
+    if (d && d.on) { if (infoBlock(room, me, 'cams') || !me.alive) return; room.camViewers.add(me.id); }   // los fantasmas no encienden la luz else room.camViewers.delete(me.id);
     emitCam(room);
   });
 
