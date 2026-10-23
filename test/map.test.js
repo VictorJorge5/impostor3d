@@ -44,7 +44,7 @@ test('se puede entrar en todas las salas', () => {
 });
 
 test('el mapa es el de The Skeld: cada sala tiene sus puertas y cada objeto está en su sala', () => {
-  const doors = { cafeteria: 3, motores: 2, motorinf: 2, almacen: 3, escudos: 2, navegacion: 2, armeria: 2, reactor: 1, seguridad: 1, enfermeria: 1, electrica: 1, administracion: 1, comunicaciones: 1, oxigeno: 1 };
+  const doors = { cafeteria: 3, motores: 2, motorinf: 2, almacen: 3, escudos: 2, navegacion: 1, armeria: 2, reactor: 1, seguridad: 1, enfermeria: 1, electrica: 1, administracion: 1, comunicaciones: 1, oxigeno: 1 };
   for (const id in doors) assert.equal(S.DOORS[id].length, doors[id], 'puertas de ' + id);
   S.STATIONS.concat(S.PANELS, S.INFO, S.VENTS).forEach(o => { const rm = S.roomAtPos(o.x, o.z); assert.equal(rm && rm.id, o.room || undefined, (o.name || 'rejilla ' + o.id)); });
   S.VENTS.forEach(v => v.links.forEach(l => assert.ok(S.VENTS[l].links.includes(v.id), 'rejillas conectadas en los dos sentidos')));

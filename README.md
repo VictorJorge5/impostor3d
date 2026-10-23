@@ -4,6 +4,14 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 5.7 · el mapa de The Skeld calcado del plano
+- **El mapa es el del original**: cada sala, pasillo y tabique está calcado del plano oficial de The Skeld, con sus formas (esquinas en diagonal, el reactor en cruz, la Eléctrica con su tabique...), sus tamaños y sus puertas. Navegación tiene una sola entrada, como en el juego.
+- **Cada tarea, rejilla, cámara y terminal está donde en el original**: los cables del pasillo de Seguridad y Admin, el lector de tarjetas junto a la mesa de Admin, los bidones al fondo del Almacén, las cuatro camas de Enfermería...
+- **Suelos con los colores de cada sala** (Admin granate, Seguridad verde, Reactor morado, Escudos y Armería beis...) y **mesas azules con bancos** en la Cafetería, con el botón de emergencia en la del centro.
+- **Animaciones de las tareas visuales como en el juego**: al destruir asteroides, los cañones de fuera de Armería disparan; al vaciar la basura del Almacén, sale despedida al espacio; al activar los escudos, se encienden por fuera de la nave; el escáner médico te recorre con anillos verdes.
+- **Minijuegos más fieles**: la tarjeta es el carné verde con tu cara y tu nombre ("Mala lectura", "Demasiado rápido"...), los láseres de los asteroides salen de las dos esquinas, el combustible cae por el tubo y los escudos lanzan una onda al completarse.
+- La visión es algo mayor para ir con la escala del mapa.
+
 ## Novedades 5.6 · la cara se amolda y todas las tareas de The Skeld
 - **Las tareas son aparatos en la pared**, como en el original: cuadros de cables, lectores de tarjeta, terminales de datos, distribuidor con diales, panel de desvío con 8 palancas, depósitos de combustible, trampilla de basura, filtro de oxígeno, paneles del reactor y de escudos... Si no hay pared detrás, van sobre un pedestal. El escáner médico es una plataforma en el suelo. Los paneles de sabotaje (luces, teclados de oxígeno, rueda de comunicaciones, escáneres de mano del reactor) también.
 - **Velocidad fija** como en el original: el joystick solo marca la dirección; aunque lo muevas poco, el personaje va siempre a la misma velocidad.

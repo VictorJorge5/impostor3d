@@ -222,15 +222,37 @@
     if (victim) { if (k < .45) crew(g, w * .66, y, sz, { color: victim.color, look: victim.look, dir: -1, t: k * 3 }); else { W2.body(g, w * .66, y, sz * .8, victim.color, -1); g.fillStyle = '#b50018'; for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI - Math.PI, rr = sz * .2 * Math.min(1, (k - .45) * 4); g.beginPath(); g.arc(w * .66 + Math.cos(a) * rr * 1.6, y - sz * .45 + Math.sin(a) * rr, sz * .03, 0, TAU); g.fill(); } } }
   };
 
-  /* ---------- mapa ---------- */
-  const THEME = {
-    cafeteria: ['#b3bccb', '#a3adbf', 'checker'], reactor: ['#7f8799', '#737b8d', 'plates'], electrica: ['#a59a77', '#968c6b', 'hazard'],
-    enfermeria: ['#bdd8da', '#acc9cc', 'tiles'], motores: ['#8f95a4', '#848a99', 'grate'], motorinf: ['#8f95a4', '#848a99', 'grate'],
-    navegacion: ['#94a7c4', '#879ab8', 'plates'], almacen: ['#a8987b', '#998a6e', 'wood'], seguridad: ['#908fa3', '#848397', 'plates'],
-    administracion: ['#aaa3bb', '#9d96ae', 'checker'], comunicaciones: ['#98a9b6', '#8b9caa', 'tiles'], escudos: ['#9ea9c2', '#919cb5', 'plates'],
-    oxigeno: ['#a8c6ba', '#9ab8ac', 'tiles'], armeria: ['#a19faf', '#9492a2', 'plates']
+  // mesa de la cafetería: banco azul partido en cuatro tramos y tablero redondo (con el botón de emergencia en la del centro)
+  W2.roundTable = (g, x, y, r, sc, lw, button) => {
+    const ry = .78, ring = (rad, a0, a1) => { g.beginPath(); g.ellipse(x, y, rad, rad * ry, 0, a0, a1); };
+    g.fillStyle = 'rgba(0,0,0,.22)'; g.beginPath(); g.ellipse(x, y + sc * .25, r * 1.08, r * ry * 1.08, 0, 0, TAU); g.fill();
+    for (let k = 0; k < 4; k++) {   // bancos
+      const a0 = k * TAU / 4 + .22, a1 = (k + 1) * TAU / 4 - .22;
+      g.beginPath(); g.ellipse(x, y, r, r * ry, 0, a0, a1); g.ellipse(x, y, r * .74, r * .74 * ry, 0, a1, a0, true); g.closePath();
+      g.fillStyle = '#2f5d99'; g.fill(); g.strokeStyle = OUT; g.lineWidth = lw; g.stroke();
+      g.beginPath(); g.ellipse(x, y - sc * .18, r * .96, r * .96 * ry, 0, a0 + .04, a1 - .04); g.ellipse(x, y - sc * .18, r * .78, r * .78 * ry, 0, a1 - .04, a0 + .04, true); g.closePath(); g.fillStyle = '#4f86c9'; g.fill();
+    }
+    const rt = r * .6, hh = sc * .35;   // tablero
+    g.fillStyle = '#2b4f86'; g.beginPath(); g.ellipse(x, y, rt, rt * ry, 0, 0, Math.PI); g.lineTo(x - rt, y - hh); g.ellipse(x, y - hh, rt, rt * ry, 0, Math.PI, 0, true); g.closePath(); g.fill(); g.strokeStyle = OUT; g.lineWidth = lw; g.stroke();
+    g.fillStyle = '#4a82c6'; g.beginPath(); g.ellipse(x, y - hh, rt, rt * ry, 0, 0, TAU); g.fill(); g.stroke();
+    g.strokeStyle = 'rgba(160,205,255,.55)'; g.lineWidth = lw * .9; g.beginPath(); g.ellipse(x, y - hh, rt * .8, rt * .8 * ry, 0, 0, TAU); g.stroke();
+    if (button) {   // botón de emergencia con su cúpula de cristal
+      g.fillStyle = '#9aa4b8'; g.beginPath(); g.ellipse(x, y - hh, rt * .42, rt * .34, 0, 0, TAU); g.fill(); g.strokeStyle = OUT; g.lineWidth = lw; g.stroke();
+      g.fillStyle = '#e8132e'; g.beginPath(); g.ellipse(x, y - hh - sc * .08, rt * .28, rt * .22, 0, 0, TAU); g.fill(); g.stroke();
+      g.fillStyle = 'rgba(200,235,255,.35)'; g.beginPath(); g.ellipse(x, y - hh - sc * .2, rt * .4, rt * .4, 0, Math.PI, 0); g.fill();
+      g.fillStyle = 'rgba(255,255,255,.7)'; g.beginPath(); g.ellipse(x - rt * .12, y - hh - sc * .3, rt * .1, rt * .05, -.4, 0, TAU); g.fill();
+    } else { g.fillStyle = 'rgba(255,255,255,.18)'; g.beginPath(); g.ellipse(x - rt * .3, y - hh - rt * .25, rt * .3, rt * .1, -.3, 0, TAU); g.fill(); }
   };
-  const CORR = ['#9aa2b2', '#8d95a6', 'corr'];
+
+  /* ---------- mapa ---------- */
+  const THEME = {   // los suelos de cada sala con los colores del plano original
+    cafeteria: ['#c3bfb2', '#b4b0a3', 'checker'], reactor: ['#8c86b6', '#7f79a9', 'plates'], electrica: ['#8e8a6e', '#817d62', 'hazard'],
+    enfermeria: ['#b9c5cf', '#abb7c1', 'tiles'], motores: ['#73767e', '#686b73', 'grate'], motorinf: ['#73767e', '#686b73', 'grate'],
+    navegacion: ['#8f9bb0', '#828ea3', 'plates'], almacen: ['#8f969f', '#838a93', 'tiles'], seguridad: ['#5d9483', '#538877', 'plates'],
+    administracion: ['#8e5d68', '#82525d', 'checker'], comunicaciones: ['#6f8d96', '#64828b', 'tiles'], escudos: ['#d4cab0', '#c7bda3', 'plates'],
+    oxigeno: ['#8ea699', '#829a8d', 'tiles'], armeria: ['#d6ccb3', '#c9bfa6', 'plates']
+  };
+  const CORR = ['#92a3b4', '#8596a7', 'corr'];
   const WALL = { face: '#b9c2d5', face2: '#a1abc2', base: '#5a6582', cap: '#39415a', capHi: '#4b5573', void: '#0b0e1a', stripe: '#d7deeb' };
   const FACE_H = 2.4, CAP = .7;   // alto del frente de las paredes y grosor del borde, en metros
   let M = null;   // datos del mapa calculados una vez
@@ -376,10 +398,7 @@
       g.strokeStyle = '#3a4156'; g.lineWidth = lw * .9; for (let k = 1; k < 5; k++) { g.beginPath(); g.moveTo(-w / 2 + k * w / 5, h * .15); g.lineTo(-w / 2 + k * w / 5, h * .85); g.stroke(); } g.restore();
     });
     // mesa del botón de emergencia
-    { const b = S.BUTTON; if (vis(b.x, b.z, 4)) { const x = X(b.x), y = Y(b.z), r = S.TABLE_R * sc;
-      g.fillStyle = '#c8d0de'; g.beginPath(); g.ellipse(x, y, r, r * .8, 0, 0, TAU); P(); g.fillStyle = '#9aa4b8'; g.beginPath(); g.ellipse(x, y + r * .12, r * .92, r * .7, 0, 0, Math.PI); g.fill();
-      g.fillStyle = 'rgba(190,230,255,.55)'; g.beginPath(); g.ellipse(x, y - r * .1, r * .42, r * .36, 0, 0, TAU); P();
-      g.fillStyle = '#e8132e'; g.beginPath(); g.ellipse(x, y - r * .08, r * .26, r * .2, 0, 0, TAU); P(); g.fillStyle = 'rgba(255,255,255,.6)'; g.beginPath(); g.ellipse(x - r * .08, y - r * .14, r * .08, r * .04, -.4, 0, TAU); g.fill(); } }
+    { const b = S.BUTTON; if (vis(b.x, b.z, 4)) W2.roundTable(g, X(b.x), Y(b.z), S.TABLE_R * sc, sc, lw, true); }
     // decoración (el juego la puede ordenar con los personajes para que tape a quien pasa por detrás)
     if (!o.noDecor) S.DECOR.forEach(d => { if (vis(d.x, d.z, (d.len || d.w || d.r * 2) + 4)) W2.drawDecor(g, v, d, t); });
     // aparatos de las tareas (en la pared si la hay detrás), con el contorno amarillo del original en las que te tocan
@@ -422,16 +441,8 @@
       g.beginPath(); g.moveTo(cx - s2 / 2, cy + s2 * .4 - hh * .5); g.lineTo(cx + s2 / 2, cy + s2 * .4 - hh * .5); g.stroke(); g.strokeStyle = OUT; g.lineWidth = lw; };
     const W = (d.w || 0) * sc, H = (d.h || 0) * sc, r = (d.r || 0) * sc;
     switch (d.kind) {
-      case 'table': {   // mesa redonda de la cafetería con taburetes
-        const rt = r * .64, n = 6, st = a => [x + Math.cos(a) * r * .9, y + Math.sin(a) * r * .74];
-        shadow(x, y + sc * .2, r * 1.05, r * .82);
-        const stool = a => { const [sx, sy] = st(a); R(sx - sc * .08, sy - sc * .5, sc * .16, sc * .5, '#59627a', sc * .05); E(sx, sy - sc * .55, r * .19, r * .13, '#7d879c'); };
-        for (let k = 0; k < n; k++) { const a = k / n * TAU + .26; if (Math.sin(a) < 0) stool(a); }
-        R(x - sc * .25, y - sc * .9, sc * .5, sc * .9, '#59627a', sc * .1);
-        g.fillStyle = '#8d97ad'; g.beginPath(); g.ellipse(x, y - sc * .8, rt, rt * .78, 0, 0, Math.PI); g.lineTo(x - rt, y - sc * 1.05); g.ellipse(x, y - sc * 1.05, rt, rt * .78, 0, Math.PI, 0, true); g.closePath(); P();
-        E(x, y - sc * 1.05, rt, rt * .78, '#d5dcea'); g.fillStyle = 'rgba(255,255,255,.55)'; g.beginPath(); g.ellipse(x - rt * .3, y - sc * 1.05 - rt * .3, rt * .35, rt * .14, -.3, 0, TAU); g.fill();
-        for (let k = 0; k < n; k++) { const a = k / n * TAU + .26; if (Math.sin(a) >= 0) stool(a); }
-        break; }
+      case 'table': {   // mesa redonda azul de la cafetería con su banco curvo alrededor, como en el original
+        W2.roundTable(g, x, y, r, sc, lw, false); break; }
       case 'engine': {   // motor gigante con la tobera hacia fuera de la nave
         const L = d.len * sc, Rr = r, top = y - Rr * 1.7, hgt = Rr * 2;
         shadow(x, y + Rr * .35, L * .55, Rr * .45);
