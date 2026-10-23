@@ -4,6 +4,11 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 6.3.2 · flechas y cámaras como en el original
+- **Flechas rojas que parpadean hacia cada consola del sabotaje** que queda por arreglar (comunicaciones, luces, reactor y oxígeno): en el borde de la pantalla si está lejos, o encima de la consola si ya la tienes a la vista. Las ven todos, también los fantasmas.
+- **Flechas amarillas hacia el siguiente paso** de una tarea a medias (por ejemplo, de descargar a subir los datos).
+- **Cámaras como en el original**: cada una enseña solo un trozo de su pasillo (antes se veían salas enteras), en un monitor con 4 pantallas casi cuadradas separadas por líneas turquesa claro.
+
 ## Novedades 6.3.1 · fin de partida en modo pruebas y minimapa
 - **El modo pruebas termina como una partida normal si hay 3 jugadores o más (bots incluidos)**: si solo quedan un impostor y un tripulante, gana el impostor; y si se expulsa al impostor o se terminan las tareas, gana la tripulación. Con 1 o 2 jugadores sigue sin terminar sola, para poder probar.
 - **Vuelve el minimapa** arriba a la derecha, debajo de los botones de ajustes y mapa, con marco gris (al tocarlo se abre el mapa grande).
