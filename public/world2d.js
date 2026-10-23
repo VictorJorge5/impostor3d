@@ -418,7 +418,7 @@
     // borde del suelo
     g.strokeStyle = OUT; g.lineWidth = lw; g.lineCap = 'round'; g.beginPath(); for (const w of S.WALLS) { if (w.n[1] < -.3) continue; g.moveTo(w.a[0], w.a[1]); g.lineTo(w.b[0], w.b[1]); } g.stroke();
     // puertas cerradas (sabotaje)
-    if (o.doorsRoom) (S.DOORS[o.doorsRoom] || []).forEach(d => {
+    (o.doorsRooms || []).flatMap(id => S.DOORS[id] || []).forEach(d => {
       g.lineCap = 'butt'; g.strokeStyle = OUT; g.lineWidth = .9; g.beginPath(); g.moveTo(d[0], d[1]); g.lineTo(d[2], d[3]); g.stroke();
       g.strokeStyle = '#6f7a91'; g.lineWidth = .75; g.stroke(); g.strokeStyle = '#f2b800'; g.lineWidth = .3; g.setLineDash([.45, .45]); g.stroke(); g.setLineDash([]);
     });

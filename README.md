@@ -4,6 +4,25 @@ Juego tipo Among Us para jugar con amigos desde el navegador (móvil o PC), con 
 
 > Guía completa para ponerlo en internet: **DESPLIEGUE.md** (web en **Vercel** + servidor de juego en Render).
 
+## Novedades 6.0 · sabotajes, Admin, tareas y sala de espera como en el original
+- **La sala de espera es una nave**, como el lobby del original:
+  - Te mueves por ella con tus amigos.
+  - En el **portátil** el anfitrión cambia los ajustes.
+  - En el **armario** te cambias de color, ropa y cara.
+  - "Empezar" está abajo a la derecha.
+- **Sabotajes como en The Skeld**:
+  - **Puertas**: cierran 10 s, cada sala tiene su propia recarga y **se pueden cerrar varias a la vez**. Mientras estén cerradas no hay otros sabotajes, pero sí se puede pulsar el botón de emergencia, y la reunión las abre.
+  - **Reactor y oxígeno**: 30 s.
+  - **Escáner de mano del reactor**: dice "MANTÉN PARA DETENER LA FUSIÓN" y "ESPERANDO AL SEGUNDO USUARIO".
+  - **Teclado del oxígeno**: parpadea OK o MAL.
+  - **Luces**: unas 5 veces menos visión.
+  - **En la lista de tareas de todos** aparece "Arreglar luces (%)", "Comunicaciones saboteadas", "Fusión del reactor en Xs"…, parpadeando en rojo y amarillo.
+  - **Comunicaciones caídas**: cámaras, Admin y registro de puertas ponen "[COMUNICACIONES DESACTIVADAS]" y el mapa no marca las tareas.
+- **Admin**: en cada sala salen tantos tripulantes grises como gente haya, sin decir quién. Los pasillos no cuentan; los que están en una rejilla y los cuerpos, sí.
+- **Tareas comunes, largas y cortas** como en el original: por defecto 1 común (la misma para todos), 1 larga y 2 cortas. Se configura en la sala.
+- **El impostor ya no tiene tareas** (salvo en el modo pruebas, para probar los minijuegos).
+- La rejilla de Eléctrica está arriba a la izquierda, detrás del tabique.
+
 ## Novedades 5.9 · muertes, cuerpos, rejillas y fantasmas como en el original
 Hecho con las imágenes y los datos de la wiki de Among Us:
 - **Cuatro animaciones de muerte al azar**, las del original:

@@ -70,8 +70,12 @@ const humans = r => list(r).filter(p => !p.isBot);
 const pub = r => list(r).map(p => ({ id: p.id, name: p.name, color: p.color, look: p.look, alive: p.alive, x: p.x, z: p.z, ry: p.ry, vent: p.vent == null ? null : p.vent }));
 const emitLobby = r => io.to(r.code).emit('lobby', {
   code: r.code, hostId: r.hostId, settings: r.set,
-  players: list(r).map(p => ({ id: p.id, name: p.name, color: p.color, look: p.look, offline: !!p.offline, bot: !!p.isBot }))
+  players: list(r).map(p => ({ id: p.id, name: p.name, color: p.color, look: p.look, offline: !!p.offline, bot: !!p.isBot, lx: p.lx, lz: p.lz }))
 });
+// la nave de la sala de espera (como el lobby del original): 26 x 15 m; cada uno aparece en un sitio libre del centro
+const SHIP = { w: 26, h: 15 };
+const SHIP_SPOTS = [[13, 6], [9, 6.5], [17, 6.5], [5, 5], [21, 5], [4, 9], [22, 9.5], [13, 13], [3.5, 12.5], [11, 5]];
+const shipSpawn = (p, r) => { const used = r ? list(r).filter(q => q !== p && q.lx != null).map(q => [q.lx, q.lz]) : []; const free = SHIP_SPOTS.filter(([x, z]) => !used.some(([a, b]) => Math.hypot(a - x, b - z) < 1.5)); const [x, z] = (free.length ? free : SHIP_SPOTS)[0]; p.lx = x + Math.random() * .6 - .3; p.lz = z + Math.random() * .4 - .2; p.ldir = 1; p.lmv = 0; };
 
 function placeSpawns(r) {
   const ps = list(r);
@@ -91,6 +95,7 @@ function winner(r) {
 function endGame(r, w, reason) {
   clearCams(r); clearTimeout(r.timer); clearTimeout(r.phaseTimer);
   if (r.sab) { clearTimeout(r.sab.timer); r.sab = null; }
+  openDoors(r, true);
   r.state = 'end';
   r.endInfo = { winner: w, reason: reason || null, hostId: r.hostId, roles: endStats(r), mvp: mvpOf(r, reason === 'test' ? null : w) };
   io.to(r.code).emit('end', r.endInfo);
@@ -136,7 +141,7 @@ function emitProgress(r) {
 function startGame(r) {
   humans(r).filter(p => p.offline).forEach(p => dropPlayer(r, p));
   const set = r.set, now = Date.now();
-  r.state = 'play'; r.bodies = []; r.bodySeq = 0; r.doneTasks = 0; r.shownDone = 0; r.sab = null; r.doorLog = []; r.camViewers = new Set(); r.camN = 0;
+  r.state = 'play'; r.bodies = []; r.bodySeq = 0; r.doneTasks = 0; r.shownDone = 0; r.sab = null; openDoors(r, true); r.doorReady = {}; r.doorLog = []; r.camViewers = new Set(); r.camN = 0;
   r.sabReadyAt = now + sabFirstMs(r); r.emReadyAt = now + ms(set.emergencyCd);
   const ps = shuffle(list(r));
   let nImp = Math.min(set.impostors, Math.floor((ps.length - 1) / 2));
@@ -147,13 +152,16 @@ function startGame(r) {
     else if (set.hostRole === 'tripulante') { nImp = Math.min(nImp, ps.length - 1); if (hi >= 0 && hi < ps.length - 1) [ps[ps.length - 1], ps[hi]] = [ps[hi], ps[ps.length - 1]]; }
   } else nImp = Math.max(1, nImp);
   // se reparten "tareas" (una consola suelta o una cadena de pasos); cada paso cuenta en la barra
-  const units = shuffle(S.TASK_UNITS.map((u, k) => k)), nCommon = Math.min(set.commonTasks || 0, set.tasksPer);
-  const common = units.slice(0, nCommon).flatMap(k => S.pickUnit(S.TASK_UNITS[k])); r.common = common;
+  // como en el original: las comunes son las mismas para todos; cada uno recibe además sus largas y sus cortas
+  const ofKind = kd => shuffle(S.TASK_UNITS.map((u, k) => k).filter(k => S.UNIT_KIND[k] === kd));
+  const common = ofKind('common').slice(0, set.commonTasks).flatMap(k => S.pickUnit(S.TASK_UNITS[k])); r.common = common;
+  if (!set.commonTasks && !set.longTasks && !set.shortTasks) set.shortTasks = 1;   // siempre hay al menos una tarea
   ps.forEach((p, i) => {
     p.role = i < nImp ? 'impostor' : 'crew';
     p.alive = true; p.done = []; p.vote = null; p.emergencies = set.emergencies; p.vent = null; p.killLeft = null; p.st = {}; p.fx = null;
     p.killReadyAt = now + firstKillMs(r);
-    p.tasks = common.concat(shuffle(units.slice(nCommon)).slice(0, set.tasksPer - nCommon).flatMap(k => S.pickUnit(S.TASK_UNITS[k])));
+    // el impostor no tiene tareas (salvo en el modo pruebas, para poder probar los minijuegos): así nadie espera por él
+    p.tasks = p.role === 'impostor' && !set.testMode ? [] : common.concat(ofKind('long').slice(0, set.longTasks).concat(ofKind('short').slice(0, set.shortTasks)).flatMap(k => S.pickUnit(S.TASK_UNITS[k])));
   });
   r.totalTasks = ps.filter(p => p.role === 'crew').reduce((n, p) => n + p.tasks.length, 0);
   placeSpawns(r); settleRooms(r);
@@ -170,7 +178,8 @@ function startGame(r) {
 function startMeeting(r, caller, kind, body) {
   r.state = 'meeting'; r.bodies = []; clearCams(r);
   caller.st = caller.st || {}; if (kind === 'body') caller.st.reports = (caller.st.reports || 0) + 1; else caller.st.calls = (caller.st.calls || 0) + 1;
-  if (r.sab && (SABS[r.sab.type].crisis || r.sab.type === 'puertas')) endSab(r, false);   // como en el original: luces y comunicaciones siguen tras la reunión
+  if (r.sab && SABS[r.sab.type].crisis) endSab(r, false);   // como en el original: luces y comunicaciones siguen tras la reunión
+  openDoors(r);   // y la reunión abre todas las puertas
   list(r).forEach(p => { p.vent = null; p.vote = null; p.fx = null; });
   const victim = body ? r.players.get(body.pid) : null, dMs = ms(r.set.discuss), vMs = ms(r.set.voteTime), now = Date.now();
   r.meetingPhase = dMs > 0 ? 'discuss' : 'vote'; r.discussEnds = now + dMs; r.meetingEnds = now + dMs + vMs;
@@ -225,7 +234,7 @@ function resolveMeeting(r) {
     const now = Date.now();
     list(r).forEach(p => { p.killReadyAt = now + killCdMs(r); p.vent = null; p.killLeft = null; p.path = []; });
     if (!r.sab) r.sabReadyAt = now + sabFirstMs(r); r.emReadyAt = now + ms(r.set.emergencyCd);
-    io.to(r.code).emit('resume', { players: pub(r), killCd: killCdMs(r), sabCd: r.sab ? -1 : sabFirstMs(r), emCd: ms(r.set.emergencyCd), sab: sabInfo(r) });
+    io.to(r.code).emit('resume', { players: pub(r), killCd: killCdMs(r), sabCd: r.sab ? -1 : sabFirstMs(r), emCd: ms(r.set.emergencyCd), sab: sabInfo(r), doors: doorInfo(r) });
   }, RESULT_MS);
 }
 
@@ -253,6 +262,17 @@ function endSab(r, fixed) {
   clearTimeout(r.sab.timer); const type = r.sab.type; r.sab = null; r.sabReadyAt = Date.now() + sabCdMs(r);
   io.to(r.code).emit('sabotageEnd', { type, fixed, cd: sabCdMs(r) });
 }
+// puertas (como en The Skeld): cada sala se cierra por su cuenta y se pueden cerrar varias a la vez; mientras haya puertas
+// cerradas no se puede provocar otro sabotaje (ni al revés), pero sí pulsar el botón de emergencia
+const DOOR_CD = 10;   // segundos que tarda en poder volver a cerrarse una sala después de abrirse
+function doorInfo(r) { const now = Date.now(), closed = {}, ready = {}; for (const [k, d] of Object.entries(r.doors || {})) closed[k] = Math.max(0, d.until - now); for (const [k, t] of Object.entries(r.doorReady || {})) if (t > now) ready[k] = t - now; return { closed, ready }; }
+function emitDoors(r) { io.to(r.code).emit('doors', doorInfo(r)); }
+function closeDoors(r, roomId) {
+  const dur = ms(r.set.doorTime); r.doors = r.doors || {};
+  r.doors[roomId] = { until: Date.now() + dur, timer: setTimeout(() => { if (!r.doors || !r.doors[roomId]) return; delete r.doors[roomId]; r.doorReady[roomId] = Date.now() + ms(DOOR_CD); emitDoors(r); }, dur) };
+  emitDoors(r);
+}
+function openDoors(r, silent) { for (const d of Object.values(r.doors || {})) clearTimeout(d.timer); const had = r.doors && Object.keys(r.doors).length; r.doors = {}; if (had && !silent) emitDoors(r); }
 function sabState(r) { if (r.sab) io.to(r.code).emit('sabState', { holds: r.sab.holds, done: [...r.sab.done] }); }
 function clearHolds(r, pid) {
   if (!r.sab) return; let ch = false;
@@ -294,7 +314,7 @@ function dropPlayer(r, p) {
   clearTimeout(p.dropTimer); clearHolds(r, p.id); if (r.camViewers) { r.camViewers.delete(p.id); emitCam(r); }
   if (!r.players.has(p.id)) return;
   r.players.delete(p.id);
-  if (humans(r).length === 0) { clearTimeout(r.timer); clearTimeout(r.phaseTimer); if (r.sab) clearTimeout(r.sab.timer); rooms.delete(r.code); return; }
+  if (humans(r).length === 0) { clearTimeout(r.timer); clearTimeout(r.phaseTimer); if (r.sab) clearTimeout(r.sab.timer); openDoors(r, true); rooms.delete(r.code); return; }
   if (r.hostId === p.id) { const all = humans(r), next = all.find(q => !q.offline) || all[0]; r.hostId = next.id; }
   if (r.state === 'lobby') return emitLobby(r);
   io.to(r.code).emit('left', { id: p.id, hostId: r.hostId });
@@ -312,7 +332,7 @@ function snapshot(r, p) {
     state: r.state, hostId: r.hostId, common: r.common || [], role: p.role, tasks: p.tasks, done: p.done, alive: p.alive, vote: p.vote, emerg: p.emergencies,
     mates: p.role === 'impostor' ? list(r).filter(q => q.role === 'impostor').map(q => q.id) : [],
     players: pub(r), bodies: r.bodies, total: r.set.taskbar === 'nunca' ? 0 : r.totalTasks, doneN: r.set.taskbar === 'siempre' ? r.doneTasks : (r.shownDone || 0), killCd: Math.max(0, (p.killReadyAt || 0) - Date.now()),
-    sab: sabInfo(r), cam: r.camViewers ? r.camViewers.size : 0, vent: p.vent == null ? null : p.vent, cfg: clientCfg(r), emCd: Math.max(0, (r.emReadyAt || 0) - Date.now()),
+    sab: sabInfo(r), doors: doorInfo(r), cam: r.camViewers ? r.camViewers.size : 0, vent: p.vent == null ? null : p.vent, cfg: clientCfg(r), emCd: Math.max(0, (r.emReadyAt || 0) - Date.now()),
     sabCd: p.role === 'impostor' ? (r.sabReadyAt === Infinity ? -1 : Math.max(0, (r.sabReadyAt || 0) - Date.now())) : 0
   };
   if (r.state === 'meeting' || r.state === 'result') s.meeting = {
@@ -349,7 +369,7 @@ io.on('connection', sock => {
     let color = used.has(look.col) ? 0 : look.col; while (used.has(color)) color++;   // el color que eligió, si está libre (como en Among Us)
     const sp = S.freeNear(S.BUTTON.x, S.BUTTON.z + 5);
     me = { id: sock.id, name, color, look, x: sp.x, z: sp.z, ry: 0, alive: true, role: null, tasks: [], done: [], vote: null, emergencies: 1, killReadyAt: 0, vent: null, token: crypto.randomBytes(12).toString('hex'), offline: false, lastChat: 0 };
-    r.players.set(sock.id, me);
+    shipSpawn(me, r); r.players.set(sock.id, me);
     room = r;
     sock.join(r.code);
     cb({ ok: true, id: sock.id, code: r.code, token: me.token, mapVer: S.MAP_VER });
@@ -357,6 +377,18 @@ io.on('connection', sock => {
   });
 
   // El anfitrión cambia un ajuste (o aplica un preset) en la sala
+  // en la sala de espera cada uno anda por la nave y se puede cambiar en el armario
+  sock.on('lmove', m => {
+    if (!room || room.state !== 'lobby' || !m) return; const x = +m.x, z = +m.z; if (!Number.isFinite(x) || !Number.isFinite(z)) return;
+    me.lx = Math.max(1, Math.min(SHIP.w - 1, x)); me.lz = Math.max(1, Math.min(SHIP.h - 1, z)); me.ldir = m.dir < 0 ? -1 : 1; me.lmv = m.mv ? 1 : 0;
+  });
+  sock.on('lobbyLook', d => {
+    if (!room || room.state !== 'lobby' || !d) return;
+    const look = S.cleanLook(d.look), used = new Set(list(room).filter(q => q !== me).map(q => q.color));
+    if (typeof d.name === 'string' && d.name.trim()) me.name = d.name.trim().slice(0, 12);
+    me.look = look; if (!used.has(look.col)) me.color = look.col;
+    emitLobby(room);
+  });
   sock.on('settings', d => {
     if (!room || room.hostId !== sock.id || room.state !== 'lobby' || !d || typeof d !== 'object') return;
     if (d.preset !== undefined) { const p = S.PRESETS[String(d.preset)]; if (!p) return; room.set = S.normalizeSettings(p.set); }
@@ -429,7 +461,7 @@ io.on('connection', sock => {
 
   sock.on('emergency', () => {
     if (!room || room.state !== 'play' || !me.alive || me.vent != null || me.emergencies < 1) return;
-    if (room.sab && room.sab.type !== 'puertas') return sock.emit('toast', 'No se puede convocar una reunión durante un sabotaje');
+    if (room.sab) return sock.emit('toast', 'No se puede convocar una reunión durante un sabotaje');   // las puertas cerradas no lo impiden
     if (dist(me, S.BUTTON) > BUTTON_RANGE) return;
     if (Date.now() < room.emReadyAt) return sock.emit('toast', `El botón se está recargando (${Math.ceil((room.emReadyAt - Date.now()) / 1000 / TS)} s)`);
     me.emergencies--;
@@ -444,11 +476,17 @@ io.on('connection', sock => {
     const cfg = SABS[d.type]; if (!cfg) return;
     if (!sabEnabled(room, d.type)) return sock.emit('toast', 'Ese sabotaje está desactivado en esta partida');
     if (room.sab) return sock.emit('toast', 'Ya hay un sabotaje en marcha');
+    me.st = me.st || {};
+    if (d.type === 'puertas') {
+      const roomId = String(d.room || ''); if (!S.ROOMS.some(q => q.id === roomId)) return;
+      if (room.doors && room.doors[roomId]) return sock.emit('toast', 'Esas puertas ya están cerradas');
+      if (Date.now() < (room.doorReady[roomId] || 0)) return sock.emit('toast', 'Esas puertas se están recargando');
+      me.st.sabs = (me.st.sabs || 0) + 1; return closeDoors(room, roomId);
+    }
+    if (room.doors && Object.keys(room.doors).length) return sock.emit('toast', 'Espera a que se abran las puertas');
     if (Date.now() < room.sabReadyAt) return sock.emit('toast', 'El sabotaje se está recargando');
-    let roomId = null;
-    if (d.type === 'puertas') { roomId = String(d.room || ''); if (!S.ROOMS.some(q => q.id === roomId)) return; }
-    me.st = me.st || {}; me.st.sabs = (me.st.sabs || 0) + 1;
-    startSab(room, d.type, roomId);
+    me.st.sabs = (me.st.sabs || 0) + 1;
+    startSab(room, d.type, null);
   });
   // Tareas visuales: el resto ve el escáner, los asteroides, la basura o los escudos mientras un tripulante los hace
   sock.on('taskfx', d => {
@@ -462,9 +500,8 @@ io.on('connection', sock => {
   // Modo pruebas: el anfitrión provoca cualquier sabotaje sin importar su rol ni la recarga
   sock.on('testSabotage', d => {
     if (!room || room.hostId !== sock.id || !room.set.testMode || room.state !== 'play' || !d || !SABS[d.type] || room.sab) return;
-    let roomId = null;
-    if (d.type === 'puertas') { roomId = String(d.room || ''); if (!S.ROOMS.some(q => q.id === roomId)) return; }
-    startSab(room, d.type, roomId);
+    if (d.type === 'puertas') { const roomId = String(d.room || ''); if (!S.ROOMS.some(q => q.id === roomId) || (room.doors && room.doors[roomId])) return; return closeDoors(room, roomId); }
+    startSab(room, d.type, null);
   });
   // Cualquiera vivo arregla un panel (luces, comunicaciones, oxígeno): también el impostor, para disimular
   sock.on('fix', d => {
@@ -549,7 +586,8 @@ io.on('connection', sock => {
   sock.on('again', () => {
     if (!room || room.hostId !== sock.id || room.state !== 'end') return;
     room.state = 'lobby';
-    list(room).forEach(p => { p.alive = true; p.role = null; p.tasks = []; p.done = []; p.vote = null; });
+    list(room).forEach(p => { p.alive = true; p.role = null; p.tasks = []; p.done = []; p.vote = null; p.lx = null; });
+    list(room).forEach(p => shipSpawn(p, room));
     io.to(room.code).emit('toLobby');
     emitLobby(room);
   });
@@ -631,7 +669,7 @@ function addBot(r) {
   const used = new Set(list(r).map(p => p.color)); let color = 0; while (used.has(color)) color++;
   const names = new Set(list(r).map(p => p.name)); const name = BOT_NAMES.find(n => !names.has(n)) || 'Bot' + (r.players.size + 1);
   const id = 'bot_' + crypto.randomBytes(4).toString('hex');
-  r.players.set(id, { id, isBot: true, name, color, look: S.randomLook(), x: S.BUTTON.x, z: S.BUTTON.z + 5, ry: 0, alive: true, role: null, tasks: [], done: [], vote: null, emergencies: 0, killReadyAt: 0, vent: null, offline: false, lastChat: 0, mv: 0, path: [] });
+  r.players.set(id, { id, isBot: true, name, color, look: S.randomLook(), x: S.BUTTON.x, z: S.BUTTON.z + 5, ry: 0, alive: true, role: null, tasks: [], done: [], vote: null, emergencies: 0, killReadyAt: 0, vent: null, offline: false, lastChat: 0, mv: 0, path: [] }); shipSpawn(r.players.get(id), r);
 }
 function trimBots(r, keep) { const bots = list(r).filter(p => p.isBot); while (r.players.size > keep && bots.length) r.players.delete(bots.pop().id); }
 function syncBots(r) {   // en la sala, el número de bots sigue al ajuste (solo con modo pruebas)
@@ -680,6 +718,10 @@ setInterval(() => {
   for (const r of rooms.values()) if (r.state === 'play') for (const p of list(r)) if (p.isBot && p.alive && r.state === 'play') botTick(r, p, now, 0.1);
 }, 100);
 
+// posiciones en la nave de la sala de espera, 10 veces por segundo
+setInterval(() => {
+  for (const r of rooms.values()) if (r.state === 'lobby' && r.players.size > 1) io.to(r.code).emit('lpos', list(r).map(p => [p.id, +(p.lx || 0).toFixed(2), +(p.lz || 0).toFixed(2), p.ldir || 1, p.lmv || 0]));
+}, 100);
 // difusión de posiciones ~15 veces por segundo
 setInterval(() => {
   const nowT = Date.now();

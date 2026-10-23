@@ -731,7 +731,8 @@
         if (fin) return; snd('click'); buzz(6);
         if (k === '⌫') cur = cur.slice(0, -1); else if (k === 'C') cur = ''; else if (cur.length < 5) cur += k;
         paint();
-        if (cur.length === 5) { if (cur === code) { paint('ok'); snd('fixed'); fin = true; setTimeout(() => body.dispatchEvent(new Event('mgwin')), 350); } else { paint('bad'); snd('err'); buzz([50, 40, 50]); setTimeout(() => { cur = ''; paint(); }, 450); } }
+        // como en el original: parpadea OK o MAL en la pantallita
+        if (cur.length === 5) { const msg = t => { scr.innerHTML = ''; const d = document.createElement('b'); d.className = 'kMsg'; d.textContent = t; scr.append(d); }; if (cur === code) { paint('ok'); msg('OK'); snd('fixed'); fin = true; setTimeout(() => body.dispatchEvent(new Event('mgwin')), 650); } else { paint('bad'); msg('MAL'); snd('err'); buzz([50, 40, 50]); setTimeout(() => { cur = ''; paint(); }, 800); } }
       };
       ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '⌫'].forEach(k => { const b = document.createElement('button'); b.textContent = k; b.addEventListener('pointerdown', e => { e.preventDefault(); press(k); }); pad.append(b); });
       paint(); wrap._solve = async () => { for (const c of code) { press(c); await wait(30); } };
