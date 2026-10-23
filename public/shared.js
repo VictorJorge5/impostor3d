@@ -143,6 +143,9 @@
   const CHAINS = {};
   STATIONS.forEach(s => { if (!s.chain) return; const c = CHAINS[s.chain] || (CHAINS[s.chain] = []); (c[s.step] || (c[s.step] = [])).push(s.id); });
   const TASK_UNITS = STATIONS.filter(s => !s.chain).map(s => [[s.id]]).concat(Object.values(CHAINS));
+  // tipo de cada tarea en The Skeld, como en el original: comunes (las mismas para todos), largas y cortas
+  const LONG_CH = ['alinear', 'basura', 'combustible'], LONG_T = ['asteroids', 'samples', 'simon', 'scan'];
+  const UNIT_KIND = TASK_UNITS.map(u => { const st = STATIONS[u[0][0]]; return st.chain === 'cables' || st.type === 'card' ? 'common' : LONG_CH.includes(st.chain) || LONG_T.includes(st.type) ? 'long' : 'short'; });
   const pickUnit = u => u.map(opts => opts[Math.floor(Math.random() * opts.length)]);
   // Paso anterior de cada consola dentro de las tareas de un jugador (hay que hacerlo antes): { id: idAnterior }
   const taskPrev = ids => {
@@ -188,7 +191,7 @@
     at({ id: 3,  room: 'motorinf',       links: [2] },    102, 275),
     at({ id: 4,  room: 'enfermeria',     links: [5, 6] }, 194, 148),
     at({ id: 5,  room: 'seguridad',      links: [4, 6] }, 152, 186),
-    at({ id: 6,  room: 'electrica',      links: [4, 5] }, 207, 250),
+    at({ id: 6,  room: 'electrica',      links: [4, 5] }, 202, 213),   // arriba a la izquierda, detrás del tabique
     at({ id: 7,  room: 'cafeteria',      links: [8, 9] }, 380, 128),
     at({ id: 8,  room: 'administracion', links: [7, 9] }, 362, 226),
     at({ id: 9,  room: null,             links: [7, 8] }, 484, 182),
@@ -197,9 +200,9 @@
     at({ id: 12, room: 'navegacion',     links: [13] },   556, 177),
     at({ id: 13, room: 'escudos',        links: [12] },   446, 250)
   ];
-  // puertas cerradas por sabotaje: tramos de puerta de la sala elegida
+  // puertas cerradas por sabotaje: tramos de puerta de las salas cerradas
   let closedDoors = [];
-  const setDoors = roomId => { closedDoors = roomId && DOORS[roomId] ? DOORS[roomId] : []; };
+  const setDoors = rooms => { closedDoors = [].concat(rooms || []).flatMap(id => DOORS[id] || []); };   // se pueden cerrar varias salas a la vez
   const segDist = (x, z, s) => { const dx = s[2] - s[0], dz = s[3] - s[1], L2 = dx * dx + dz * dz, t = Math.max(0, Math.min(1, ((x - s[0]) * dx + (z - s[1]) * dz) / L2)); return Math.hypot(x - s[0] - dx * t, z - s[1] - dz * t); };
   const isClosedCell = (x, z) => closedDoors.length > 0 && closedDoors.some(s => segDist(x, z, s) < .35);
 
@@ -345,14 +348,15 @@
     num('Reuniones', 'voteTime', 'Tiempo de votación', 10, 300, 5, 60, ' s'),
     bool('Reuniones', 'confirmEjects', 'Confirmar expulsiones', true, 'Revela si el expulsado era impostor'),
     bool('Reuniones', 'anonVotes', 'Votos anónimos', false, 'Solo se ve cuántos votos recibió cada uno'),
-    num('Tareas', 'tasksPer', 'Tareas por tripulante', 1, 8, 1, 4),
-    num('Tareas', 'commonTasks', 'Tareas comunes', 0, 2, 1, 1, '', 'Las mismas para todos los tripulantes'),
+    num('Tareas', 'commonTasks', 'Tareas comunes', 0, 2, 1, 1, '', 'Las mismas para todos: pasar tarjeta y cables'),
+    num('Tareas', 'longTasks', 'Tareas largas', 0, 3, 1, 1, '', 'Motores, basura, combustible, asteroides, muestras, reactor y escáner'),
+    num('Tareas', 'shortTasks', 'Tareas cortas', 0, 5, 1, 2),
     bool('Tareas', 'visualTasks', 'Tareas visuales', true, 'Los demás ven el escáner médico, los asteroides, la basura y los escudos: hacerlas delante de alguien demuestra que eres inocente'),
     sel('Tareas', 'taskbar', 'Barra de progreso de tareas', [['siempre', 'Siempre'], ['reuniones', 'Solo tras las reuniones'], ['nunca', 'Nunca']], 'siempre'),
     num('Sabotajes', 'sabCd', 'Enfriamiento de sabotajes', 5, 60, 5, 30, ' s'),
-    num('Sabotajes', 'reactorTime', 'Tiempo para arreglar el reactor', 15, 120, 5, 45, ' s'),
-    num('Sabotajes', 'o2Time', 'Tiempo para arreglar el oxígeno', 15, 120, 5, 50, ' s'),
-    num('Sabotajes', 'doorTime', 'Duración de las puertas cerradas', 5, 30, 1, 12, ' s'),
+    num('Sabotajes', 'reactorTime', 'Tiempo para arreglar el reactor', 15, 120, 5, 30, ' s'),
+    num('Sabotajes', 'o2Time', 'Tiempo para arreglar el oxígeno', 15, 120, 5, 30, ' s'),
+    num('Sabotajes', 'doorTime', 'Duración de las puertas cerradas', 5, 30, 1, 10, ' s'),
     bool('Sabotajes', 'sabLuces', 'Permitir sabotaje de luces', true),
     bool('Sabotajes', 'sabComs', 'Permitir sabotaje de comunicaciones', true),
     bool('Sabotajes', 'sabPuertas', 'Permitir cierre de puertas', true),
@@ -365,8 +369,8 @@
   ];
   const PRESETS = {
     clasico: { name: 'Clásico', set: {} },
-    rapido:  { name: 'Rápido', set: { killCd: 10, sabCd: 10, reactorTime: 25, o2Time: 25, doorTime: 8, discuss: 5, voteTime: 20, emergencyCd: 0, tasksPer: 2 } },
-    pruebas: { name: 'Pruebas', set: { killCd: 5, sabCd: 5, reactorTime: 20, o2Time: 20, doorTime: 6, discuss: 0, voteTime: 15, emergencyCd: 0, tasksPer: 2, testMode: true } }
+    rapido:  { name: 'Rápido', set: { killCd: 10, sabCd: 10, reactorTime: 25, o2Time: 25, doorTime: 8, discuss: 5, voteTime: 20, emergencyCd: 0, longTasks: 0, shortTasks: 1 } },
+    pruebas: { name: 'Pruebas', set: { killCd: 5, sabCd: 5, reactorTime: 20, o2Time: 20, doorTime: 6, discuss: 0, voteTime: 15, emergencyCd: 0, longTasks: 0, shortTasks: 1, testMode: true } }
   };
   // Devuelve siempre un conjunto completo y válido: lo que no es válido se corrige o se pone por defecto
   const normalizeSettings = src => {
@@ -382,6 +386,6 @@
   };
 
   const VISUAL_TASKS = ['scan', 'asteroids', 'trash', 'shields'];   // tareas que se ven desde fuera
-  const api = { wallBetween, MAP_VER, freeNear, WEAPON_GUN, TRASH_OUT, SHIELD_OUT, VISUAL_TASKS, CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, WALLS, POLYS, inPoly, roomAtPos, segDist, MAPW, MAPH, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
+  const api = { UNIT_KIND, wallBetween, MAP_VER, freeNear, WEAPON_GUN, TRASH_OUT, SHIELD_OUT, VISUAL_TASKS, CHAINS, TASK_UNITS, pickUnit, taskPrev, DECOR, KITS, INFO, CAMERAS, SETTINGS, PRESETS, normalizeSettings, cellPos, PANELS, VENTS, DOORS, WALLS, POLYS, inPoly, roomAtPos, segDist, MAPW, MAPH, setDoors, isClosedCell, colors, SKINS, HAIR_COLORS, CLOTHES, OPT, randomLook, cleanLook, CELL, W, H, WALL_H, TASKS_PER, TABLE_R, COLORS, ROOMS, CORRIDORS, grid, roomAt, STATIONS, stationPos, BUTTON, isSolid, blocked, spawnPos };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Shared = api;
 })(this);

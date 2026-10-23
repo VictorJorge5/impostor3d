@@ -836,7 +836,43 @@ body.nokeys #keys{display:none!important}
 #topLeft>#barWrap.coms #bar{width:100%!important;background:#1f5a2a;box-shadow:none}
 /* la tableta de votación, rajada para los fantasmas */
 #mtgMain.ghost::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60' preserveAspectRatio='none'><g fill='none' stroke='%23ffffff' stroke-width='.45' stroke-linejoin='round' opacity='.85'><path d='M62 0 L58 14 L66 22 L55 33 L60 45 L52 60'/><path d='M58 14 L46 12 L38 20'/><path d='M66 22 L80 18 L92 26 L100 24'/><path d='M55 33 L44 38 L30 36 L18 44'/><path d='M60 45 L74 50 L84 60'/></g><g fill='none' stroke='%2333404f' stroke-width='.2' opacity='.6'><path d='M62.4 0 L58.4 14 L66.4 22 L55.4 33 L60.4 45 L52.4 60'/></g></svg>") center/100% 100% no-repeat}
-#taskBox.comsOff #taskList>*{display:none}#taskBox.comsOff #taskList::before{content:"Comunicaciones saboteadas";display:block;padding:6px 12px 10px;color:#ff4b5c;font-weight:800;animation:flash 1s steps(2) infinite}
+#taskBox.comsOff #taskList{display:none}
+#sabLine{display:none;padding:2px 12px 6px;font-weight:800;font-size:13px;line-height:1.25;animation:sabline 1s steps(1) infinite}#sabLine.on{display:block}
+@keyframes sabline{0%{color:#ff3b4a}50%{color:#ffd23f}}
+
+/* ===== v6.0 · escáner de mano del reactor, como el original ===== */
+.rscan{gap:12px}
+.rsTxt{min-width:min(320px,80vw);padding:8px 14px;border-radius:6px;background:#0b1a10;border:3px solid #39424f;color:#ff4b4b;font:900 15px/1.2 "Arial Black",var(--fd),sans-serif;text-align:center;letter-spacing:.5px;animation:flash 1s steps(2) infinite}
+.rscan[data-st=wait] .rsTxt{color:#ffd23f}.rscan[data-st=ok] .rsTxt{color:#4ef06b;animation:none}
+.rsPad{width:min(190px,42vh);height:min(220px,48vh);border-radius:14px;border:6px solid #39424f;background:radial-gradient(circle at 50% 45%,#1b2635,#0b1018);display:flex;align-items:center;justify-content:center;padding:14px;touch-action:none}
+.rsPad svg{width:80%;height:80%;fill:#c4162f;filter:drop-shadow(0 0 8px #ff2e4d88)}
+.rscan[data-st=wait] .rsPad svg{fill:#d9b51a;filter:drop-shadow(0 0 8px #ffd23f88)}.rscan[data-st=ok] .rsPad svg{fill:#2fbf71;filter:drop-shadow(0 0 10px #4ef06b)}
+.rsPad.on{background:repeating-linear-gradient(0deg,#1b2635 0 6px,#22324a 6px 8px)}
+.kMsg{height:40px;display:flex;align-items:center;font:900 28px/1 var(--fd);letter-spacing:4px;animation:flash .35s steps(2) infinite}.kScr.ok .kMsg{color:#4ef06b;text-shadow:0 0 12px #4ef06b}.kScr.bad .kMsg{color:#ff4b5c;text-shadow:0 0 12px #ff3d5e}
+
+/* ===== v6.0 · la nave de la sala de espera (en horizontal) ===== */
+#shipCv,#shipHud{display:none}
+@media (orientation:landscape){
+  #lobby{overflow:clip}   /* clip: que abrir los ajustes no desplace la nave */
+  #shipCv{display:block;position:absolute;inset:0;width:100%;height:100%;touch-action:none;z-index:1}
+  #shipHud{display:block;position:absolute;inset:0;pointer-events:none;z-index:2}
+  #shipHud>*{pointer-events:auto}
+  #lobby>.card{display:none}
+  #lobby.lpanel>.card{display:block!important;position:absolute;z-index:5;top:max(8px,env(safe-area-inset-top));bottom:max(8px,env(safe-area-inset-bottom));left:10vw;width:80vw;max-width:none;margin:0;overflow:auto;border-radius:20px;background:#0b1224f2;border:1px solid #6d8fd655;box-shadow:0 20px 60px #000;padding:14px 18px}
+  #lobby.lpanel::after{content:"";position:absolute;inset:0;background:#000a;z-index:4}
+  #shipPanelX{display:flex!important;position:sticky;top:0;margin-left:auto;z-index:2}
+  #lobby.lpanel>.card>*{grid-column:auto!important}
+}
+#shipPanelX{display:none}
+.shTop{position:absolute;top:max(8px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));display:flex;align-items:center;gap:8px}
+.shTop #shipInvite{margin-left:auto}
+.shBot{position:absolute;bottom:max(8px,env(safe-area-inset-bottom));left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));display:flex;align-items:center;gap:10px}
+.shChip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;border:1px solid #9fb6ff33;background:#0a1124d0;color:#fff;font:800 14px/1 var(--fd),sans-serif}
+.shChip small{font-size:10px;letter-spacing:1.5px;color:var(--steel)}.shChip b{font-size:18px;letter-spacing:3px;color:var(--amber)}
+.shChip.amber{background:var(--amber);color:#1d1300;border:none}.shChip .i{width:18px;height:18px}
+#shipStart{margin:0 0 0 auto;width:auto;padding:12px 26px;font-size:17px}
+#shipWait{margin-left:auto;color:#cdd6ee;font-weight:700;font-size:13px;background:#0a1124d0;padding:8px 12px;border-radius:12px}
+.shAct{padding:12px 20px;border-radius:14px;border:3px solid #ffd23f;background:#1b2338e6;color:#ffd23f;font:900 15px/1 var(--fd),sans-serif;animation:pulse 1.2s infinite}
 </style>
 <link rel="preload" href="fonts/chakra-petch-latin-700-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -871,13 +907,19 @@ body.nokeys #keys{display:none!important}
       <div class="sec-h"><span>¿Te han pasado un código?</span></div>
       <div class="row"><input id="code" class="field" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Código de sala"><button id="btnJoin" class="btn">Unirse</button></div>
     </div>
-    <footer class="foot"><span>Impostor 3D · v5.9</span></footer>
+    <footer class="foot"><span>Impostor 3D · v6.0</span></footer>
   </div>
 </div>
 
 <div id="lobby" class="screen">
   <div class="stars"></div>
+  <canvas id="shipCv"></canvas>
+  <div id="shipHud">
+    <div class="shTop"><button id="shipBack" class="ibtn" aria-label="Salir de la sala"><svg class="i" aria-hidden="true"><use href="#i-back"/></svg></button><button id="shipCode" class="shChip"><small>CÓDIGO</small><b id="shipCodeTxt">----</b></button><button id="shipInvite" class="shChip amber"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg>Invitar</button></div>
+    <div class="shBot"><button id="shipPanel" class="shChip"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg><span id="shipCount">1/10</span></button><button id="shipUse" class="shAct" style="display:none"></button><button id="shipStart" class="btn amber">Empezar</button><span id="shipWait">Esperando al anfitrión…</span></div>
+  </div>
   <div class="card">
+    <button id="shipPanelX" class="x" aria-label="Cerrar">✕</button>
     <header class="topbar">
       <button id="btnLeave" class="ibtn" aria-label="Salir de la sala"><svg class="i" aria-hidden="true"><use href="#i-back"/></svg></button>
       <div class="tb-title">Sala de espera</div>
@@ -918,7 +960,7 @@ body.nokeys #keys{display:none!important}
 <div id="game" class="screen">
   <canvas id="cv"></canvas>
   <div id="vignette"></div>
-  <div id="topLeft" class="hud"><div id="barWrap"><div id="bar"></div><span>TAREAS TOTALES COMPLETADAS</span></div><div id="taskBox" class="hglass"><div id="taskHead" role="button" aria-label="Mostrar u ocultar tareas"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tareas</span><b id="taskCount"></b><i class="chev"></i></div><div id="taskList"></div></div><div id="testTag" style="display:none">MODO PRUEBAS</div></div>
+  <div id="topLeft" class="hud"><div id="barWrap"><div id="bar"></div><span>TAREAS TOTALES COMPLETADAS</span></div><div id="taskBox" class="hglass"><div id="taskHead" role="button" aria-label="Mostrar u ocultar tareas"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span>Tareas</span><b id="taskCount"></b><i class="chev"></i></div><div id="sabLine"></div><div id="taskList"></div></div><div id="testTag" style="display:none">MODO PRUEBAS</div></div>
   <div id="topRight" class="hud"><canvas id="minimap" width="300" height="205"></canvas><div class="tools"><button id="btnSound" class="ibtn sndBtn" aria-label="Sonido"></button><button id="btnCfg" class="ibtn" aria-label="Ajustes"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button><button id="btnFull" class="ibtn" aria-label="Pantalla completa"><svg class="i" aria-hidden="true"><use href="#i-max"/></svg></button><button id="btnTest" class="ibtn" style="display:none" aria-label="Herramientas de prueba"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg></button><button id="btnEndTest" class="ibtn" style="display:none" aria-label="Terminar prueba"><svg class="i" aria-hidden="true"><use href="#i-flag"/></svg></button><button id="btnQuit" class="ibtn" aria-label="Salir de la partida"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button></div></div>
   <div id="ghost" class="hud">Eres un fantasma: sigue con las tareas y observa</div>
   <div id="keys" class="hud">WASD / flechas mover · E usar · R reportar · Q matar · G sabotaje · F ventilación</div>
@@ -1038,7 +1080,7 @@ const G = {
   total: 0, doneN: 0, players: new Map(), bodies: new Map(),
   sc: .92, x: 0, z: 0, ry: 0, heading: 0, zoom: 0, still: 0,
   cfg: { speed: 1, visCrew: 1, visImp: 1.25, killRange: 3.8, taskbar: 'siempre', test: false, vents: true, sabs: { luces: true, coms: true, puertas: true, reactor: true, o2: true }, times: { reactor: 45, o2: 50, doors: 12 } },
-  info: null, camN: 0, shakeUntil: 0, shakeAmp: 0, fx: [], eject: null, impCount: 1, hostId: null, emReadyAt: 0, phase: 'vote', phaseEnds: 0, sab: null, vent: null, sabReadyAt: 0, holding: null, mgPanel: null, sabMenuOpen: false, killReadyAt: 0, frozenUntil: 0, act: null, voted: new Set(), myVote: null, resultShown: false, mtgEnds: 0
+  doors: { closed: {}, ready: {} }, info: null, camN: 0, shakeUntil: 0, shakeAmp: 0, fx: [], eject: null, impCount: 1, hostId: null, emReadyAt: 0, phase: 'vote', phaseEnds: 0, sab: null, vent: null, sabReadyAt: 0, holding: null, mgPanel: null, sabMenuOpen: false, killReadyAt: 0, frozenUntil: 0, act: null, voted: new Set(), myVote: null, resultShown: false, mtgEnds: 0
 };
 
 /* ---------- utilidades ---------- */
@@ -1151,9 +1193,82 @@ $('btnStart').onclick = () => socket.emit('start');
 $('btnAgain').onclick = () => socket.emit('again');
 
 socket.on('toast', t => toast(t));
+/* ---------- la nave de la sala de espera, como el lobby del original ----------
+   Se anda por ella (joystick o WASD), el anfitrión cambia los ajustes en el portátil y en el armario te cambias. */
+const SHIP = { w: 26, h: 15, obs: [[8, 1.6, 10.4, 3.6, 'laptop'], [15.6, 1.6, 18, 3.6, 'wardrobe'], [6.5, 9.2, 11, 12.6, 'crate'], [15, 8.6, 19.5, 12.2, 'crate'], [1.6, 1.4, 6.4, 2.4, 'seats'], [19.6, 12.6, 24.4, 13.6, 'seats']] };
+const LB = { me: null, ptr: null, raf: 0, near: null, last: 0, sent: 0, others: new Map() };
+const shipFree = (x, z) => x > 1.4 && x < SHIP.w - 1.4 && z > 1.6 && z < SHIP.h - 1.2 && !SHIP.obs.some(o => x > o[0] - .5 && x < o[2] + .5 && z > o[1] - .3 && z < o[3] + .9);
+function shipView() { const cv = $('shipCv'), w = cv.clientWidth, h = cv.clientHeight, sc = Math.min(w / (SHIP.w + 1.5), h / (SHIP.h + 2.2)); return { w, h, sc, ox: (w - SHIP.w * sc) / 2, oy: (h - SHIP.h * sc) / 2 + sc * .5 }; }
+function drawShip(now) {
+  const cv = $('shipCv'); if (!cv.clientWidth) return;
+  const { g, w, h } = fitCanvas(cv), v = shipView(), sc = v.sc, X = x => v.ox + x * sc, Y = z => v.oy + z * sc, t = now / 1000;
+  g.fillStyle = '#05070d'; g.fillRect(0, 0, w, h);
+  // casco y suelo de placas
+  g.fillStyle = '#3a4152'; g.beginPath(); g.roundRect(X(-.4), Y(-.6), (SHIP.w + .8) * sc, (SHIP.h + 1.2) * sc, sc * 1.4); g.fill();
+  g.fillStyle = '#8f9aab'; g.fillRect(X(1), Y(1), (SHIP.w - 2) * sc, (SHIP.h - 2) * sc);
+  g.strokeStyle = '#7a8597'; g.lineWidth = Math.max(1, sc * .06);
+  for (let x = 1; x <= SHIP.w - 1; x += 2) { g.beginPath(); g.moveTo(X(x), Y(1)); g.lineTo(X(x), Y(SHIP.h - 1)); g.stroke(); }
+  for (let z = 1; z <= SHIP.h - 1; z += 2) { g.beginPath(); g.moveTo(X(1), Y(z)); g.lineTo(X(SHIP.w - 1), Y(z)); g.stroke(); }
+  // pared del fondo con la puerta de entrada (arriba, en el centro)
+  g.fillStyle = '#b8c1d1'; g.fillRect(X(1), Y(-.2), (SHIP.w - 2) * sc, 1.2 * sc); g.fillStyle = '#5b6578'; g.fillRect(X(1), Y(.85), (SHIP.w - 2) * sc, .15 * sc);
+  g.fillStyle = '#20252f'; g.fillRect(X(11.6), Y(-.2), 2.8 * sc, 1.2 * sc); g.fillStyle = '#ffd23f'; for (let k = 0; k < 6; k++) g.fillRect(X(11.6 + k * .5), Y(.75), .25 * sc, .25 * sc);
+  g.strokeStyle = '#0d0f17'; g.lineWidth = Math.max(2, sc * .12); g.strokeRect(X(1), Y(-.2), (SHIP.w - 2) * sc, (SHIP.h - .8) * sc);
+  // objetos
+  const box = (o, top, front) => { const [x0, z0, x1, z1] = o; g.fillStyle = front; g.fillRect(X(x0), Y(z1) - sc * .9, (x1 - x0) * sc, sc * .9); g.fillStyle = top; g.fillRect(X(x0), Y(z0) - sc * .9, (x1 - x0) * sc, (z1 - z0) * sc); g.strokeStyle = '#0d0f17'; g.lineWidth = Math.max(1.5, sc * .07); g.strokeRect(X(x0), Y(z0) - sc * .9, (x1 - x0) * sc, (z1 - z0 + .9) * sc); };
+  SHIP.obs.forEach(o => {
+    if (o[4] === 'seats') { for (let x = o[0]; x < o[2] - .2; x += 1) { g.fillStyle = '#3c6fb5'; g.beginPath(); g.roundRect(X(x + .1), Y(o[1]) - sc * .5, .8 * sc, 1.2 * sc, sc * .2); g.fill(); g.strokeStyle = '#0d0f17'; g.lineWidth = Math.max(1, sc * .05); g.stroke(); } return; }
+    if (o[4] === 'crate') { box(o, '#3aa197', '#2a7a72'); g.strokeStyle = '#1f5a54'; g.lineWidth = Math.max(1, sc * .08); g.beginPath(); g.moveTo(X(o[0] + .3), Y(o[1]) - sc * .6); g.lineTo(X(o[2] - .3), Y(o[3]) - sc * 1.2); g.stroke(); return; }
+    box(o, '#7d6a52', '#5e4f3c');
+    if (o[4] === 'laptop') { const cx = X((o[0] + o[2]) / 2), cy = Y((o[1] + o[3]) / 2) - sc * 1.1; g.fillStyle = '#20252f'; g.fillRect(cx - sc * .8, cy - sc * .9, sc * 1.6, sc * 1); g.fillStyle = `rgba(110,220,255,${.7 + Math.sin(t * 3) * .2})`; g.fillRect(cx - sc * .65, cy - sc * .8, sc * 1.3, sc * .8); g.fillStyle = '#9aa3b1'; g.fillRect(cx - sc * .9, cy + sc * .1, sc * 1.8, sc * .25); }
+    else { const cx = X((o[0] + o[2]) / 2), cy = Y((o[1] + o[3]) / 2) - sc * .9; g.fillStyle = '#c8a46c'; g.fillRect(cx - sc * .9, cy - sc * .55, sc * 1.8, sc * 1.1); g.fillStyle = '#e35a5a'; g.fillRect(cx - sc * .6, cy - sc * .35, sc * .5, sc * .7); g.fillStyle = '#5aa0e3'; g.fillRect(cx + sc * .1, cy - sc * .35, sc * .5, sc * .7); }
+  });
+  // tripulantes (de atrás hacia delante)
+  const all = [...LB.others.values()]; if (LB.me) all.push(LB.me);
+  all.sort((a, b) => a.z - b.z).forEach(p => {
+    const hh = sc * 2.1, x = X(p.x), y = Y(p.z);
+    g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.ellipse(x, y, hh * .3, hh * .08, 0, 0, TAU); g.fill();
+    W2.crew(g, x, y, hh, { color: colHex(p.color), look: p.look, dir: p.dir || 1, mv: !!p.mv, ph: p.ph || 0, t });
+    W2.name(g, x, y - hh * (p.look && p.look.t ? 1.26 : 1.08), p.name, p.id === G.hostId ? '#ffd23f' : '#fff', Math.max(11, sc * .55));
+  });
+  if (LB.near) { const o = LB.near, x = X((o[0] + o[2]) / 2), y = Y(o[1]) - sc * 2.2; g.fillStyle = '#ffd23f'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y + sc * .5); g.lineTo(x + sc * .4, y); g.lineTo(x - sc * .4, y); g.closePath(); g.fill(); g.stroke(); }
+}
+function shipTick(now) {
+  LB.raf = 0; if (G.state !== 'lobby') return;
+  const dt = Math.min(.05, (now - (LB.last || now)) / 1000); LB.last = now;
+  const me = LB.me;
+  if (me && !$('chars').classList.contains('on')) {
+    let vx = 0, vz = 0;
+    if (keys.KeyW || keys.ArrowUp) vz -= 1; if (keys.KeyS || keys.ArrowDown) vz += 1; if (keys.KeyD || keys.ArrowRight) vx += 1; if (keys.KeyA || keys.ArrowLeft) vx -= 1;
+    if (LB.ptr) { const v = shipView(), dx = LB.ptr.x - (v.ox + me.x * v.sc), dy = LB.ptr.y - (v.oy + me.z * v.sc - v.sc); if (Math.hypot(dx, dy) > v.sc * .4) { vx = dx; vz = dy; } }
+    const L = Math.hypot(vx, vz); me.mv = L > 0;
+    if (L > 0) { const sp = 5.5 * dt; const nx = me.x + vx / L * sp, nz = me.z + vz / L * sp; if (shipFree(nx, me.z)) me.x = nx; if (shipFree(me.x, nz)) me.z = nz; if (Math.abs(vx) > .1) me.dir = vx > 0 ? 1 : -1; me.ph = (me.ph || 0) + dt * 13; }
+    if (now - LB.sent > 90) { LB.sent = now; socket.emit('lmove', { x: me.x, z: me.z, dir: me.dir, mv: me.mv ? 1 : 0 }); }
+    // ¿cerca del portátil o del armario?
+    LB.near = SHIP.obs.find(o => (o[4] === 'laptop' || o[4] === 'wardrobe') && Math.hypot(Math.max(o[0] - me.x, 0, me.x - o[2]), Math.max(o[1] - me.z, 0, me.z - o[3])) < 1.8) || null;
+    const u = $('shipUse'), kind = LB.near && LB.near[4]; const lab = kind === 'laptop' ? 'Ajustes' : kind === 'wardrobe' ? 'Personalizar' : '';
+    if (u.textContent !== lab) { u.textContent = lab; u.style.display = lab ? '' : 'none'; }
+  }
+  for (const p of LB.others.values()) { const k = Math.min(1, dt * 12); p.x += (p.tx - p.x) * k; p.z += (p.tz - p.z) * k; if (p.mv) p.ph = (p.ph || 0) + dt * 13; }
+  drawShip(now); LB.raf = requestAnimationFrame(shipTick);
+}
+function shipStart() { if (!LB.raf) { LB.last = 0; LB.raf = requestAnimationFrame(shipTick); } }
+socket.on('toLobby', () => { LB.me = null; LB.others.clear(); });   // tras la partida, todos vuelven a aparecer en la nave
+socket.on('lpos', list => list.forEach(([id, x, z, dir, mv]) => { const p = LB.others.get(id); if (p) { p.tx = x; p.tz = z; p.dir = dir; p.mv = mv; } }));
+$('shipCv').addEventListener('pointerdown', e => { e.preventDefault(); const r = e.currentTarget.getBoundingClientRect(); LB.ptr = { x: e.clientX - r.left, y: e.clientY - r.top, id: e.pointerId }; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) { /* nada */ } });
+$('shipCv').addEventListener('pointermove', e => { if (!LB.ptr || LB.ptr.id !== e.pointerId) return; const r = e.currentTarget.getBoundingClientRect(); LB.ptr.x = e.clientX - r.left; LB.ptr.y = e.clientY - r.top; });
+['pointerup', 'pointercancel'].forEach(ev => $('shipCv').addEventListener(ev, () => { LB.ptr = null; }));
+const lobbyPanel = on => $('lobby').classList.toggle('lpanel', !!on);
+$('shipPanel').onclick = () => lobbyPanel(true); $('shipPanelX').onclick = () => lobbyPanel(false);
+$('shipBack').onclick = () => $('btnLeave').click(); $('shipCode').onclick = () => $('ticket').click(); $('shipInvite').onclick = () => $('btnShare').click(); $('shipStart').onclick = () => $('btnStart').click();
+$('shipUse').onclick = () => { const k = LB.near && LB.near[4]; if (k === 'laptop') { lobbyPanel(true); const sb = $('setBox'); if (sb) { sb.open = true; sb.scrollIntoView({ block: 'start' }); } } else if (k === 'wardrobe') { G.wardrobe = true; openEditor(); } };
 socket.on('lobby', L => {
   closeOverlays(); touchSess(); G.state = 'lobby'; screen('lobby'); ov('endOv', false); ov('meeting', false); ov('mg', false); releaseLock();
-  $('roomCode').textContent = L.code;
+  $('roomCode').textContent = L.code; $('shipCodeTxt').textContent = L.code;
+  { const seen = new Set(); L.players.forEach(p => { seen.add(p.id); if (p.id === myId) { if (!LB.me) LB.me = { id: p.id, x: p.lx || 13, z: p.lz || 6.5, dir: 1 }; Object.assign(LB.me, { name: p.name, color: p.color, look: p.look }); return; }
+      const o = LB.others.get(p.id) || { id: p.id, x: p.lx || 13, z: p.lz || 6.5, tx: p.lx || 13, tz: p.lz || 6.5, dir: 1 }; Object.assign(o, { name: p.name, color: p.color, look: p.look }); LB.others.set(p.id, o); });
+    for (const id of [...LB.others.keys()]) if (!seen.has(id)) LB.others.delete(id); }
+  $('shipCount').textContent = `${L.players.length}/10`; $('shipStart').style.display = L.hostId === myId ? '' : 'none'; $('shipWait').style.display = L.hostId === myId ? 'none' : '';
+  shipStart();
   const box = $('lobbyList'); box.innerHTML = '';
   L.players.forEach((p, i) => {
     const row = el('div', 'pl' + (p.id === myId ? ' me' : '') + (p.offline ? ' off' : '')); row.style.animationDelay = (i * 40) + 'ms';
@@ -1240,7 +1355,7 @@ socket.on('resync', s => {
   clearWorld(); s.players.forEach(p => { addPlayer(p); if (p.alive === false) ghostify(G.players.get(p.id)); }); (s.bodies || []).forEach(addBody);
   const me = G.players.get(myId); if (me) { G.x = me.x; G.z = me.z; G.ry = me.ry; G.heading = me.ry; G.sc = (me.look && me.look.ht ? me.look.ht : 175) / (me.look && me.look.f ? 220 : 190); }
   G.killReadyAt = performance.now() + (s.killCd || 0); G.frozenUntil = 0; mgOpen = false; G.holding = null;
-  G.vent = s.vent == null ? null : s.vent; G.sabReadyAt = s.sabCd < 0 ? Infinity : performance.now() + (s.sabCd || 0); setSab(s.sab); renderVentUI();
+  G.vent = s.vent == null ? null : s.vent; G.sabReadyAt = s.sabCd < 0 ? Infinity : performance.now() + (s.sabCd || 0); setSab(s.sab); setDoors(s.doors); renderVentUI();
   screen('game'); ['mg', 'endOv', 'meeting', 'roleOv'].forEach(i => ov(i, false));
   updateTasksUI(); updateBar(); updateStationVisuals(); updateGhost(); G.state = 'play'; applyCfgUI();
   if (s.state === 'meeting' || s.state === 'result') {
@@ -1400,7 +1515,11 @@ function openEditor(tab) {
   try { initPreview(); } catch (e) { toast('No se pudo iniciar la vista previa'); }
   $('edName').value = cur.name; renderEditor(); rebuildPreview();
 }
-function closeEditor() { editing = false; persist(); screen('menu'); renderMenuChar(); }
+function closeEditor() {
+  editing = false; persist();
+  if (G.wardrobe && G.state === 'lobby') { G.wardrobe = false; screen('lobby'); const c = activeChar(); socket.emit('lobbyLook', { look: c.look, name: c.name }); shipStart(); return; }   // vuelves a la nave con el personaje nuevo
+  G.wardrobe = false; screen('menu'); renderMenuChar();
+}
 $('edBack').onclick = closeEditor;
 $('edUse').onclick = () => { activeId = cur.id; closeEditor(); toast('Jugarás como ' + cur.name); };
 $('edName').addEventListener('input', e => { cur.name = e.target.value.slice(0, 12) || 'Jugador'; persist(); });
@@ -1591,7 +1710,7 @@ function updateTasksUI() {
   // una línea por tarea; las de varios pasos muestran el paso que toca y cuántos llevas, como en el original
   const heads = G.tasks.filter(id => tPrev()[id] == null), fin = heads.filter(h => chainOf(h).every(q => G.done.has(q))).length;
   $('taskCount').textContent = heads.length ? `${fin}/${heads.length}` : '';
-  if (G.role === 'impostor' && !G.cfg.test) box.append(el('div', 'fake', 'Sabotea y elimina a todos. Tareas falsas:'));
+  if (G.role === 'impostor' && !G.cfg.test) box.append(el('div', 'fake', G.tasks.length ? 'Sabotea y elimina a todos. Tareas falsas:' : 'Sabotea y elimina a todos'));
   heads.forEach(h => {
     const ch = chainOf(h), n = ch.filter(q => G.done.has(q)).length, all = n === ch.length, cur = S.STATIONS[all ? ch[ch.length - 1] : ch[n]];
     const line = el('div', all ? 'd' : '', cur.name + ' · ' + roomName(cur.room) + (ch.length > 1 ? ` (${n}/${ch.length})` : '') + (ch.some(q => (G.common || []).includes(q)) ? ' ★' : ''));
@@ -1624,7 +1743,7 @@ function drawBigMap(now) {
   const { g, w, h } = fitCanvas($('mapCv')), sx = w / S.MAPW, sz = h / S.MAPH, t = now / 1000;
   g.clearRect(0, 0, w, h); g.drawImage(bigMap, 0, 0, w, h);
   if (G.mapSab) { g.save(); g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(255,40,60,.42)'; g.fillRect(0, 0, w, h); g.restore(); }   // el mapa de sabotaje es rojo
-  if (!G.mapSab) G.tasks.forEach(id => { if (!canDo(id)) return; const p = S.stationPos(S.STATIONS[id]), x = p.x * sx, y = p.z * sz, b = Math.sin(t * 5) * 2;
+  if (!G.mapSab && !(G.sab && G.sab.type === 'coms' && G.role === 'crew')) G.tasks.forEach(id => { if (!canDo(id)) return; const p = S.stationPos(S.STATIONS[id]), x = p.x * sx, y = p.z * sz, b = Math.sin(t * 5) * 2;
     g.fillStyle = '#ffd23f'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y - 16 + b); g.lineTo(x + 9, y + b); g.lineTo(x - 9, y + b); g.closePath(); g.fill(); g.stroke(); g.fillStyle = '#000'; g.font = '900 11px Inter,sans-serif'; g.textAlign = 'center'; g.fillText('!', x, y - 3 + b); });
   if (G.sab && G.sab.panels) G.sab.panels.forEach(id => { if ((G.sab.done || []).includes(id)) return; const p = S.cellPos(S.PANELS.find(q => q.id === id)); g.fillStyle = Math.sin(t * 8) > 0 ? '#ff2e4d' : '#7a1020'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.arc(p.x * sx, p.z * sz, 9, 0, TAU); g.fill(); g.stroke(); });
   const me = G.players.get(myId); if (me) W2.crew(g, G.x * sx, G.z * sz + 10, 30, { color: colHex(me.color), look: me.look, dir: me.dir || 1, t });
@@ -1639,9 +1758,12 @@ function sabIcons() {
   return out;
 }
 function drawSabIcons(g, w, h, sx, sz, now) {
-  const cd = G.sab ? -1 : Math.max(0, G.sabReadyAt - now), off = !!G.sab || cd > 0, R = Math.max(14, Math.min(26, w / 36)), tot = Math.max(1, (G.cfg.sabCd || 30) * 1000);
+  const R = Math.max(14, Math.min(26, w / 36)), anyDoor = Object.keys(G.doors.closed).length > 0;
   G.sabHits = [];
   sabIcons().forEach(o => {
+    // las puertas tienen su propia recarga por sala; el resto, la general (y no se puede mientras haya puertas cerradas)
+    const door = o.type === 'puertas', cd = door ? Math.max(0, (G.doors.ready[o.room] || 0) - now) : G.sab ? -1 : Math.max(0, G.sabReadyAt - now);
+    const off = door ? !!G.sab || !!G.doors.closed[o.room] || cd > 0 : !!G.sab || anyDoor || cd > 0, tot = door ? 10000 : Math.max(1, (G.cfg.sabCd || 30) * 1000);
     const x = o.x * sx, y = o.z * sz; G.sabHits.push({ o, x, y, r: R * 1.25 });
     g.save(); g.translate(x, y);
     g.fillStyle = off ? '#5a5f6b' : '#d8262f'; g.strokeStyle = '#1a0a0c'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, R, 0, TAU); g.fill(); g.stroke();
@@ -1661,8 +1783,9 @@ $('mapCv').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, hit = (G.sabHits || []).find(h => Math.hypot(h.x - x, h.y - y) < h.r);
   if (!hit) return;
   if (G.sab) { toast('Ya hay un sabotaje en marcha'); return; }
-  if (G.sabReadyAt > performance.now()) { toast('El sabotaje se está recargando'); return; }
-  socket.emit('sabotage', hit.o.type === 'puertas' ? { type: 'puertas', room: hit.o.room } : { type: hit.o.type }); buzz(30);
+  if (hit.o.type === 'puertas') { if (G.doors.closed[hit.o.room]) return toast('Esas puertas ya están cerradas'); if ((G.doors.ready[hit.o.room] || 0) > performance.now()) return toast('Esas puertas se están recargando'); }
+  else { if (Object.keys(G.doors.closed).length) return toast('Espera a que se abran las puertas'); if (G.sabReadyAt > performance.now()) return toast('El sabotaje se está recargando'); }
+  socket.emit('sabotage', hit.o.type === 'puertas' ? { type: 'puertas', room: hit.o.room } : { type: hit.o.type }); buzz(30); if (hit.o.type === 'puertas') closeSabMenu();
 });
 $('minimap').onclick = () => openMap(); $('mapClose').onclick = closeMap;
 
@@ -1704,7 +1827,7 @@ socket.on('start', d => {
   const me = G.players.get(myId);
   G.sc = (me.look && me.look.ht ? me.look.ht : 175) / (me.look && me.look.f ? 220 : 190);
   G.x = me.x; G.z = me.z; G.ry = me.ry; G.heading = Math.atan2(S.BUTTON.x - G.x, S.BUTTON.z - G.z); unstick();
-  G.killReadyAt = performance.now() + d.killCd; G.vent = null; G.holding = null; G.sab = null; G.sabReadyAt = performance.now() + (d.sabCd || 0);
+  G.killReadyAt = performance.now() + d.killCd; G.vent = null; G.holding = null; G.sab = null; G.doors = { closed: {}, ready: {} }; G.sabReadyAt = performance.now() + (d.sabCd || 0);
   G.state = 'play'; mgOpen = false;
   screen('game'); ov('endOv', false); ov('meeting', false); ov('mg', false);
   updateTasksUI(); updateBar(); updateStationVisuals(); updateGhost(); showRole(); renderVentUI(); updateSabVisuals(); applyCfgUI();
@@ -1870,7 +1993,7 @@ socket.on('resume', d => {
     if (s.id === myId) { G.x = s.x; G.z = s.z; G.alive = s.alive; G.ry = s.ry; G.heading = Math.atan2(S.BUTTON.x - s.x, S.BUTTON.z - s.z); }
   });
   unstick();
-  stopEject(); touchSess(); G.killReadyAt = performance.now() + d.killCd; if ('sab' in d) setSab(d.sab); G.sabReadyAt = d.sabCd < 0 ? Infinity : performance.now() + (d.sabCd || 0); G.emReadyAt = performance.now() + (d.emCd || 0); G.vent = null; G.state = 'play'; ov('meeting', false); updateGhost(); renderVentUI(); updateSabVisuals();
+  stopEject(); touchSess(); G.killReadyAt = performance.now() + d.killCd; if ('sab' in d) setSab(d.sab); setDoors(d.doors); G.sabReadyAt = d.sabCd < 0 ? Infinity : performance.now() + (d.sabCd || 0); G.emReadyAt = performance.now() + (d.emCd || 0); G.vent = null; G.state = 'play'; ov('meeting', false); updateGhost(); renderVentUI(); updateSabVisuals();
 });
 function showEnd(d) {
   closeOverlays(); G.state = 'end'; G.hostId = d.hostId || G.hostId; applyCfgUI(); releaseLock(); closeMG(); ov('meeting', false); stopEject(); sfx.stopAll();
@@ -1957,16 +2080,20 @@ function openPanel(pn) {
   MG[pn.type](body, () => { if (fin) return; fin = true; $('mgTitle').textContent = '✔ Arreglado'; socket.emit('fix', { panel: pn.id }); const tok = mgTok; setTimeout(() => { if (mgOpen && mgTok === tok) closeMG(); }, 400); });
 }
 function holdPanelUI(pn, body) {
-  // Reactor: hay que mantener este panel mientras otro jugador mantiene el del otro extremo
-  const wrap = el('div', 'hold'), b = el('button', 'hbtn'), st = el('div', 'hint', ''); b.append(ico('hand'), el('span', '', 'MANTÉN')); wrap.append(b, st); body.append(wrap);
+  // Reactor: escáner de mano. Hay que mantenerlo mientras otro jugador mantiene el del otro extremo, como en el original
+  const wrap = el('div', 'hold rscan'), scr = el('div', 'rsTxt'), b = el('button', 'hbtn rsPad');
+  b.innerHTML = '<svg viewBox="0 0 100 120" aria-hidden="true"><path d="M30 112 C14 96 10 80 12 66 L14 50 C15 44 23 44 24 50 L26 64 L26 22 C26 14 36 14 36 22 L36 58 L38 12 C38 4 48 4 48 12 L49 58 L52 16 C52 8 62 8 62 16 L62 60 L66 28 C67 20 76 21 76 29 L74 70 C74 88 70 100 62 112 Z"/></svg>';
+  wrap.append(scr, b); body.append(wrap);
   const down = e => { e.preventDefault(); b.classList.add('on'); G.holding = pn.id; socket.emit('hold', { panel: pn.id, on: true }); };
   const up = () => { b.classList.remove('on'); if (G.holding === pn.id) { G.holding = null; socket.emit('hold', { panel: pn.id, on: false }); } };
   b.addEventListener('pointerdown', down); window.addEventListener('pointerup', up); b.addEventListener('contextmenu', e => e.preventDefault());
-  const iv = setInterval(() => {
-    if (!mgOpen || G.mgPanel !== pn.id) { clearInterval(iv); window.removeEventListener('pointerup', up); return; }
+  const paint = () => {
     const other = G.sab && G.sab.panels ? G.sab.panels.find(q => q !== pn.id) : null, held = G.sab && G.sab.holds && other && G.sab.holds[other];
-    st.textContent = G.holding ? (held ? '¡Los dos paneles están sujetos!' : 'Mantén pulsado. Falta alguien en el otro panel…') : 'Mantén pulsado el botón mientras otro jugador mantiene el otro panel del Reactor.';
-  }, 150);
+    const st = !G.holding ? 'idle' : held ? 'ok' : 'wait'; wrap.dataset.st = st;
+    scr.textContent = st === 'idle' ? 'MANTÉN PARA DETENER LA FUSIÓN' : st === 'wait' ? 'ESPERANDO AL SEGUNDO USUARIO' : 'FUSIÓN DETENIDA';
+  };
+  paint();
+  const iv = setInterval(() => { if (!mgOpen || G.mgPanel !== pn.id) { clearInterval(iv); window.removeEventListener('pointerup', up); return; } paint(); }, 120);
 }
 $('mgClose').onclick = closeMG;
 function completeTask(id) { socket.emit('task', id); }   // el servidor valida y avisa con 'taskDone' (tripulación, impostor y fantasmas)
@@ -2012,7 +2139,7 @@ const roomName = id => { const r = S.ROOMS.find(x => x.id === id); return r ? r.
 function updateSabVisuals() {
   if (!sceneOK) return;
   const s = G.sab, crew = G.role === 'crew' && G.alive;
-  S.setDoors(s && s.type === 'puertas' ? s.room : null);
+  S.setDoors(Object.keys(G.doors.closed));
   const dark = !!(s && s.type === 'luces' && crew);      // la tripulación viva casi no ve con las luces apagadas
   const vm = G.alive ? (G.role === 'impostor' ? G.cfg.visImp : G.cfg.visCrew) : 1.5;   // visión según los ajustes de la partida
   const blind = !!(s && s.type === 'coms' && crew);      // sin comunicaciones no se ve la lista de tareas ni el minimapa
@@ -2020,31 +2147,41 @@ function updateSabVisuals() {
   $('redFlash').classList.toggle('on', !!(s && s.crisis));
   updateSabBanner(performance.now());
 }
+// como en el original, el sabotaje aparece arriba de la lista de tareas de todos, parpadeando en rojo y amarillo
+function updateSabLine(now) {
+  const el2 = $('sabLine'), s = G.sab; if (!el2) return;
+  if (!s || G.state !== 'play') { if (el2.textContent) el2.textContent = ''; el2.className = ''; return; }
+  s.t0 = s.t0 || now; const sec = s.local ? Math.max(0, Math.ceil((s.local - now) / 1000)) : 0;
+  const t = s.type === 'luces' ? `Arreglar luces (${Math.max(0, Math.round(100 - (now - s.t0) / 20))}%)` : s.type === 'coms' ? 'Comunicaciones saboteadas'
+    : s.type === 'reactor' ? `Fusión del reactor en ${sec}s (${Object.keys(s.holds || {}).length}/2)` : s.type === 'o2' ? `Oxígeno agotado en ${sec}s (${(s.done || []).length}/2)` : '';
+  if (el2.textContent !== t) el2.textContent = t; el2.className = 'on';
+}
 function updateSabBanner(now) {
-  const b = $('sabBanner'), s = G.sab; if (!s || G.state === 'meeting') { b.className = 'hud'; b.textContent = ''; return; }
+  const b = $('sabBanner'), s = G.sab; updateSabLine(now);
+  if (!s && G.state === 'play' && Object.keys(G.doors.closed).length) { b.className = 'hud on soft'; b.textContent = 'Puertas cerradas: ' + Object.entries(G.doors.closed).map(([id, t]) => `${roomName(id)} ${Math.max(0, Math.ceil((t - now) / 1000))}s`).join(' · '); return; }
+  if (!s || G.state === 'meeting') { b.className = 'hud'; b.textContent = ''; return; }
   const sec = s.local ? Math.max(0, Math.ceil((s.local - now) / 1000)) : 0, imp = G.role === 'impostor';
   let t = '', crisis = !!s.crisis;
   if (s.type === 'luces') t = imp ? 'Has apagado las luces' : 'Luces apagadas: arregla el panel de la Eléctrica';
   else if (s.type === 'coms') t = imp ? 'Has cortado las comunicaciones' : 'Comunicaciones caídas: arregla el panel de Comunicaciones';
-  else if (s.type === 'puertas') t = `Puertas cerradas (${roomName(s.room)}) · ${sec}s`;
   else if (s.type === 'reactor') t = `⚠ REACTOR INESTABLE · ${sec}s\nDos jugadores deben mantener a la vez los dos paneles del Reactor`;
   else if (s.type === 'o2') t = `⚠ SIN OXÍGENO · ${sec}s\nIntroduce el código en los dos depuradores: Navegación y Almacén (${(s.done || []).length}/2)`;
   b.className = 'hud on' + (crisis ? '' : ' soft'); b.style.whiteSpace = 'pre-line'; b.textContent = t;
 }
-function pushOutOfDoors() {
-  const room = G.sab && G.sab.type === 'puertas' ? G.sab.room : null; if (!room) return;
+function pushOutOfDoors(room) {
+  if (!room || !S.DOORS[room]) return;
   // si la puerta se cierra encima de ti, te quedas dentro de la sala
   const d = S.DOORS[room].find(s => S.segDist(G.x, G.z, s) < 1); if (!d) return;
   const dx = d[2] - d[0], dz = d[3] - d[1], L = Math.hypot(dx, dz); let nx = dz / L, nz = -dx / L;
   const mx = (d[0] + d[2]) / 2, mz = (d[1] + d[3]) / 2, rm = S.roomAtPos(mx + nx, mz + nz); if (!rm || rm.id !== room) { nx = -nx; nz = -nz; }
   const k = ((G.x - mx) * nx + (G.z - mz) * nz); G.x += nx * (1.1 - k); G.z += nz * (1.1 - k);
 }
-function setSab(s) { G.sab = s ? Object.assign({}, s, { local: performance.now() + (s.ends || 0) }) : null; if (G.sab) { G.sabReadyAt = Infinity; pushOutOfDoors(); } updateSabVisuals(); }
+function setSab(s) { G.sab = s ? Object.assign({}, s, { local: performance.now() + (s.ends || 0) }) : null; if (G.sab) G.sabReadyAt = Infinity; updateSabVisuals(); }
 socket.on('sabotage', s => {
   setSab(s); closeSabMenu(); if (G.role !== 'impostor') buzz(s.crisis ? [90, 50, 90, 50, 90] : 60);
   if (s.crisis) { snd('warn'); sfx.loopStart('alarm'); } else snd(s.type === 'luces' ? 'lights' : s.type === 'coms' ? 'static' : 'door');
-  if (s.type === 'coms' && G.info && G.info !== 'vitals') { const was = G.info; closeMG(); toast('Se han caído las comunicaciones: sin ' + (was === 'cams' ? 'cámaras' : was === 'admin' ? 'panel de administración' : 'registro de puertas'), 3000); }
-  toast(s.type === 'puertas' ? `Puertas cerradas: ${roomName(s.room)}` : `Sabotaje: ${SAB_NAME[s.type]}`, 2600);
+  if (s.type === 'coms' && G.info) refreshInfo();   // como en el original: el aparato sigue abierto y pone [COMUNICACIONES DESACTIVADAS]
+  toast(`Sabotaje: ${SAB_NAME[s.type]}`, 2600);
 });
 socket.on('sabotageEnd', d => {
   G.sab = null; if (d.cd != null) G.sabReadyAt = performance.now() + d.cd;
@@ -2052,6 +2189,16 @@ socket.on('sabotageEnd', d => {
   if (G.mgPanel) closeMG();
   updateSabVisuals(); if (G.state === 'play') toast(d.type === 'puertas' ? 'Las puertas se han abierto' : d.fixed ? '¡Sabotaje resuelto!' : 'Sabotaje cancelado', 2400);
 });
+// puertas: cada sala por su cuenta (closed / ready = ms que faltan)
+function setDoors(d) {
+  const now = performance.now(), was = G.doors.closed; G.doors = { closed: {}, ready: {} };
+  for (const [k, v] of Object.entries((d && d.closed) || {})) G.doors.closed[k] = now + v;
+  for (const [k, v] of Object.entries((d && d.ready) || {})) G.doors.ready[k] = now + v;
+  if (G.state === 'play') for (const k of Object.keys(G.doors.closed)) if (!was[k]) { pushOutOfDoors(k); snd('door'); toast('Puertas cerradas: ' + roomName(k), 2000); }
+  if (G.state === 'play') for (const k of Object.keys(was)) if (!G.doors.closed[k]) snd('door');
+  updateSabVisuals();
+}
+socket.on('doors', setDoors);
 socket.on('sabState', d => { if (!G.sab) return; G.sab.holds = d.holds; G.sab.done = d.done; updateSabVisuals(); });
 socket.on('ventState', d => { if (d.id != null && G.vent == null) G.killReadyAt = performance.now() + 1e9; G.vent = d.id; G.x = d.x; G.z = d.z; renderVentUI(); });   // en la rejilla la recarga se para (al salir llega la que queda)
 socket.on('ventfx', d => {   // anillo en la ventilación: se ve quién entra o sale
@@ -2108,7 +2255,7 @@ $('infoClose').onclick = () => closeMG();
 function refreshInfo() {
   const id = G.info; if (!id) return; const body = $('infoBody'), off = infoNoSignal();
   if (id === 'cams') { body.querySelectorAll('.feed').forEach(f => { f.classList.toggle('off', off); f.querySelectorAll('.nosig').forEach(n => n.remove()); if (off) f.append(el('div', 'nosig', '')); }); return; }
-  if (id !== 'vitals' && off) { if (!body.querySelector('.nosig')) { body.innerHTML = ''; body.append(el('div', 'nosig', 'Sin señal: las comunicaciones están caídas. Arregla el panel de Navegación.')); } return; }
+  if (id !== 'vitals' && off) { if (!body.querySelector('.nosig')) { body.innerHTML = ''; body.append(el('div', 'nosig', '[COMUNICACIONES DESACTIVADAS]')); } return; }
   if (id === 'admin') drawAdmin(); else if (id === 'vitals') drawVitals(); else if (id === 'doorlog') pollDoorlog();
 }
 function renderCamFeeds(now) {
@@ -2122,19 +2269,18 @@ function renderCamFeeds(now) {
   });
 }
 function drawAdmin() {
-  // como en Among Us: se ve cuánta gente hay en cada sala (puntos de su color), no la posición exacta
+  // como en el original: en cada sala salen tantos tripulantes grises como gente haya (sin decir quién), los pasillos no
+  // cuentan, los que están en una rejilla sí y los cuerpos también hasta la siguiente reunión
   const cv = $('admCv'); if (!cv) return; const g = cv.getContext('2d'), W = cv.width, Hh = cv.height, sx = W / S.MAPW, sz = Hh / S.MAPH;
   g.clearRect(0, 0, W, Hh); g.drawImage(floorCanvas, 0, 0, W, Hh);
-  const counts = {}, slot = {};
-  for (const p of G.players.values()) {
-    if (!p.alive || p.vent) continue;
-    const rm = S.roomAtPos(p.x, p.z), rid = rm ? rm.id : 'pasillo'; counts[rid] = (counts[rid] || 0) + 1;
-    let px = p.x * sx, pz = p.z * sz;
-    if (rm) { const n = slot[rid] = slot[rid] == null ? 0 : slot[rid] + 1; px = rm.c[0] * sx + ((n % 4) - 1.5) * 26; pz = rm.c[1] * sz + 18 + Math.floor(n / 4) * 26; }
-    g.fillStyle = colHex(p.color); g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.arc(px, pz, 10, 0, TAU); g.fill(); g.stroke();
+  const counts = {}, slot = {}, pts = [...G.players.values()].filter(p => p.alive).map(p => [p.x, p.z]).concat([...G.bodies.values()].map(b => [b.x, b.z]));
+  for (const [x, z] of pts) {
+    const rm = S.roomAtPos(x, z); if (!rm) continue; counts[rm.id] = (counts[rm.id] || 0) + 1;
+    const n = slot[rm.id] = slot[rm.id] == null ? 0 : slot[rm.id] + 1, px = rm.c[0] * sx + ((n % 4) - 1.5) * 24, pz = rm.c[1] * sz + 26 + Math.floor(n / 4) * 30;
+    W2.crew(g, px, pz, 26, { color: '#a7afba', look: {}, dir: 1, t: 0 });
   }
   const list = $('admRooms'); if (!list) return; list.innerHTML = '';
-  S.ROOMS.concat([{ id: 'pasillo', name: 'Pasillos' }]).forEach(rm => { const n = counts[rm.id] || 0, d = el('div', 'admRoom' + (n ? ' has' : '')); d.append(el('span', '', rm.name), el('b', '', String(n))); list.append(d); });
+  S.ROOMS.forEach(rm => { const n = counts[rm.id] || 0, d = el('div', 'admRoom' + (n ? ' has' : '')); d.append(el('span', '', rm.name), el('b', '', String(n))); list.append(d); });
 }
 function drawVitals() {
   const body = $('infoBody'), ps = [...G.players.values()];
@@ -2288,7 +2434,7 @@ function updateActions(now) {
       const p = S.stationPos(S.STATIONS[id]), d = Math.hypot(G.x - p.x, G.z - p.z);
       if (d < bd) { bd = d; act.use = { type: 'task', st: S.STATIONS[id] }; }
     }
-    if (!act.use && G.alive && G.emerg > 0 && !(G.sab && G.sab.type !== 'puertas') && Math.hypot(G.x - S.BUTTON.x, G.z - S.BUTTON.z) < 5.8) act.use = { type: 'button', cd: Math.max(0, G.emReadyAt - now) };
+    if (!act.use && G.alive && G.emerg > 0 && !G.sab && Math.hypot(G.x - S.BUTTON.x, G.z - S.BUTTON.z) < 5.8) act.use = { type: 'button', cd: Math.max(0, G.emReadyAt - now) };
     if (G.alive) for (const b of G.bodies.values()) if (b.seen && Math.hypot(G.x - b.x, G.z - b.z) < 6.2) { act.report = true; break; }
     if (G.role === 'impostor' && G.alive) {
       let best = null, bk = G.cfg.killRange - 0.4;
@@ -2391,7 +2537,7 @@ function losClear(x0, z0, x1, z1) {
 function fowRadius() {
   const imp = G.role === 'impostor', R = FOW_BASE * ((imp ? G.cfg.visImp : G.cfg.visCrew) || 1);
   FOW.Rn = R;
-  return G.sab && G.sab.type === 'luces' && !imp ? Math.max(1.8, R * .25) : R;   // apagón: la tripulación apenas ve a un par de metros
+  return G.sab && G.sab.type === 'luces' && !imp ? Math.max(1.6, R * .2) : R;   // como en el original: unas 5 veces menos   // apagón: la tripulación apenas ve a un par de metros
 }
 function fowCompute() {
   const N = 320, R = FOW.R + 1, x0 = FOW.x, z0 = FOW.z, out = [];
@@ -2407,7 +2553,7 @@ function updateFow(dt, now) {
   FOW.on = G.state === 'play' && G.alive;   // los fantasmas lo ven todo, como en Among Us
   const Rt = fowRadius(); FOW.R = FOW.R ? FOW.R + (Rt - FOW.R) * Math.min(1, dt * (Rt < FOW.R ? 5 : 2)) : Rt;
   FOW.x = G.x; FOW.z = G.z;
-  const key = (G.x * 4 | 0) + ',' + (G.z * 4 | 0) + ',' + (FOW.R * 10 | 0) + ',' + (G.sab && G.sab.type === 'puertas' ? G.sab.room : '');
+  const key = (G.x * 4 | 0) + ',' + (G.z * 4 | 0) + ',' + (FOW.R * 10 | 0) + ',' + Object.keys(G.doors.closed).join('');
   if (FOW.on && (key !== FOW.key || now - FOW.t > 500) && now - FOW.t > 60) { FOW.key = key; FOW.t = now; fowCompute(); }
 }
 // ¿Puedo ver este punto? (radio + nada sólido en medio). Con histéresis para que nadie parpadee en el borde.
@@ -2485,7 +2631,7 @@ function drawWorld(g, v, now, cam) {
   const sabPanels = new Set(G.sab && G.sab.panels ? G.sab.panels.filter(id => !(G.sab.done || []).includes(id) && !(G.sab.holds && G.sab.holds[id])) : []);
   const u = G.act && G.act.use, use = !u ? null : u.type === 'task' ? u.st.id : u.type === 'info' ? 'info:' + u.tool.id : null;
   const ventOpen = {}; for (const id in G.ventOpen) { const k = (now - G.ventOpen[id]) / 650; if (k < 1) ventOpen[id] = Math.sin(k * Math.PI) * .6; else delete G.ventOpen[id]; }
-  W2.drawMap(g, v, { t, doorsRoom: G.sab && G.sab.type === 'puertas' ? G.sab.room : null });
+  W2.drawMap(g, v, { t, doorsRooms: Object.keys(G.doors.closed) });
   W2.drawProps(g, v, { t, noDecor: true, hl: cam ? null : new Set((G.tasks || []).filter(canDo)), use: cam ? null : use, sabPanels, ventOpen, camOn: G.camN > 0 });
   const ents = [], vw = v.w / v.sc / 2 + 8, vh = v.h / v.sc / 2 + 8;
   S.DECOR.forEach(d => { if (Math.abs(d.x - v.cx) < vw + (d.len || 0) && Math.abs(d.z - v.cy) < vh) ents.push({ z: W2.decorBase(d), d: () => W2.drawDecor(g, v, d, t) }); });

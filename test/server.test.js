@@ -48,6 +48,38 @@ test('CORS: acepta *.vercel.app y rechaza otros dominios', async () => {
   assert.notEqual(bad.headers.get('access-control-allow-origin'), 'https://malo.example.com');
 });
 
+test('reparto de tareas como el original: 1 común igual para todos, 1 larga y 2 cortas', async () => {
+  const S = require('../public/shared.js');
+  const cs = await Promise.all([1, 2, 3, 4].map(() => connect()));
+  const r0 = await ack(cs[0], 'join', { mapVer: MAP_VER, name: 'A', look: {}, code: '' });
+  for (const c of cs.slice(1)) await ack(c, 'join', { mapVer: MAP_VER, name: 'B', look: {}, code: r0.code });
+  const st = cs.map(c => once(c, 'start')); cs[0].emit('start'); const ds = await Promise.all(st);
+  const crew = ds.filter(d => d.role === 'crew'), kindOf = id => S.UNIT_KIND[S.TASK_UNITS.findIndex(u => u.some(o => o.includes(id)))];
+  crew.forEach(d => {
+    const units = new Set(d.tasks.map(id => S.TASK_UNITS.findIndex(u => u.some(o => o.includes(id)))));
+    const kinds = [...units].map(k => S.UNIT_KIND[k]).sort().join(',');
+    assert.equal(kinds, 'common,long,short,short', 'tipos de tarea');
+  });
+  const com = crew.map(d => d.tasks.filter(id => kindOf(id) === 'common').join());
+  assert.ok(com.every(c => c === com[0]), 'la común es la misma para todos');
+});
+
+test('puertas como en The Skeld: varias salas a la vez, no impiden el botón y bloquean los otros sabotajes', async () => {
+  const S = require('../public/shared.js');
+  const cs = await Promise.all([1, 2, 3, 4].map(() => connect()));
+  const r0 = await ack(cs[0], 'join', { mapVer: MAP_VER, name: 'A', look: {}, code: '' });
+  for (const c of cs.slice(1)) await ack(c, 'join', { mapVer: MAP_VER, name: 'B', look: {}, code: r0.code });
+  const st = cs.map(c => once(c, 'start')); cs[0].emit('start'); const ds = await Promise.all(st);
+  const imp = cs[ds.findIndex(d => d.role === 'impostor')], crew = cs.filter(c => c !== imp);
+  await new Promise(r => setTimeout(r, 1200));   // recarga inicial del sabotaje (acortada en las pruebas)
+  let d1 = once(crew[0], 'doors'); imp.emit('sabotage', { type: 'puertas', room: 'cafeteria' }); await d1;
+  d1 = once(crew[0], 'doors'); imp.emit('sabotage', { type: 'puertas', room: 'almacen' }); const dd = await d1;
+  assert.deepEqual(Object.keys(dd.closed).sort(), ['almacen', 'cafeteria'], 'dos salas cerradas a la vez');
+  const t = once(imp, 'toast'); imp.emit('sabotage', { type: 'luces' }); assert.match(await t, /puertas/, 'con puertas cerradas no hay otros sabotajes');
+  crew[0].emit('move', { x: S.BUTTON.x, z: S.BUTTON.z + 3, ry: 0, mv: 0 }); await new Promise(r => setTimeout(r, 100));
+  const m = once(crew[0], 'meeting'); crew[0].emit('emergency'); assert.ok(await m, 'el botón funciona con las puertas cerradas');
+});
+
 test('la web y el servidor tienen que llevar el mismo mapa', async () => {
   const c = await connect();
   const old = await ack(c, 'join', { name: 'Viejo', look: {}, code: '' });
@@ -93,7 +125,8 @@ test('crear sala, unirse con el código y empezar la partida', async () => {
   const tryTask = async (k) => { const s = st[k], id = s.tasks.find(i => S.taskPrev(s.tasks)[i] == null), p = S.stationPos(S.STATIONS[id]);
     socks[k].emit('move', { x: p.x, z: p.z + 1, ry: 0, mv: 0 }); await new Promise(r => setTimeout(r, 80));
     let got = false; socks[k].once('taskDone', () => { got = true; }); socks[k].emit('task', id); await new Promise(r => setTimeout(r, 250)); return got; };
-  assert.equal(await tryTask(roles.indexOf('impostor')), false, 'el impostor no puede hacer tareas');
+  assert.equal(st[roles.indexOf('impostor')].tasks.length, 0, 'el impostor no tiene tareas fuera del modo pruebas');
+  { const c = socks[roles.indexOf('impostor')]; let got = false; c.once('taskDone', () => { got = true; }); c.emit('task', st[roles.indexOf('crew')].tasks[0]); await new Promise(r => setTimeout(r, 250)); assert.equal(got, false, 'ni puede hacer las de otro'); }
   assert.equal(await tryTask(roles.indexOf('crew')), true, 'la tripulación sí');
 
   // reconexión: un jugador recarga y vuelve a su sitio con el mismo rol
